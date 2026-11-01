@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Discover thoughtfully designed furniture, bespoke interiors, and personalized styling from Oak Furniture & Interiors.">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="OAK Furniture & Interiors">
+    <meta property="og:description" content="Thoughtfully designed furniture, bespoke interiors, and personalized styling.">
+    <meta name="twitter:card" content="summary_large_image">
     <meta name="theme-color" content="#082411">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta name="color-scheme" content="light">
@@ -207,20 +212,155 @@
             border-bottom: 1px solid rgba(197, 160, 89, 0.15);
         }
 
+        /* LIQUID GLASS HEADER — clear, refractive, lightly frosted */
         header {
-            background-color: #ffffff;
             position: sticky;
             top: 0;
             z-index: 999;
-            padding: 20px 0;
-            border-bottom: 1px solid var(--border-color);
-            backdrop-filter: blur(10px);
-            transition: var(--transition-fast);
+            padding: 18px 0;
+            isolation: isolate;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.34) 0%, rgba(255,255,255,0.10) 45%, rgba(255,255,255,0.16) 100%);
+            -webkit-backdrop-filter: blur(5px) saturate(170%) contrast(1.05) brightness(1.06);
+            backdrop-filter: blur(5px) saturate(170%) contrast(1.05) brightness(1.06);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.35);
+            box-shadow:
+                0 12px 30px rgba(8, 36, 17, 0.14),
+                0 2px 6px rgba(8, 36, 17, 0.06),
+                inset 0 1.5px 0 rgba(255, 255, 255, 0.95),
+                inset 0 -1.5px 0 rgba(255, 255, 255, 0.45),
+                inset 1.5px 0 0 rgba(255, 255, 255, 0.45),
+                inset -1.5px 0 0 rgba(255, 255, 255, 0.45),
+                inset 0 10px 18px -10px rgba(255, 255, 255, 0.75),
+                inset 0 -12px 18px -12px rgba(8, 36, 17, 0.14);
+            transition: padding 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Real refraction (bends the content behind the glass) where the browser supports SVG backdrop filters */
+        @supports (backdrop-filter: url(#oak-glass-refract)) {
+            header {
+                backdrop-filter: url(#oak-glass-refract) blur(3px) saturate(170%) brightness(1.06);
+            }
+        }
+
+        /* Specular highlights: a sharp rim light plus a soft glint that drifts across */
+        header::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0) 22%),
+                radial-gradient(60% 140% at 8% -40%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 60%),
+                linear-gradient(105deg, transparent 38%, rgba(255,255,255,0.38) 47%, rgba(255,255,255,0.06) 52%, transparent 60%);
+            background-size: 100% 100%, 100% 100%, 260% 100%;
+            background-position: 0 0, 0 0, 130% 0;
+            mix-blend-mode: soft-light;
+            animation: oakGlassSheen 10s ease-in-out infinite;
+        }
+
+        /* Chromatic edge: faint warm/cool fringing like light splitting at a glass bevel */
+        header::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -1px;
+            height: 2px;
+            z-index: -1;
+            pointer-events: none;
+            background: linear-gradient(90deg,
+                rgba(255,255,255,0) 0%, rgba(255,255,255,0.95) 15%,
+                rgba(255,200,140,0.55) 35%, rgba(255,255,255,0.95) 50%,
+                rgba(150,200,255,0.5) 68%, rgba(255,255,255,0.95) 85%, rgba(255,255,255,0) 100%);
+            opacity: 0.9;
+        }
+
+        @keyframes oakGlassSheen {
+            0%, 100% { background-position: 0 0, 0 0, 130% 0; }
+            50% { background-position: 0 0, 0 0, -30% 0; }
         }
 
         header.scrolled {
-            padding: 12px 0;
-            background-color: #ffffff;
+            padding: 10px 0;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0.16) 50%, rgba(255,255,255,0.24) 100%);
+            box-shadow:
+                0 14px 34px rgba(8, 36, 17, 0.2),
+                0 2px 6px rgba(8, 36, 17, 0.08),
+                inset 0 1.5px 0 rgba(255, 255, 255, 1),
+                inset 0 -1.5px 0 rgba(255, 255, 255, 0.5),
+                inset 1.5px 0 0 rgba(255, 255, 255, 0.5),
+                inset -1.5px 0 0 rgba(255, 255, 255, 0.5),
+                inset 0 10px 18px -10px rgba(255, 255, 255, 0.8),
+                inset 0 -12px 18px -12px rgba(8, 36, 17, 0.18);
+        }
+
+        /* Glass-styled menu button to match */
+        header .menu-btn {
+            background: linear-gradient(180deg, rgba(255,255,255,0.5), rgba(255,255,255,0.15));
+            -webkit-backdrop-filter: blur(4px) saturate(160%);
+            backdrop-filter: blur(4px) saturate(160%);
+            border-color: rgba(197, 160, 89, 0.75);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.95), inset 0 -1px 0 rgba(255,255,255,0.4), 0 4px 12px rgba(8,36,17,0.1);
+        }
+
+        /* AT THE TOP: clean white glass. Liquid glass sets in once the page starts scrolling. */
+        header::before, header::after { transition: opacity 0.4s ease; }
+        header:not(.scrolled) {
+            background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,255,255,0.94) 100%);
+            -webkit-backdrop-filter: none;
+            backdrop-filter: none;
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 1px 0 rgba(255,255,255,1) inset, 0 2px 10px rgba(8, 36, 17, 0.04);
+        }
+        header:not(.scrolled)::before,
+        header:not(.scrolled)::after { opacity: 0; animation: none; }
+        header:not(.scrolled) .menu-btn {
+            background: rgba(255, 255, 255, 0.9);
+            -webkit-backdrop-filter: none;
+            backdrop-filter: none;
+        }
+
+        /* Browsers without backdrop-filter get a solid, readable header */
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            header, header.scrolled { background: rgba(255, 255, 255, 0.96); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            header::before { animation: none; }
+        }
+
+        /* ADAPTIVE HEADER TEXT — original colours over light sections, white over dark ones */
+        header .logo-text-group h1,
+        header .logo-text-group span,
+        header nav ul li a,
+        header .menu-btn,
+        header .menu-btn-bars i {
+            transition: color 0.35s ease, border-color 0.35s ease, background-color 0.35s ease, text-shadow 0.35s ease;
+        }
+
+        header.scrolled.on-dark {
+            background:
+                linear-gradient(180deg, rgba(8,36,17,0.38) 0%, rgba(8,36,17,0.16) 50%, rgba(8,36,17,0.24) 100%);
+            border-bottom-color: rgba(255, 255, 255, 0.22);
+        }
+        header.scrolled.on-dark .logo-text-group h1 { color: #ffffff; text-shadow: 0 1px 8px rgba(0,0,0,0.35); }
+        header.scrolled.on-dark .logo-text-group span { color: rgba(255, 255, 255, 0.85); }
+        header.scrolled.on-dark nav ul li a { color: #ffffff; text-shadow: 0 1px 8px rgba(0,0,0,0.35); }
+        header.scrolled.on-dark nav ul li a:hover,
+        header.scrolled.on-dark nav ul li a.active-link { color: var(--accent-gold); }
+        header.scrolled.on-dark .menu-btn {
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.7);
+            background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.06));
+        }
+        header.scrolled.on-dark .menu-btn:hover,
+        header.scrolled.on-dark .menu-btn:focus-visible {
+            background: #ffffff;
+            border-color: #ffffff;
+            color: var(--primary-green);
         }
 
         .nav-container {
@@ -834,11 +974,6 @@
             font-weight: 500;
         }
 
-        .product-price {
-            font-size: 0.95rem;
-            color: var(--accent-gold);
-            font-weight: 600;
-        }
 
         /* DESIGNERS CORNER / PORTFOLIO */
         .portfolio-tabs {
@@ -2173,12 +2308,6 @@
             line-height: 1.3;
         }
 
-        .oak-card-price {
-            font-size: 0.86rem;
-            font-weight: 600;
-            color: var(--oak-gold-deep);
-            margin-bottom: 6px;
-        }
 
         .oak-card-btns {
             display: flex;
@@ -3093,10 +3222,10 @@
         .oak-loader-caption { font-size: .69rem; text-transform: uppercase; letter-spacing: .28em; color: var(--text-muted); text-align: center; }
         .oak-loader-rule { width: 48px; height: 1px; background: var(--accent-gold); transform-origin: center; animation: oakRuleSequence 1.5s ease-in-out infinite; }
         @keyframes oakLogoSequence {
-            0% { transform: scale(.76); filter: grayscale(0); opacity: .82; }
-            38% { transform: scale(1.1); filter: grayscale(1); opacity: 1; }
-            62% { transform: scale(1.1); filter: grayscale(1); opacity: 1; }
-            100% { transform: scale(.78); filter: grayscale(0); opacity: .9; }
+            0% { transform: scale(.78); filter: grayscale(1); opacity: .88; }
+            38% { transform: scale(1.1); filter: grayscale(0); opacity: 1; }
+            62% { transform: scale(1.1); filter: grayscale(0); opacity: 1; }
+            100% { transform: scale(.76); filter: grayscale(1); opacity: .88; }
         }
         @keyframes oakRuleSequence { 0% { transform: scaleX(.35); opacity: .4; } 48% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(.35); opacity: .65; } }
 
@@ -3171,12 +3300,43 @@
             html:not(.oak-motion-override) *, html:not(.oak-motion-override) *::before, html:not(.oak-motion-override) *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
         }
 
+        /* Silver shimmer while remote imagery is genuinely loading. */
+        .oak-image-loading { position: relative; isolation: isolate; background: #e9e9e7 !important; overflow: hidden; }
+        .oak-image-loading::after {
+            content: ""; position: absolute; inset: 0; z-index: 5; pointer-events: none;
+            background: linear-gradient(105deg, transparent 25%, rgba(255,255,255,.48) 38%, rgba(190,194,197,.58) 48%, rgba(255,255,255,.72) 55%, transparent 72%);
+            background-size: 220% 100%; animation: oakSilverShimmer 1.45s linear infinite;
+        }
+        .oak-image-loading > img { opacity: .12; transition: opacity .35s ease; }
+        .oak-image-loading.oak-image-ready > img { opacity: 1; }
+        .oak-image-ready::after { animation: none; opacity: 0; transition: opacity .3s ease; }
+        @keyframes oakSilverShimmer { from { background-position: 120% 0; } to { background-position: -120% 0; } }
+
+        /* Quiet motion gives controls feedback without distracting from the interiors. */
+        .feature-box, .product-card, .gallery-item, .service-media, .insta-card { backface-visibility: hidden; }
+        .feature-box, .product-card { transition: transform .32s cubic-bezier(.2,.75,.25,1), box-shadow .32s ease, border-color .32s ease; }
+        .btn-gold:focus-visible, .btn-outline-dark:focus-visible, .btn-outline-gold:focus-visible, .filter-btn:focus-visible { outline-offset: 4px; }
+        .product-card:focus-within { border-color: var(--accent-gold); box-shadow: 0 12px 28px rgba(0,0,0,.06); }
+        @media (hover: hover) and (pointer: fine) {
+            .service-media img { transition: transform .65s cubic-bezier(.2,.75,.25,1); }
+            .service-media:hover img { transform: scale(1.035); }
+        }
+
 </style>
 </head>
 <body>
+    <!-- Glass refraction filter used by the header -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+        <filter id="oak-glass-refract" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.006 0.035" numOctaves="2" seed="7" result="noise"/>
+            <feGaussianBlur in="noise" stdDeviation="2" result="softNoise"/>
+            <feDisplacementMap in="SourceGraphic" in2="softNoise" scale="14" xChannelSelector="R" yChannelSelector="G"/>
+        </filter>
+    </svg>
+
     <a class="oak-skip-link" href="#home-view">Skip to content</a>
 
-    <!-- One-second branded loading sequence: colour -> monochrome zoom -> colour on zoom-out. -->
+    <!-- Branded loading sequence: monochrome on zoom-out, full colour at the zoom-in peak. -->
     <div class="oak-page-loader" id="oak-page-loader" role="status" aria-live="polite" aria-label="Loading Oak Furniture and Interiors">
         <div class="oak-loader-mark">
             <img id="oak-loader-logo" src="https://i.postimg.cc/nzmbqwHc/Chat-GPT-Image-Jul-15-2026-05-53-13-PM.png" alt="" fetchpriority="high">
@@ -3331,7 +3491,7 @@
                     <div class="feature-box reveal">
                         <i class="fa-solid fa-gem"></i>
                         <h3>Accessible Premium</h3>
-                        <p>We source authentic hardwood materials directly to cut third-party costs, creating realistic premium pricing structures for your custom interiors.</p>
+                        <p>We source authentic hardwood materials directly from trusted suppliers, bringing honest quality and craftsmanship to your custom interiors.</p>
                     </div>
                     <div class="feature-box reveal">
                         <i class="fa-solid fa-compass-drafting"></i>
@@ -3423,8 +3583,6 @@
                     </div>
                     <select id="shop-sort-order" class="shop-sort-select" onchange="applyShopFiltersAndSorting()">
                         <option value="default">Default Sorting</option>
-                        <option value="price-asc">Price: Low to High</option>
-                        <option value="price-desc">Price: High to Low</option>
                         <option value="name-asc">Alphabetical: A-Z</option>
                     </select>
                 </div>
@@ -3631,10 +3789,6 @@
                             <div class="preview-details-row">
                                 <span>Est. Crafting Time</span>
                                 <span id="config-val-time">4-6 Weeks</span>
-                            </div>
-                            <div class="preview-details-row">
-                                <span>Consultation Fee</span>
-                                <span style="color: var(--accent-gold) !important; font-weight: bold;">Complimentary</span>
                             </div>
                         </div>
 
@@ -3846,7 +4000,7 @@
             <div class="oak-teaser" id="oak-teaser" role="status">
                 <button class="oak-teaser-close" id="oak-teaser-close" type="button" aria-label="Dismiss greeting"><i class="fa-solid fa-xmark"></i></button>
                 <strong>Hi, I'm Oak Man</strong>
-                Looking for the perfect piece? I can help you browse, get a quote or book a design session.
+                Looking for the perfect piece? I can help you browse or book a design session.
             </div>
 
             <!-- Chat window -->
@@ -3870,7 +4024,7 @@
                     <button class="oak-round-btn oak-mic" id="oak-chat-mic" type="button" aria-label="Speak your message"><i class="fa-solid fa-microphone"></i></button>
                     <button class="oak-round-btn oak-send" type="submit" aria-label="Send message"><i class="fa-solid fa-paper-plane"></i></button>
                 </form>
-                <div class="oak-chat-foot">Automated assistant · Orders &amp; quotes are confirmed by our team</div>
+                <div class="oak-chat-foot">Automated assistant · Enquiries are confirmed by our team</div>
             </section>
 
             <!-- Launcher -->
@@ -3955,14 +4109,14 @@
     <script>
         /* DYNAMIC DATABASE ARCHITECTURE */
         const PRODUCTS_DB = [
-            { id: "p1", name: "Peak Bed Frame", category: "bedroom", price: 1850.00, desc: "Symmetrical layout padded with organic performance linens.", image: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&q=80&w=600" },
-            { id: "p2", name: "L-Shape Premium Sofa", category: "living", price: 3200.00, desc: "Constructed with structural kiln-dried birch frameworks.", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=600" },
-            { id: "p3", name: "Artisanal Dining Table Set", category: "dining", price: 2100.00, desc: "A harmonious presentation of natural wood grain and raw brass joints.", image: "https://images.unsplash.com/photo-1615066390971-03e4e1c36ddf?auto=format&fit=crop&q=80&w=600" },
-            { id: "p4", name: "Geometric Media Showcase", category: "living", price: 1450.00, desc: "Perfect spatial planning to host screens and conceal cables cleanly.", image: "https://images.unsplash.com/photo-1595428774223-ef52624120d2?auto=format&fit=crop&q=80&w=600" },
-            { id: "p5", name: "Ergonomic Studio Worktop", category: "office", price: 950.00, desc: "Minimalist desk designed with organic oils and solid oak supports.", image: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=600" },
-            { id: "p6", name: "Upholstered Bouclé Chair", category: "living", price: 680.00, desc: "Understated luxury chair with exceptional lumbar alignment.", image: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=600" },
-            { id: "p7", name: "Antiquated Vanity Mirror Set", category: "bedroom", price: 520.00, desc: "Solid brass border framing custom cut mirror glass.", image: "https://images.unsplash.com/photo-1617806118233-18e1db207f62?auto=format&fit=crop&q=80&w=600" },
-            { id: "p8", name: "Symmetric Travertine Coffee Block", category: "living", price: 1100.00, desc: "A singular blocks design emphasizing pure geometric massing.", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=600" }
+            { id: "p1", name: "Modern Elegance,", category: "bedroom", desc: "This feature wall combines glossy black panels, warm wood grids, and vertical strip lighting above a sleek console to create a sophisticated modern focal point.", image: "https://i.postimg.cc/wv54N22w/photo-2026-10-18-16-42-23.jpg=600" },
+            { id: "p2", name: "Organized aesthetic", category: "living", desc: "This custom wardrobe unit combines high-gloss dark wood finishings with open hanging sections, built-in drawers, and tinted glass accents to create an elegant, contemporary storage solution.", image: "https://i.postimg.cc/cH7k3hhD/photo-2026-10-18-16-42-17.jpg=600" },
+            { id: "p3", name: "Refined Minimalism", category: "dining", desc: "This walk-in closet space features polished warm-wood cabinetry, open shelving, and integrated drawer storage set against light marbled flooring to deliver a refined and organized aesthetic.", image: "https://i.postimg.cc/G2PgDKKg/photo-2026-10-18-16-42-20.jpg=600" },
+            { id: "p4", name: "Modern Bumblebee", category: "living", desc: "This modern kitchen features high-contrast bright yellow cabinetry paired with sleek, white-veined black marble countertops and matching dark flooring to create a bold, vibrant aesthetic.", image: "https://i.postimg.cc/fTQyLgtQ/photo-2026-11-01-08-20-52.jpg=600" },
+            { id: "p5", name: "Ergonomic Studio Worktop", category: "office", desc: "Minimalist desk designed with organic oils and solid oak supports.", image: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=600" },
+            { id: "p6", name: "Upholstered Bouclé Chair", category: "living", desc: "Understated luxury chair with exceptional lumbar alignment.", image: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=600" },
+            { id: "p7", name: "Antiquated Vanity Mirror Set", category: "bedroom", desc: "Solid brass border framing custom cut mirror glass.", image: "https://images.unsplash.com/photo-1617806118233-18e1db207f62?auto=format&fit=crop&q=80&w=600" },
+            { id: "p8", name: "Symmetric Travertine Coffee Block", category: "living", desc: "A singular blocks design emphasizing pure geometric massing.", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=600" }
         ];
 
         const PORTFOLIO_DB = [
@@ -4333,11 +4487,7 @@
             }
 
             // Step 3: Sort logic
-            if (sortVal === "price-asc") {
-                filtered.sort((a, b) => a.price - b.price);
-            } else if (sortVal === "price-desc") {
-                filtered.sort((a, b) => b.price - a.price);
-            } else if (sortVal === "name-asc") {
+            if (sortVal === "name-asc") {
                 filtered.sort((a, b) => a.name.localeCompare(b.name));
             } else {
                 // Restore default order
@@ -4367,10 +4517,6 @@
             applyShopFiltersAndSorting();
         }
 
-        function formatCurrency(amount) {
-            return `GH₵${Number(amount).toFixed(2)}`;
-        }
-
         function createProductCard(prod) {
             const isWished = wishlistState.includes(prod.id);
             const card = document.createElement("div");
@@ -4390,7 +4536,6 @@
                 <div class="product-info">
                     <p class="product-cat">${prod.category}</p>
                     <h3 class="product-name">${prod.name}</h3>
-                    <p class="product-price">${formatCurrency(prod.price)}</p>
                 </div>
             `;
             return card;
@@ -4650,7 +4795,7 @@
             }
         }
 
-        /* PRODUCT ENQUIRY (no cart, no payment) */
+        /* PRODUCT ENQUIRY */
         function enquireProduct(prodId) {
             const product = PRODUCTS_DB.find(p => p.id === prodId);
             if (!product) return;
@@ -4681,7 +4826,6 @@
                             <i class="fa-solid fa-star"></i>
                             <span style="color: var(--text-muted); margin-left: 5px;">(5.0 stars Based on Verified Orders)</span>
                         </div>
-                        <p style="font-size: 1.3rem; color: var(--accent-gold); font-weight: 600; margin-bottom: 20px;">${formatCurrency(prod.price)}</p>
                         <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 30px; line-height: 1.6;">${prod.desc} This masterpiece is individually treated using organic finishes to emphasize premium grain presentation.</p>
                         <button class="btn-gold" style="width:100%; justify-content:center;" onclick="enquireProduct('${prod.id}'); closeGenericModal();"><i class="fa-brands fa-whatsapp"></i> Enquire About This Piece</button>
                     </div>
@@ -4972,7 +5116,6 @@
             const SERVICE_CHIPS = SERVICES.map(s => s.label).concat(["Cancel"]);
 
             const isMobile = () => window.matchMedia("(max-width: 600px)").matches;
-            const fmt = n => (typeof formatCurrency === "function") ? formatCurrency(n) : "GH₵" + Number(n).toFixed(2);
 
             /* ---------- State & persistence ---------- */
             const fresh = () => ({
@@ -5004,7 +5147,6 @@
                 closet: "wardrobe", closets: "wardrobe", cupboard: "wardrobe", cupboards: "wardrobe",
                 nightstands: "nightstand", bedside: "nightstand", bedsides: "nightstand",
                 tv: "media", television: "media", televisions: "media", diningroom: "dining",
-                quote: "pricing", quotation: "pricing", quotations: "pricing",
                 appointment: "consultation", appointments: "consultation",
                 delivery: "shipping", delivered: "shipping", deliver: "shipping",
                 clean: "cleaning", cleaned: "cleaning", polish: "polishing"
@@ -5051,28 +5193,8 @@
                 dining: ["dining", "dinner", "kitchen"],
                 office: ["office", "desk", "workspace", "worktop"]
             };
-            const NON_SEARCH = new Set(["the", "and", "for", "you", "your", "are", "can", "any", "some", "with", "have", "has", "what", "which", "how", "much", "about", "tell", "like", "want", "need", "looking", "show", "find", "get", "please", "pls", "give", "see", "that", "this", "its", "from", "into", "over", "under", "below", "above", "budget", "cheap", "cheapest", "affordable", "expensive", "premium", "luxury", "price", "prices", "pricing", "cost", "furniture", "collection", "collections", "product", "products", "piece", "pieces", "item", "items", "shop", "browse", "buy", "ghs", "cedis", "best", "good", "nice", "new", "range", "available", "stock", "recommend", "suggest", "gift", "within", "less", "than", "more", "most", "between", "interested", "options", "option", "whats", "hello", "hey"]);
+            const NON_SEARCH = new Set(["the", "and", "for", "you", "your", "are", "can", "any", "some", "with", "have", "has", "what", "which", "how", "much", "about", "tell", "like", "want", "need", "looking", "show", "find", "get", "please", "pls", "give", "see", "that", "this", "its", "from", "into", "over", "under", "below", "above", "premium", "luxury", "furniture", "collection", "collections", "product", "products", "piece", "pieces", "item", "items", "shop", "browse", "buy", "best", "good", "nice", "new", "range", "available", "stock", "recommend", "suggest", "gift", "within", "less", "than", "more", "most", "between", "interested", "options", "option", "whats", "hello", "hey"]);
 
-            const toNum = (s, k) => {
-                const n = parseFloat(String(s).replace(/,/g, ""));
-                if (isNaN(n)) return null;
-                return k ? n * 1000 : n;
-            };
-            function parseBudget(raw) {
-                let m = raw.match(/between\s*(?:gh[₵cs]?|₵)?\s*([\d][\d,.]*)(k\b)?\s*(?:and|to|-)\s*(?:gh[₵cs]?|₵)?\s*([\d][\d,.]*)(k\b)?/);
-                if (m) return { min: toNum(m[1], m[2]), max: toNum(m[3], m[4]) };
-                m = raw.match(/(?:under|below|less than|within|up to|maximum|max|not more than|cheaper than|budget(?: of| is)?)\s*(?:gh[₵cs]?|₵|cedis?)?\s*([\d][\d,]*(?:\.\d+)?)(k\b)?/);
-                if (m) return { max: toNum(m[1], m[2]) };
-                m = raw.match(/(?:over|above|more than|at least|starting at|minimum)\s*(?:gh[₵cs]?|₵|cedis?)?\s*([\d][\d,]*(?:\.\d+)?)(k\b)?/);
-                if (m) return { min: toNum(m[1], m[2]) };
-                return null;
-            }
-            const budgetText = b => {
-                if (!b) return "";
-                if (b.min != null && b.max != null) return " between " + fmt(b.min) + " and " + fmt(b.max);
-                if (b.max != null) return " within " + fmt(b.max);
-                return " above " + fmt(b.min);
-            };
             const sameWord = (a, w) => {
                 a = canonicalWord(a); w = canonicalWord(w);
                 return a === w || a === w + "s" || w === a + "s" || oneEditAway(a, w);
@@ -5085,10 +5207,7 @@
                 const cats = Object.keys(CAT_KW).filter(c => CAT_KW[c].some(k => tokens.some(w => sameWord(w, k))));
                 const words = tokens.filter(w => w.length > 2 && !NON_SEARCH.has(w) && !/^\d+$/.test(w));
                 const nameMatch = PRODUCTS_DB.some(p => norm(p.name).split(" ").some(n => words.some(w => sameWord(n, w))));
-                let sort = null;
-                if (/\b(cheap|cheapest|afford|lowest|least expensive)/.test(t)) sort = "asc";
-                else if (/\b(expensive|premium|luxur|highest|priciest)/.test(t)) sort = "desc";
-                return { raw: raw, tokens: tokens, cats: cats, words: words, nameMatch: nameMatch, budget: parseBudget(raw), sort: sort };
+                return { raw: raw, tokens: tokens, cats: cats, words: words, nameMatch: nameMatch };
             }
 
             function runSearch(q) {
@@ -5104,12 +5223,7 @@
                 });
                 const specific = q.cats.length > 0 || list.some(x => x.s > 0);
                 let pool = specific ? list.filter(x => x.s > 0) : list;
-                if (q.budget) {
-                    pool = pool.filter(x => (q.budget.max == null || x.p.price <= q.budget.max) && (q.budget.min == null || x.p.price >= q.budget.min));
-                }
-                if (q.sort === "asc") pool.sort((a, b) => a.p.price - b.p.price);
-                else if (q.sort === "desc") pool.sort((a, b) => b.p.price - a.p.price);
-                else pool.sort((a, b) => (b.s - a.s) || (a.i - b.i));
+                pool.sort((a, b) => (b.s - a.s) || (a.i - b.i));
                 let items = pool.slice(0, 6);
                 if (items.length > 1 && items[0].s >= 6 && items[0].s >= items[1].s * 2) items = [items[0]];
                 return { items: items.map(x => x.p), specific: specific };
@@ -5124,7 +5238,7 @@
             }
             function startBooking() {
                 state.flow = { step: "service", data: {} };
-                return M("Wonderful — a design consultation is **complimentary**. Which service are you interested in?", { chips: SERVICE_CHIPS });
+                return M("Wonderful — let's set up a design consultation. Which service are you interested in?", { chips: SERVICE_CHIPS });
             }
             function flowStep(c) {
                 const f = state.flow;
@@ -5209,8 +5323,8 @@
                 },
                 {
                     id: "order",
-                    kws: ["order", "buy", "purchase", "pay", "payment", "checkout", "cart", "deposit", "installment", "installments", "credit card", "momo", "mobile money"],
-                    run: () => M("Our website doesn't take online payments. To order, tap **Enquire** on any piece and our team will confirm availability, finishes, delivery and payment details with you directly on WhatsApp.", {
+                    kws: ["order", "buy", "purchase", "checkout", "cart"],
+                    run: () => M("To order, tap **Enquire** on any piece and our team will confirm availability, finishes and delivery with you directly on WhatsApp.", {
                         actions: [waAction("I'd like to place an order.", "Start an order on WhatsApp"), { type: "shopfilter", value: "all", label: "Open collections" }]
                     })
                 },
@@ -5229,14 +5343,14 @@
                 {
                     id: "wood",
                     kws: ["wood", "timber", "hardwood", "oak", "walnut", "mahogany", "brass", "copper", "hardware", "finish", "finishes", "material", "materials", "sourcing", "configurator", "lead time", "how long", "weeks", "turnaround", "grain", "sustainable", "quality"],
-                    run: () => M("We work with authentic hardwoods sourced directly from sustainable reserves, so premium pricing stays accessible.\n\nIn our Style Configurator you can choose **Natural Royal Oak**, **Smoked Dark Walnut** or **Classic Red Mahogany**, with **Brushed Brass**, **Matte Black** or **Aged Copper** hardware.\n\n**Typical crafting time:** Oak 4–6 weeks · Walnut 5–7 weeks · Mahogany 6–8 weeks.\n\nWould you like to book a consultation?", {
+                    run: () => M("We work with authentic hardwoods sourced directly from sustainable reserves, so quality stays at the heart of every piece.\n\nIn our Style Configurator you can choose **Natural Royal Oak**, **Smoked Dark Walnut** or **Classic Red Mahogany**, with **Brushed Brass**, **Matte Black** or **Aged Copper** hardware.\n\n**Typical crafting time:** Oak 4–6 weeks · Walnut 5–7 weeks · Mahogany 6–8 weeks.\n\nWould you like to book a consultation?", {
                         actions: [{ type: "configurator", label: "Open style configurator" }, bookAction()], offer: "booking"
                     })
                 },
                 {
                     id: "delivery",
                     kws: ["delivery", "deliver", "shipping", "ship", "transport", "dispatch", "installation", "assembly", "install", "courier", "freight"],
-                    run: () => M("Deliveries are coordinated to your door by specialised furniture handlers. Timing and delivery costs depend on your location and the piece — share your area when you enquire and our team will confirm on WhatsApp.", {
+                    run: () => M("Deliveries are coordinated to your door by specialised furniture handlers. Timing depends on your location and the piece — share your area when you enquire and our team will confirm on WhatsApp.", {
                         actions: [waAction("I'd like to ask about delivery to my area.", "Ask about delivery")], chips: ["Browse collections", "Contact us"]
                     })
                 },
@@ -5249,9 +5363,9 @@
                 },
                 {
                     id: "price",
-                    kws: ["price", "prices", "pricing", "cost", "costs", "how much", "quote", "estimate", "vat", "tax", "fee", "fees", "discount", "sale"],
-                    run: () => M("Every piece in our collections shows its price in GH₵. Bespoke and custom work is quoted after a consultation — and the consultation itself is **complimentary**. Share your room size and wood preference and our team will prepare an estimate.", {
-                        actions: [bookAction(), waAction("I'd like a quote for a custom piece.", "Request a quote")], chips: ["Browse collections", "Wood & materials"], offer: "booking"
+                    kws: ["price", "prices", "pricing", "cost", "costs", "how much", "quote", "estimate", "discount", "sale"],
+                    run: () => M("Our team shares all the details for each piece directly. Tell us what you have in mind — room, size and wood preference — and they will get back to you on WhatsApp.", {
+                        actions: [bookAction(), waAction("I'd like details on a piece.", "Ask our team")], chips: ["Browse collections", "Wood & materials"], offer: "booking"
                     })
                 },
                 {
@@ -5283,13 +5397,13 @@
                 {
                     id: "services",
                     kws: ["service", "services", "bespoke", "joinery", "custom", "customize", "customise", "tailored", "tailor", "made to order", "layout", "planning", "3d", "cad", "design", "designer", "interior", "interiors", "styling", "studio"],
-                    run: () => M("We offer three bespoke services:\n**1. Custom Joinery & Tailored Crafting** — media units, walk-in dressers and statement tables.\n**2. Room Spatial Layout Planning** — 3D CAD modelling of furniture, flow and lighting before production.\n**3. Virtual Design Consulting** — a remote session with a design consultant.\n\nConsultations are complimentary. Shall I set one up?", {
+                    run: () => M("We offer three bespoke services:\n**1. Custom Joinery & Tailored Crafting** — media units, walk-in dressers and statement tables.\n**2. Room Spatial Layout Planning** — 3D CAD modelling of furniture, flow and lighting before production.\n**3. Virtual Design Consulting** — a remote session with a design consultant.\n\nShall I set one up?", {
                         actions: [bookAction(), { type: "configurator", label: "Style configurator" }, navAction("services", "View services")], offer: "booking"
                     })
                 },
                 {
                     id: "products",
-                    kws: ["collection", "shop", "browse", "products", "catalog", "catalogue", "furniture", "sofa", "couch", "bed", "table", "desk", "chair", "dining", "bedroom", "living", "office", "mirror", "media", "coffee", "recommend", "suggest", "show me", "items", "pieces", "gift", "cheapest", "cheap", "affordable", "budget", "expensive", "luxury", "stock", "available", "availability"],
+                    kws: ["collection", "shop", "browse", "products", "catalog", "catalogue", "furniture", "sofa", "couch", "bed", "table", "desk", "chair", "dining", "bedroom", "living", "office", "mirror", "media", "coffee", "recommend", "suggest", "show me", "items", "pieces", "gift", "luxury", "stock", "available", "availability"],
                     run: c => productReply(c)
                 },
                 {
@@ -5315,7 +5429,7 @@
                 {
                     id: "help",
                     kws: ["help", "menu", "options", "what can you do", "start", "home"],
-                    run: () => M("Here's what I can do:\n• Find furniture by room, name or budget\n• Explain our bespoke services and materials\n• Book a complimentary design consultation\n• Share care tips, delivery and contact info\n• Connect you with our team on WhatsApp", { chips: MAIN_CHIPS })
+                    run: () => M("Here's what I can do:\n• Find furniture by room or name\n• Explain our bespoke services and materials\n• Book a design consultation\n• Share care tips, delivery and contact info\n• Connect you with our team on WhatsApp", { chips: MAIN_CHIPS })
                 }
             ];
 
@@ -5323,12 +5437,6 @@
                 const q = c.pq;
                 const r = runSearch(q);
                 if (!r.items.length) {
-                    const cheapest = PRODUCTS_DB.slice().sort((a, b) => a.price - b.price)[0];
-                    if (q.budget) {
-                        return M("I couldn't find a matching piece" + budgetText(q.budget) + ". Our most affordable piece is the **" + cheapest.name + "** at " + fmt(cheapest.price) + ". For custom work within a specific budget, our team can tailor a quote.", {
-                            cards: [cheapest.id], actions: [waAction("I have a specific budget and would like a custom quote.", "Ask for a custom quote")], chips: ["Book a consultation", "Browse collections"]
-                        });
-                    }
                     return M("I couldn't find an exact match, but here are some pieces from our collections.", {
                         cards: PRODUCTS_DB.slice(0, 6).map(p => p.id), actions: [{ type: "shopfilter", value: "all", label: "Open collections" }]
                     });
@@ -5337,9 +5445,9 @@
                 let text;
                 if (n === 1) {
                     const p = r.items[0];
-                    text = "**" + p.name + "** — " + fmt(p.price) + "\n" + p.desc;
+                    text = "**" + p.name + "**\n" + p.desc;
                 } else {
-                    text = "Here are " + n + " pieces " + (r.specific ? "that match what you're after" : "from our collections") + budgetText(q.budget) + (q.sort === "asc" ? ", from most affordable up" : (q.sort === "desc" ? ", from highest price down" : "")) + ". Tap **Enquire** and our team will reply on WhatsApp.";
+                    text = "Here are " + n + " pieces " + (r.specific ? "that match what you're after" : "from our collections") + ". Tap **Enquire** and our team will reply on WhatsApp.";
                 }
                 const cat = q.cats.length === 1 ? q.cats[0] : "all";
                 return M(text, {
@@ -5398,7 +5506,7 @@
                 INTENTS.forEach(it => {
                     let s = scoreKws(c.text, c.tokens, it.kws);
                     if (it.id === "greeting" && c.tokens.length > 6) s = 0;
-                    if (it.id === "products" && (c.pq.cats.length || c.pq.nameMatch || c.pq.budget)) s += 4;
+                    if (it.id === "products" && (c.pq.cats.length || c.pq.nameMatch)) s += 4;
                     if (s > bestScore) { best = it; bestScore = s; }
                 });
                 if (best) {
@@ -5467,9 +5575,6 @@
                     const name = document.createElement("div");
                     name.className = "oak-card-name";
                     name.textContent = p.name;
-                    const price = document.createElement("div");
-                    price.className = "oak-card-price";
-                    price.textContent = fmt(p.price);
                     const btns = document.createElement("div");
                     btns.className = "oak-card-btns";
                     const enq = document.createElement("button");
@@ -5483,7 +5588,7 @@
                     view.addEventListener("click", () => runAction({ type: "product-view", value: p.id }));
                     btns.appendChild(enq);
                     btns.appendChild(view);
-                    [cat, name, price, btns].forEach(n => body.appendChild(n));
+                    [cat, name, btns].forEach(n => body.appendChild(n));
                     card.appendChild(img);
                     card.appendChild(body);
                     wrap.appendChild(card);
@@ -5576,9 +5681,9 @@
                 const siteFacts = {
                     brand: "Oak Furniture & Interiors",
                     services: SERVICES.map(x => x.full),
-                    products: PRODUCTS_DB.map(p => ({ name: p.name, category: p.category, price: p.price, description: String(p.desc || "").slice(0, 180) }))
+                    products: PRODUCTS_DB.map(p => ({ name: p.name, category: p.category, description: String(p.desc || "").slice(0, 180) }))
                 };
-                const systemPrompt = "You are Oak Man, a helpful, clear and conversational assistant for Oak Furniture & Interiors. Understand the customer's intent and use the whole conversation for context. Answer only with facts in the supplied website context; never invent stock, prices, addresses, delivery dates, policies or bookings. If information is missing, say so plainly and offer to connect the customer to the team on WhatsApp. Product prices are in Ghana cedis (GH₵). A consultation is complimentary. Do not claim to have placed an order or completed a booking. Reply as plain text, with concise formatting. Website context: " + JSON.stringify(siteFacts);
+                const systemPrompt = "You are Oak Man, a helpful, clear and conversational assistant for Oak Furniture & Interiors. Understand the customer's intent and use the whole conversation for context. Answer only with facts in the supplied website context; never invent stock, addresses, delivery dates, policies or bookings. If information is missing, say so plainly and offer to connect the customer to the team on WhatsApp. Never state prices or any monetary amounts; direct such questions to the team on WhatsApp. Do not claim to have placed an order or completed a booking. Reply as plain text, with concise formatting. Website context: " + JSON.stringify(siteFacts);
                 const endpointUrl = new URL(AI_ENDPOINT, window.location.href);
                 if (!/^https?:$/.test(endpointUrl.protocol) || endpointUrl.origin !== window.location.origin) {
                     throw new Error("For privacy, Oak Man only sends messages to a same-origin AI endpoint.");
@@ -5816,7 +5921,7 @@
             }
 
             function welcome() {
-                botNow(M("Hello, I'm **Oak Man** — the virtual assistant for Oak Furniture & Interiors.\n\nI can help you find furniture, explore our bespoke services, book a complimentary design consultation, or connect you with our team. What would you like to do?", { chips: MAIN_CHIPS }));
+                botNow(M("Hello, I'm **Oak Man** — the virtual assistant for Oak Furniture & Interiors.\n\nI can help you find furniture, explore our bespoke services, book a design consultation, or connect you with our team. What would you like to do?", { chips: MAIN_CHIPS }));
             }
 
             /* ---------- Voice input ---------- */
@@ -5967,6 +6072,49 @@
 (function () {
     "use strict";
 
+    /* Image loading shimmer: keep the layout stable and reveal each image only when it is ready. */
+    function initSilverImageLoading() {
+        const images = Array.from(document.images);
+        images.forEach(function (img) {
+            if (!img || img.closest(".oak-loader-mark")) return;
+            const host = img.closest(".product-image-container, .gallery-item, .insta-card, .service-media, .story-img-frame, .insta-avatar, .ba-container") || img.parentElement;
+            if (!host) return;
+            host.classList.add("oak-image-loading");
+            const done = function () {
+                host.classList.add("oak-image-ready");
+                host.classList.remove("oak-image-loading");
+            };
+            if (img.complete) {
+                if (img.naturalWidth > 0) done();
+                else { host.classList.add("oak-image-ready"); host.classList.remove("oak-image-loading"); }
+            } else {
+                img.addEventListener("load", done, { once: true });
+                img.addEventListener("error", function () {
+                    host.classList.add("oak-image-ready");
+                    host.classList.remove("oak-image-loading");
+                }, { once: true });
+            }
+        });
+    }
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initSilverImageLoading, { once: true });
+    } else {
+        initSilverImageLoading();
+    }
+    /* Images inserted later (product filters, feeds, and dynamic sections) receive the same treatment. */
+    if ("MutationObserver" in window && document.body) {
+        const imageObserver = new MutationObserver(function (records) {
+            records.forEach(function (record) {
+                record.addedNodes.forEach(function (node) {
+                    if (node.nodeType !== 1) return;
+                    if (node.matches && node.matches("img")) initSilverImageLoading();
+                    else if (node.querySelector && node.querySelector("img")) initSilverImageLoading();
+                });
+            });
+        });
+        imageObserver.observe(document.body, { childList: true, subtree: true });
+    }
+
     /* Branded loader: repeat the slower 1.5-second zoom/colour cycle for the full three-second loader display. */
     const loader = document.getElementById("oak-page-loader");
     const loaderMark = document.querySelector(".oak-loader-mark");
@@ -5985,7 +6133,7 @@
         }
     }
 
-    /* User preferences are small, validated, local-only values; never store personal or payment data. */
+    /* User preferences are small, validated, local-only values; never store personal data. */
     const PREF_KEY = "oak-website-preferences-v1";
     const root = document.documentElement;
     const roomSelect = document.getElementById("oak-pref-room");
@@ -6101,5 +6249,63 @@
 })();
 </script>
 
+
+<script>
+/* Adaptive header: white text over dark sections, original colours over light ones */
+(function () {
+    "use strict";
+    var header = document.getElementById("site-header");
+    if (!header) return;
+    var ticking = false, lastState = null;
+
+    function parseColor(str) {
+        var m = /rgba?\(([^)]+)\)/.exec(str || "");
+        if (!m) return null;
+        var p = m[1].split(",").map(function (v) { return parseFloat(v); });
+        return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 };
+    }
+    function luminance(c) {
+        return (0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b) / 255;
+    }
+    function isDarkAt(x, y) {
+        var stack = document.elementsFromPoint(x, y);
+        var el = null;
+        for (var i = 0; i < stack.length; i++) {
+            if (!header.contains(stack[i]) && stack[i] !== document.documentElement) { el = stack[i]; break; }
+        }
+        while (el && el.nodeType === 1) {
+            if (el.classList && el.classList.contains("hero-slide")) return true;
+            var cs = getComputedStyle(el);
+            var c = parseColor(cs.backgroundColor);
+            if (c && c.a > 0.5) return luminance(c) < 0.45;
+            el = el.parentElement;
+        }
+        return false;
+    }
+    function update() {
+        ticking = false;
+        var rect = header.getBoundingClientRect();
+        var y = Math.min(window.innerHeight - 1, Math.max(0, rect.bottom + 4));
+        var w = window.innerWidth;
+        var votes = [0.2, 0.5, 0.8].map(function (f) { return isDarkAt(w * f, y); });
+        var dark = votes.filter(Boolean).length >= 2;
+        if (dark !== lastState) {
+            lastState = dark;
+            header.classList.toggle("on-dark", dark);
+        }
+    }
+    function queue() {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(update);
+    }
+    window.addEventListener("scroll", queue, { passive: true });
+    window.addEventListener("resize", queue);
+    window.addEventListener("load", queue);
+    document.addEventListener("click", function () { setTimeout(queue, 150); setTimeout(queue, 600); });
+    setInterval(queue, 600); /* catches slide changes and page-view transitions */
+    queue();
+})();
+</script>
 </body>
 </html>
