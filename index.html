@@ -236,12 +236,8 @@
             transition: padding 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
         }
 
-        /* Real refraction (bends the content behind the glass) where the browser supports SVG backdrop filters */
-        @supports (backdrop-filter: url(#oak-glass-refract)) {
-            header {
-                backdrop-filter: url(#oak-glass-refract) blur(3px) saturate(170%) brightness(1.06);
-            }
-        }
+        /* The SVG "refraction" backdrop filter was removed: re-running a noise displacement under the header on every
+           frame competes with video decoding and causes stutter. The standard frosted-glass blur above is kept. */
 
         /* Specular highlights: a sharp rim light plus a soft glint that drifts across */
         header::before {
@@ -3322,6 +3318,152 @@
             .service-media:hover img { transform: scale(1.035); }
         }
 
+
+        /* ============================================================
+           VISION · MISSION · TESTIMONIES SHOWCASE (home page only)
+           Layout: wide green panel + taller video panel that overhangs it
+           ============================================================ */
+        .vm-section { position: relative; padding: 120px 0; background: var(--bg-light); overflow: hidden; }
+        .vm-section::before {
+            content: ''; position: absolute; inset: 0; pointer-events: none;
+            background:
+                radial-gradient(720px 380px at 92% 0%, rgba(197,160,89,.16), transparent 65%),
+                radial-gradient(620px 340px at 0% 100%, rgba(8,36,17,.08), transparent 65%);
+        }
+        .vm-section .container { position: relative; }
+        .vm-stage { position: relative; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); align-items: center; }
+
+        /* Green panel */
+        .vm-panel {
+            position: relative; z-index: 1; min-height: 450px;
+            display: flex; flex-direction: column; justify-content: center;
+            padding: 68px 96px 56px 64px; color: var(--text-light);
+            background:
+                repeating-linear-gradient(100deg, rgba(255,255,255,.018) 0, rgba(255,255,255,.018) 2px, transparent 2px, transparent 9px),
+                linear-gradient(135deg, #0e3a1b 0%, #082411 58%, #071a0c 100%);
+            box-shadow: 0 34px 80px rgba(8,36,17,.3);
+        }
+        .vm-panel::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 120px; height: 3px; background: var(--accent-gold);
+        }
+        .vm-panel::after {
+            content: ''; position: absolute; left: 0; top: 0; width: 3px; height: 120px; background: var(--accent-gold);
+        }
+        .vm-eyebrow { font-size: .72rem; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 22px; display: block; }
+
+        .vm-tabs { display: flex; gap: 26px; flex-wrap: wrap; margin-bottom: 34px; border-bottom: 1px solid rgba(255,255,255,.12); }
+        .vm-tab {
+            position: relative; background: none; border: none; cursor: pointer;
+            padding: 0 0 14px; color: rgba(255,255,255,.55); font-size: .78rem; letter-spacing: 2.2px; text-transform: uppercase;
+            transition: color .3s ease;
+        }
+        .vm-tab::after { content: ''; position: absolute; left: 0; bottom: -1px; width: 0; height: 2px; background: var(--accent-gold); transition: width .4s cubic-bezier(.22,1,.36,1); }
+        .vm-tab:hover { color: #fff; }
+        .vm-tab[aria-selected="true"] { color: var(--accent-gold); }
+        .vm-tab[aria-selected="true"]::after { width: 100%; }
+
+        .vm-slides { display: grid; }
+        .vm-slide {
+            grid-area: 1 / 1; align-self: start;
+            opacity: 0; visibility: hidden; transform: translateY(16px);
+            transition: opacity .6s ease, transform .7s cubic-bezier(.22,1,.36,1), visibility 0s linear .6s;
+        }
+        .vm-slide.is-active { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+        .vm-kicker { font-size: .7rem; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 14px; display: block; }
+        .vm-statement { font-family: 'Playfair Display', serif; font-size: clamp(1.55rem, 2.5vw, 2.15rem); line-height: 1.35; font-weight: 400; color: #fff; margin-bottom: 20px; text-wrap: balance; }
+        .vm-statement em { color: var(--accent-gold); font-style: italic; }
+        .vm-text { font-size: .93rem; line-height: 1.75; color: rgba(255,255,255,.72); max-width: 560px; }
+
+        .vm-list { list-style: none; display: grid; gap: 16px; margin-top: 8px; }
+        .vm-list li { display: grid; grid-template-columns: 34px 1fr; gap: 14px; align-items: start; font-size: .92rem; line-height: 1.65; color: rgba(255,255,255,.78); }
+        .vm-list li b { font-family: 'Playfair Display', serif; font-weight: 400; font-size: 1.15rem; color: var(--accent-gold); line-height: 1.4; }
+        .vm-list li strong { color: #fff; font-weight: 500; }
+
+        .vm-quote-mark { font-family: 'Playfair Display', serif; font-size: 4.2rem; line-height: .6; color: var(--accent-gold); opacity: .85; display: block; margin-bottom: 10px; }
+        .vm-stars { color: var(--accent-gold); font-size: .78rem; display: flex; gap: 4px; margin-bottom: 16px; }
+        .vm-quote { font-family: 'Playfair Display', serif; font-size: clamp(1.2rem, 1.9vw, 1.55rem); line-height: 1.55; font-style: italic; color: #fff; margin-bottom: 22px; }
+        .vm-author { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+        .vm-author-mark { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--accent-gold); color: var(--accent-gold); display: grid; place-items: center; font-family: 'Playfair Display', serif; font-size: 1.05rem; flex: 0 0 auto; }
+        .vm-author strong { display: block; font-size: .88rem; font-weight: 500; letter-spacing: .5px; }
+        .vm-author span { display: block; font-size: .72rem; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(255,255,255,.55); }
+        .vm-sample-tag { font-size: .62rem !important; letter-spacing: 1.2px; color: var(--accent-gold) !important; border: 1px dashed rgba(197,160,89,.6); padding: 3px 9px; }
+
+        .vm-controls { display: flex; align-items: center; gap: 18px; margin-top: 38px; }
+        .vm-progress { flex: 1; height: 2px; background: rgba(255,255,255,.14); overflow: hidden; }
+        .vm-progress span { display: block; height: 100%; width: 0; background: var(--accent-gold); }
+        .vm-progress.running span { animation: vmFill var(--vm-dur, 7s) linear forwards; }
+        @keyframes vmFill { from { width: 0; } to { width: 100%; } }
+        .vm-arrows { display: flex; gap: 8px; }
+        .vm-arrow { width: 38px; height: 38px; border-radius: 50%; border: 1px solid rgba(197,160,89,.6); background: transparent; color: var(--accent-gold); cursor: pointer; display: grid; place-items: center; font-size: .8rem; transition: var(--transition-fast); }
+        .vm-arrow:hover, .vm-arrow:focus-visible { background: var(--accent-gold); color: var(--secondary-dark); }
+
+        /* Video panel (the tall block that overhangs the green panel) */
+        .vm-video-wrap { position: relative; z-index: 2; margin-left: -48px; }
+        .vm-video-wrap::before {
+            content: ''; position: absolute; inset: 18px -18px -18px 18px; z-index: -1;
+            border: 1px solid var(--accent-gold); pointer-events: none;
+        }
+        .vm-video-frame {
+            position: relative; overflow: hidden; aspect-ratio: 4 / 5; min-height: 560px; width: 100%;
+            background: #0b2d16 url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=900') center / cover no-repeat;
+            box-shadow: 0 40px 90px rgba(8,36,17,.35);
+        }
+        /* Video layer: kept simple on purpose. Extra GPU hints (containment, 3D transforms, hidden backfaces) can slow or glitch playback on some phones. */
+        .vm-video-frame { isolation: isolate; }
+        .vm-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; border: 0; background: transparent; pointer-events: none; }
+        /* While the video is on screen, pause the header's endless shimmer so the device can focus on playback */
+        html.vm-playing header::before { animation-play-state: paused; }
+        .vm-video-failed .vm-video { display: none; }
+        .vm-video-frame::after {
+            content: ''; position: absolute; inset: 0; pointer-events: none;
+            background: linear-gradient(to top, rgba(8,36,17,.78) 0%, rgba(8,36,17,0) 42%), linear-gradient(to bottom, rgba(8,36,17,.25) 0%, rgba(8,36,17,0) 22%);
+        }
+        .vm-video-caption { pointer-events: none; position: absolute; left: 26px; right: 26px; bottom: 24px; z-index: 3; color: #fff; display: flex; align-items: flex-end; justify-content: space-between; gap: 14px; }
+        .vm-video-caption strong { display: block; font-family: 'Playfair Display', serif; font-weight: 400; font-size: 1.3rem; line-height: 1.25; }
+        .vm-video-caption span { display: block; margin-top: 4px; font-size: .66rem; letter-spacing: 2.5px; text-transform: uppercase; color: var(--accent-gold); }
+        .vm-live-dot { display: inline-flex; align-items: center; gap: 8px; font-size: .62rem; letter-spacing: 2px; text-transform: uppercase; padding: 6px 12px; background: rgba(8,36,17,.82); border: 1px solid rgba(197,160,89,.55); white-space: nowrap; position: relative; }
+        .vm-live-dot::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--accent-gold); }
+        /* Pulse uses only transform + opacity (GPU-only), instead of an animated box-shadow that repaints over the video */
+        .vm-live-dot::after { content: ''; position: absolute; left: 12px; top: 50%; width: 7px; height: 7px; margin-top: -3.5px; border-radius: 50%; border: 1px solid rgba(197,160,89,.8); animation: vmPulse 1.8s ease-out infinite; will-change: transform, opacity; }
+        @keyframes vmPulse { 0% { transform: scale(1); opacity: .9; } 80%, 100% { transform: scale(2.4); opacity: 0; } }
+        /* The badge ("Hand-finished") keeps its own layout instead of inheriting the caption's block styling */
+        .vm-video-caption .vm-live-dot { display: inline-flex; align-items: center; margin-top: 0; gap: 8px; color: #fff; max-width: 100%; flex: 0 1 auto; box-sizing: border-box; white-space: nowrap; overflow: hidden; }
+        .vm-video-caption > div { min-width: 0; }
+
+        @media (max-width: 960px) {
+            .vm-section { padding: 90px 0; }
+            .vm-stage { grid-template-columns: 1fr; }
+            /* Phones & tablets: the video is centred exactly and takes the shape of the video itself (no stretching or cropping).
+               --vm-r is the video's real width/height ratio, filled in by the script once the video's size is known. */
+            .vm-video-wrap { order: -1; margin: 0 auto; width: min(86%, 520px, calc(78vh * var(--vm-r, .8))); }
+            .vm-video-wrap::before { inset: -10px; }
+            .vm-video-frame { min-height: 0; max-height: none; aspect-ratio: var(--vm-r, .8); }
+            .vm-video { object-fit: cover; object-position: center center; }
+            /* Caption + "Hand-finished" badge scale down with the screen and wrap instead of running out of the frame */
+            .vm-video-caption { left: clamp(12px, 4vw, 26px); right: clamp(12px, 4vw, 26px); bottom: clamp(12px, 3.5vw, 24px); gap: 8px 10px; flex-wrap: wrap; align-items: flex-end; }
+            .vm-video-caption > div { flex: 1 1 auto; }
+            .vm-video-caption strong { font-size: clamp(.95rem, 4.2vw, 1.3rem); overflow-wrap: anywhere; }
+            .vm-video-caption span { font-size: clamp(.54rem, 2.2vw, .66rem); letter-spacing: clamp(1px, .5vw, 2.5px); overflow-wrap: anywhere; }
+            /* "Hand-finished" badge: smaller, fully inside its green pill */
+            .vm-video-caption .vm-live-dot { font-size: clamp(.44rem, 1.7vw, .54rem); letter-spacing: clamp(.4px, .25vw, 1.2px); padding: 4px 8px; gap: 6px; line-height: 1.2; }
+            .vm-video-caption .vm-live-dot::before { width: 5px; height: 5px; }
+            .vm-video-caption .vm-live-dot::after { left: 8px; width: 5px; height: 5px; margin-top: -2.5px; }
+            /* The title block fades away a few seconds in (the script adds .vm-caption-hide) so it never covers the video */
+            .vm-video-caption { transition: opacity .9s ease, transform .9s ease; }
+            .vm-video-frame::after { transition: opacity .9s ease; }
+            .vm-caption-hide:not(.vm-video-failed) .vm-video-caption { opacity: 0; transform: translateY(10px); }
+            .vm-caption-hide:not(.vm-video-failed) .vm-video-frame::after { opacity: 0; }
+            .vm-panel { margin: -64px auto 0; width: min(94%, 720px); padding: 92px 30px 40px 30px; min-height: 0; }
+        }
+        @media (max-width: 520px) {
+            .vm-video-wrap { width: min(88%, calc(78vh * var(--vm-r, .8))); }
+            .vm-video-wrap::before { inset: -8px; }
+            .vm-panel { width: 94%; padding: 84px 22px 34px; }
+            .vm-tabs { gap: 18px; }
+            .vm-video-caption .vm-live-dot { padding: 3px 7px; gap: 5px; }
+            .vm-video-caption .vm-live-dot::after { left: 7px; }
+        }
+        @media (prefers-reduced-motion: reduce) { .vm-live-dot::before { animation: none; } }
 </style>
 </head>
 <body>
@@ -3549,6 +3691,71 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VISION, MISSION & TESTIMONIES + LOOPING VIDEO (home page only, sits right above the Instagram hub) -->
+        <section class="vm-section" id="vm-showcase" aria-labelledby="vm-heading">
+            <div class="container">
+                <div class="modern-section-title vm-head reveal">
+                    <span>Why Oak</span>
+                    <h2 id="vm-heading">Vision, Mission &amp; Voices</h2>
+                </div>
+
+                <div class="vm-stage reveal">
+                    <!-- Green panel -->
+                    <div class="vm-panel" id="vm-panel">
+                        <span class="vm-eyebrow">Our Promise</span>
+
+                        <div class="vm-tabs" role="tablist" aria-label="Vision, mission and customer testimonies">
+                            <button class="vm-tab" type="button" role="tab" data-group="vision" aria-selected="true">Vision</button>
+                            <button class="vm-tab" type="button" role="tab" data-group="mission" aria-selected="false">Mission</button>
+                            <button class="vm-tab" type="button" role="tab" data-group="voices" aria-selected="false">Testimonies</button>
+                        </div>
+
+                        <div class="vm-slides" id="vm-slides" aria-live="off">
+                            <article class="vm-slide is-active" data-group="vision">
+                                <span class="vm-kicker">Our Vision</span>
+                                <h3 class="vm-statement">To be the most trusted name in <em>hand-finished</em> furniture and interiors.</h3>
+                                <p class="vm-text">We imagine homes and workplaces that feel balanced, warm and quietly elegant &mdash; spaces built from honest hardwood and thoughtful design that outlast trends and carry families through generations.</p>
+                            </article>
+
+                            <article class="vm-slide" data-group="mission">
+                                <span class="vm-kicker">Our Mission</span>
+                                <ul class="vm-list">
+                                    <li><b>01</b><span><strong>Craft with integrity.</strong> Handcraft every piece from authentic, responsibly sourced hardwood.</span></li>
+                                    <li><b>02</b><span><strong>Design around you.</strong> Tailor each space with our consultants so function and beauty fit your life.</span></li>
+                                    <li><b>03</b><span><strong>Stand behind our work.</strong> Back every joint and finish with lasting assurance and honest service.</span></li>
+                                </ul>
+                            </article>
+                            <!-- Testimony slides are added by the script below from the OAK_TESTIMONIES list -->
+                        </div>
+
+                        <div class="vm-controls">
+                            <div class="vm-progress" id="vm-progress" aria-hidden="true"><span></span></div>
+                            <div class="vm-arrows">
+                                <button class="vm-arrow" type="button" id="vm-prev" aria-label="Previous"><i class="fa-solid fa-chevron-left"></i></button>
+                                <button class="vm-arrow" type="button" id="vm-next" aria-label="Next"><i class="fa-solid fa-chevron-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tall video panel (muted, looping, no audio) -->
+                    <figure class="vm-video-wrap">
+                        <div class="vm-video-frame">
+                            <video class="vm-video" id="vm-video" muted volume="0" loop playsinline preload="none" disablepictureinpicture disableremoteplayback controlslist="nodownload noplaybackrate noremoteplayback" aria-hidden="true" tabindex="-1" poster="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&amp;fit=crop&amp;q=80&amp;w=900">
+                                <source src="https://www.image2url.com/r2/default/videos/1793612102221-4e6184eb-dc16-4fb4-8d63-36bfe54ce903.mp4" type="video/mp4">
+                            </video>
+                            <figcaption class="vm-video-caption">
+                                <div>
+                                    <strong>Crafted with pride</strong>
+                                    <span>Oak Furniture &amp; Interiors</span>
+                                </div>
+                                <span class="vm-live-dot">Hand-finished</span>
+                            </figcaption>
+                        </div>
+                    </figure>
                 </div>
             </div>
         </section>
@@ -6303,8 +6510,263 @@
     window.addEventListener("resize", queue);
     window.addEventListener("load", queue);
     document.addEventListener("click", function () { setTimeout(queue, 150); setTimeout(queue, 600); });
-    setInterval(queue, 600); /* catches slide changes and page-view transitions */
+    /* catches slide changes and page-view transitions; slower and skipped when the tab is hidden to keep the main thread free for video */
+    setInterval(function () { if (!document.hidden) queue(); }, 1500);
     queue();
+})();
+</script>
+
+<script>
+/* Vision / Mission / Testimonies rotator + looping video (home page section) */
+(function () {
+    "use strict";
+
+    /* ---- EDIT HERE: add your real customer testimonies. ----
+       Set sample:false once a quote is a genuine one (this removes the "Sample" tag). */
+    var OAK_TESTIMONIES = [
+        { name: "Customer name", role: "Living room · Residential", quote: "Sample testimonial: replace this with the words of a real Oak customer.", sample: true },
+        { name: "Customer name", role: "Bespoke joinery", quote: "Sample testimonial: replace this with the words of a real Oak customer.", sample: true },
+        { name: "Customer name", role: "Office fit-out · Commercial", quote: "Sample testimonial: replace this with the words of a real Oak customer.", sample: true }
+    ];
+    var DURATION = 7000;
+
+    var root = document.getElementById("vm-showcase");
+    if (!root) return;
+    var slidesEl = document.getElementById("vm-slides");
+    var progress = document.getElementById("vm-progress");
+    var panel = document.getElementById("vm-panel");
+    var tabs = Array.prototype.slice.call(root.querySelectorAll(".vm-tab"));
+    var video = document.getElementById("vm-video");
+    if (!slidesEl || !progress || !panel) return;
+
+    /* Build testimony slides safely (text only, no HTML injection) */
+    OAK_TESTIMONIES.forEach(function (t) {
+        var s = document.createElement("article");
+        s.className = "vm-slide";
+        s.setAttribute("data-group", "voices");
+
+        var mark = document.createElement("span");
+        mark.className = "vm-quote-mark";
+        mark.setAttribute("aria-hidden", "true");
+        mark.textContent = "“";
+
+        var stars = document.createElement("div");
+        stars.className = "vm-stars";
+        stars.setAttribute("aria-label", "5 out of 5 stars");
+        for (var i = 0; i < 5; i++) {
+            var st = document.createElement("i");
+            st.className = "fa-solid fa-star";
+            stars.appendChild(st);
+        }
+
+        var q = document.createElement("p");
+        q.className = "vm-quote";
+        q.textContent = t.quote;
+
+        var author = document.createElement("div");
+        author.className = "vm-author";
+        var av = document.createElement("div");
+        av.className = "vm-author-mark";
+        av.setAttribute("aria-hidden", "true");
+        av.textContent = (t.name || "?").charAt(0).toUpperCase();
+        var who = document.createElement("div");
+        var n = document.createElement("strong");
+        n.textContent = t.name;
+        var r = document.createElement("span");
+        r.textContent = t.role;
+        who.appendChild(n);
+        who.appendChild(r);
+        author.appendChild(av);
+        author.appendChild(who);
+        if (t.sample) {
+            var tag = document.createElement("span");
+            tag.className = "vm-sample-tag";
+            tag.textContent = "Sample — replace before launch";
+            author.appendChild(tag);
+        }
+
+        [mark, stars, q, author].forEach(function (el) { s.appendChild(el); });
+        slidesEl.appendChild(s);
+    });
+
+    var slides = Array.prototype.slice.call(slidesEl.querySelectorAll(".vm-slide"));
+    var idx = 0, timer = null, hovered = false, focused = false, inView = false;
+
+    root.style.setProperty("--vm-dur", (DURATION / 1000) + "s");
+
+    function show(i) {
+        idx = (i + slides.length) % slides.length;
+        slides.forEach(function (s, k) {
+            var on = k === idx;
+            s.classList.toggle("is-active", on);
+            s.setAttribute("aria-hidden", on ? "false" : "true");
+        });
+        var group = slides[idx].getAttribute("data-group");
+        tabs.forEach(function (t) { t.setAttribute("aria-selected", t.getAttribute("data-group") === group ? "true" : "false"); });
+        schedule();
+    }
+
+    function schedule() {
+        clearTimeout(timer);
+        progress.classList.remove("running");
+        if (hovered || focused || !inView || document.hidden) return;
+        void progress.offsetWidth; /* restart the progress animation */
+        progress.classList.add("running");
+        timer = setTimeout(function () { show(idx + 1); }, DURATION);
+    }
+
+    tabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+            var g = tab.getAttribute("data-group");
+            for (var k = 0; k < slides.length; k++) {
+                if (slides[k].getAttribute("data-group") === g) { show(k); break; }
+            }
+        });
+    });
+    document.getElementById("vm-prev").addEventListener("click", function () { show(idx - 1); });
+    document.getElementById("vm-next").addEventListener("click", function () { show(idx + 1); });
+
+    panel.addEventListener("mouseenter", function () { hovered = true; schedule(); });
+    panel.addEventListener("mouseleave", function () { hovered = false; schedule(); });
+    panel.addEventListener("focusin", function () { focused = true; schedule(); });
+    panel.addEventListener("focusout", function () { focused = false; schedule(); });
+    document.addEventListener("visibilitychange", schedule);
+
+    /* ---------- Reliable video playback ----------
+       - The file is fetched shortly before the section scrolls into view, then the browser's own buffering plays it.
+       - Plays only while the video is on screen and the tab is visible.
+       - If a device genuinely can't keep up (many dropped frames for several seconds), it falls back to the still photo
+         instead of showing a stuttering video.
+       - Respects Data Saver and very slow (2G) connections. */
+    var htmlEl = document.documentElement;
+    var frameEl = root.querySelector(".vm-video-frame");
+    var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    var saveData = !!(conn && conn.saveData);
+    var verySlow = !!(conn && /(^|-)2g$/.test(conn.effectiveType || ""));
+    var videoLoaded = false, videoWanted = false, guardTimer = null;
+
+    function videoFailed() {
+        root.classList.add("vm-video-failed");
+        htmlEl.classList.remove("vm-playing");
+        clearInterval(guardTimer);
+        if (video) { try { video.pause(); } catch (e) { /* ignore */ } }
+    }
+
+    function startVideoLoad() {
+        if (!video || videoLoaded || saveData || verySlow) return;
+        videoLoaded = true;
+        video.preload = "auto";
+        try { video.load(); } catch (e) { /* ignore */ }
+    }
+
+    function tryPlay() {
+        if (!video || !videoLoaded || !videoWanted || document.hidden) return;
+        var p = video.play(); /* the browser waits for data and starts by itself; no manual buffer checks */
+        if (p && p.catch) p.catch(function () { /* autoplay blocked (e.g. low-power mode): retried on first touch */ });
+    }
+
+    /* Dropped-frame guard: checks every 3 seconds for the first ~40 seconds of playback */
+    function startGuard() {
+        if (!video || !video.getVideoPlaybackQuality || guardTimer) return;
+        var lastTotal = 0, lastDropped = 0, bad = 0, runs = 0;
+        guardTimer = setInterval(function () {
+            if (video.paused || document.hidden || !videoWanted) return;
+            var q = video.getVideoPlaybackQuality();
+            var total = q.totalVideoFrames - lastTotal, dropped = q.droppedVideoFrames - lastDropped;
+            lastTotal = q.totalVideoFrames; lastDropped = q.droppedVideoFrames;
+            if (total < 30) return;
+            bad = (dropped / total > 0.4) ? bad + 1 : 0;
+            if (bad >= 3) { videoFailed(); return; } /* ~9 seconds of heavy frame dropping */
+            if (++runs >= 13) { clearInterval(guardTimer); guardTimer = null; } /* stable: stop checking */
+        }, 3000);
+    }
+
+    if (video) {
+        /* Sound is permanently disabled: muted, volume zero, and re-enforced if anything tries to change it */
+        var silence = function () {
+            try {
+                video.muted = true;
+                video.defaultMuted = true;
+                video.volume = 0;
+                video.setAttribute("muted", "");
+                /* Detach any audio track the browser exposes (where supported) */
+                if (video.audioTracks) { for (var a = 0; a < video.audioTracks.length; a++) video.audioTracks[a].enabled = false; }
+            } catch (e) { /* ignore */ }
+        };
+        silence();
+        ["volumechange", "loadedmetadata", "loadeddata", "play", "playing"].forEach(function (ev) {
+            video.addEventListener(ev, function () { if (!video.muted || video.volume !== 0) silence(); else if (ev !== "volumechange") silence(); });
+        });
+        video.loop = true;
+        video.setAttribute("playsinline", "");
+        video.setAttribute("webkit-playsinline", "");
+        video.addEventListener("error", videoFailed);
+        /* Match the frame to the video's real shape on small screens so it is never stretched or cropped */
+        video.addEventListener("loadedmetadata", function () {
+            if (!video.videoWidth || !video.videoHeight) return;
+            var r = Math.min(1.6, Math.max(0.6, video.videoWidth / video.videoHeight));
+            root.style.setProperty("--vm-r", r.toFixed(4));
+        });
+        var srcEl = video.querySelector("source");
+        if (srcEl) srcEl.addEventListener("error", videoFailed);
+
+        video.addEventListener("playing", function () {
+            if (!videoWanted) { video.pause(); return; } /* it began after the user scrolled away */
+            htmlEl.classList.add("vm-playing");
+            startGuard();
+        });
+        video.addEventListener("pause", function () { htmlEl.classList.remove("vm-playing"); });
+
+        /* Caption fade (phones/small screens, via CSS): visible at the start of each loop, fades away a few seconds in,
+           well before the video ends, so it never sits on top of the picture. Change the 3 to adjust the timing. */
+        var CAPTION_SHOW_SECONDS = 3, captionHidden = false;
+        video.addEventListener("timeupdate", function () {
+            var d = video.duration;
+            if (!d || !isFinite(d)) return;
+            var hide = video.currentTime >= Math.min(CAPTION_SHOW_SECONDS, d * 0.6);
+            if (hide !== captionHidden) { captionHidden = hide; root.classList.toggle("vm-caption-hide", hide); }
+        });
+
+        /* Some phones block autoplay until the first touch: retry once on first interaction */
+        ["touchstart", "pointerdown", "keydown"].forEach(function (ev) {
+            window.addEventListener(ev, function () { if (video.paused) tryPlay(); }, { once: true, passive: true });
+        });
+    }
+
+    document.addEventListener("visibilitychange", function () {
+        if (!video) return;
+        if (document.hidden) video.pause(); else tryPlay();
+    });
+
+    if ("IntersectionObserver" in window) {
+        /* Text rotator: runs only while the section is on screen */
+        new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) { inView = entry.isIntersecting; schedule(); });
+        }, { threshold: 0.25 }).observe(root);
+
+        /* Begin downloading shortly before the video scrolls into view */
+        new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) { if (entry.isIntersecting) startVideoLoad(); });
+        }, { rootMargin: "900px 0px" }).observe(frameEl || root);
+
+        /* Play only while the video itself is visible */
+        new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                videoWanted = entry.isIntersecting;
+                if (!video) return;
+                if (videoWanted) { startVideoLoad(); tryPlay(); }
+                else { video.pause(); htmlEl.classList.remove("vm-playing"); }
+            });
+        }, { threshold: 0.15 }).observe(frameEl || root);
+    } else {
+        inView = true;
+        videoWanted = true;
+        startVideoLoad();
+        tryPlay();
+        schedule();
+    }
+
+    show(0);
 })();
 </script>
 </body>
