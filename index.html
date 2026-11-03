@@ -3464,6 +3464,53 @@
             .vm-video-caption .vm-live-dot::after { left: 7px; }
         }
         @media (prefers-reduced-motion: reduce) { .vm-live-dot::before { animation: none; } }
+
+        /* ============================================================
+           FOOTER WORDMARK: a large "OAK" that melts into the footer.
+           Resting: ghosted, low opacity, same family as the footer colour.
+           Hover / touch: brand colours are revealed in a soft spotlight
+           that follows the cursor, and the colours shift with its position.
+           ============================================================ */
+        footer { position: relative; overflow: hidden; padding-bottom: 0; }
+        .oak-wordmark {
+            position: relative; z-index: 1;
+            margin: 10px auto 0; padding: 0 16px;
+            max-width: 1300px; text-align: center;
+            cursor: default; user-select: none; -webkit-user-select: none;
+            --mx: 50%; --my: 50%; --gx: 50%; --spot: 0;
+        }
+        .oak-wordmark-text {
+            display: block;
+            font-family: 'Poppins', sans-serif; font-weight: 800;
+            font-size: clamp(6.5rem, 23vw, 18rem);
+            line-height: .82; letter-spacing: .05em; padding-left: .05em;
+            margin-bottom: -0.06em; /* sits tight to the bottom edge of the footer */
+        }
+        /* Layer 1: the ghost, a faint tint that blends into the dark footer */
+        .oak-wordmark-base { color: rgba(197, 160, 89, .09); transition: color .5s ease; }
+        .oak-wordmark.is-lit .oak-wordmark-base { color: rgba(197, 160, 89, .05); }
+        /* Layer 2: brand colours, revealed only inside the spotlight */
+        .oak-wordmark-color {
+            position: absolute; top: 0; left: 16px; right: 16px;
+            pointer-events: none; color: transparent;
+            background-image: linear-gradient(100deg, #1f6b38 0%, var(--primary-green-light) 14%, var(--accent-gold) 38%, #ecd9a8 55%, var(--accent-gold-hover) 74%, #2f8a4d 100%);
+            background-size: 220% 100%;
+            background-position: var(--gx) 0;
+            -webkit-background-clip: text; background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: var(--spot);
+            -webkit-mask-image: radial-gradient(circle 200px at var(--mx) var(--my), #000 0%, rgba(0,0,0,.7) 42%, transparent 100%);
+            mask-image: radial-gradient(circle 200px at var(--mx) var(--my), #000 0%, rgba(0,0,0,.7) 42%, transparent 100%);
+            transition: opacity .45s ease;
+        }
+        .oak-wordmark.is-lit { --spot: 1; }
+        @media (max-width: 640px) {
+            .oak-wordmark-color {
+                -webkit-mask-image: radial-gradient(circle 120px at var(--mx) var(--my), #000 0%, rgba(0,0,0,.7) 42%, transparent 100%);
+                mask-image: radial-gradient(circle 120px at var(--mx) var(--my), #000 0%, rgba(0,0,0,.7) 42%, transparent 100%);
+            }
+        }
+        @media (prefers-reduced-motion: reduce) { .oak-wordmark-color, .oak-wordmark-base { transition: none; } }
 </style>
 </head>
 <body>
@@ -4309,6 +4356,12 @@
                 <p>&copy; 2026 Oak Furniture & Interiors. All rights reserved.</p>
                 <p>Designed with understated luxury.</p>
             </div>
+        </div>
+
+        <!-- Footer wordmark: ghosted at rest, brand colours follow the cursor -->
+        <div class="oak-wordmark" id="oak-wordmark" aria-hidden="true">
+            <span class="oak-wordmark-text oak-wordmark-base">OAK</span>
+            <span class="oak-wordmark-text oak-wordmark-color">OAK</span>
         </div>
     </footer>
 
@@ -6767,6 +6820,41 @@
     }
 
     show(0);
+})();
+</script>
+
+<script>
+/* Footer wordmark: the spotlight and colour shift follow the pointer */
+(function () {
+    "use strict";
+    var wm = document.getElementById("oak-wordmark");
+    if (!wm) return;
+    var frame = null, px = 0, py = 0;
+
+    function paint() {
+        frame = null;
+        var r = wm.getBoundingClientRect();
+        var x = Math.min(r.width, Math.max(0, px - r.left));
+        var y = Math.min(r.height, Math.max(0, py - r.top));
+        wm.style.setProperty("--mx", x + "px");
+        wm.style.setProperty("--my", y + "px");
+        wm.style.setProperty("--gx", (r.width ? (x / r.width) * 100 : 50) + "%");
+    }
+    function move(e) {
+        px = e.clientX; py = e.clientY;
+        if (!frame) frame = requestAnimationFrame(paint);
+    }
+    function on(e) { wm.classList.add("is-lit"); move(e); }
+    function off() { wm.classList.remove("is-lit"); }
+
+    wm.addEventListener("pointerenter", on);
+    wm.addEventListener("pointermove", move);
+    wm.addEventListener("pointerleave", off);
+    wm.addEventListener("pointercancel", off);
+    /* touch: light up while a finger is on it */
+    wm.addEventListener("touchstart", function (e) { if (e.touches[0]) on(e.touches[0]); }, { passive: true });
+    wm.addEventListener("touchmove", function (e) { if (e.touches[0]) move(e.touches[0]); }, { passive: true });
+    wm.addEventListener("touchend", off, { passive: true });
 })();
 </script>
 </body>
