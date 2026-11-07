@@ -3596,6 +3596,307 @@
         @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
             header, header.scrolled, header:not(.scrolled) { background: rgba(240, 247, 242, 0.94); }
         }
+
+        /* ============================================================
+           MENU DRAWER v2 — frosted dark green panel that springs in from the
+           right and settles at the middle of the screen (never full width).
+           Same items as before, restyled so everything stays composed.
+           ============================================================ */
+        .menu-overlay {
+            background: rgba(4, 20, 10, 0.34);
+            transition: opacity 0.2s ease, visibility 0s linear 0.24s;
+        }
+        .menu-overlay.open { transition-delay: 0s; }
+
+        .menu-drawer {
+            width: var(--oak-menu-w);
+            max-width: 100vw;
+            background:
+                radial-gradient(90% 55% at 0% 0%, rgba(197,160,89,0.16) 0%, rgba(197,160,89,0) 60%),
+                radial-gradient(80% 50% at 100% 100%, rgba(60,140,90,0.18) 0%, rgba(60,140,90,0) 65%),
+                linear-gradient(180deg, rgba(10,42,21,0.76) 0%, rgba(6,28,14,0.84) 100%);
+            -webkit-backdrop-filter: blur(16px) saturate(145%);
+            backdrop-filter: blur(16px) saturate(145%);
+            border-left: 1px solid rgba(197,160,89,0.55);
+            box-shadow: -30px 0 70px -20px rgba(0,0,0,0.5), inset 1px 0 0 rgba(255,255,255,0.06);
+            /* closing: a tiny pull-back, then it glides away */
+            transition: transform 0.24s cubic-bezier(0.6, -0.2, 0.74, 0.05), visibility 0s linear 0.24s;
+        }
+        .menu-drawer.open {
+            /* opening: springs past its resting point and bounces back */
+            transition: transform 0.38s cubic-bezier(0.3, 1.5, 0.6, 1), visibility 0s linear 0s;
+            will-change: transform;
+        }
+        /* Fills the sliver on the right while the panel overshoots, so no gap ever shows */
+        .menu-drawer::before {
+            content: '';
+            position: absolute; top: 0; bottom: 0; left: 100%; width: 160px;
+            background: linear-gradient(180deg, rgba(10,42,21,0.76) 0%, rgba(6,28,14,0.84) 100%);
+            -webkit-backdrop-filter: blur(16px) saturate(145%);
+            backdrop-filter: blur(16px) saturate(145%);
+            pointer-events: none;
+        }
+
+        /* Header */
+        .menu-drawer-head { padding: 24px 30px 20px; border-bottom: 1px solid rgba(197,160,89,0.28); }
+        .menu-brand strong { font-size: 1.35rem; letter-spacing: 1.5px; }
+        .menu-brand small { letter-spacing: 4px; }
+        .menu-close { border-color: rgba(197,160,89,0.7); background: rgba(255,255,255,0.04); }
+
+        /* Body */
+        .menu-drawer-body { padding: 4px 30px 24px; scrollbar-width: thin; scrollbar-color: rgba(197,160,89,0.6) transparent; }
+        .menu-drawer-body::-webkit-scrollbar { width: 5px; }
+        .menu-drawer-body::-webkit-scrollbar-thumb { background: rgba(197,160,89,0.6); border-radius: 3px; }
+        .menu-eyebrow { display: flex; align-items: center; gap: 14px; margin: 24px 0 12px; letter-spacing: 3.5px; }
+        .menu-eyebrow::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(197,160,89,0.45), rgba(197,160,89,0)); }
+
+        /* Navigate list */
+        .menu-list li { border-bottom: 1px solid rgba(255,255,255,0.09); }
+        .menu-list a { position: relative; padding: 12px 4px; font-size: 1.35rem; }
+        .menu-list a::after {
+            content: '\2192'; margin-left: auto; font-family: 'Poppins', sans-serif; font-size: 1rem;
+            color: var(--accent-gold); opacity: 0; transform: translateX(-10px);
+            transition: opacity 0.3s ease, transform 0.35s ease;
+        }
+        .menu-list a:hover, .menu-list a.active-link { padding-left: 12px; }
+        .menu-list a:hover::after, .menu-list a.active-link::after { opacity: 1; transform: none; }
+
+        /* Shop by room: glass pills */
+        .menu-chips { gap: 10px; }
+        .menu-chips button {
+            border-radius: 999px; padding: 10px 18px;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.2);
+            -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+        }
+        .menu-chips button:hover { background: rgba(197,160,89,0.16); border-color: var(--accent-gold); color: #fff; }
+
+        /* Quick actions: two-column glass tiles */
+        .menu-actions { display: grid; grid-template-columns: 1fr; gap: 8px; }
+        .menu-actions button {
+            padding: 13px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.14);
+            -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+        }
+        .menu-actions button:hover { background: var(--accent-gold); border-color: var(--accent-gold); }
+
+        /* Personalisation: one tidy glass card */
+        .oak-personalization {
+            margin-top: 28px; padding: 18px 18px 14px;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(197,160,89,0.28);
+        }
+        .oak-personalization .menu-eyebrow { margin-top: 0; }
+        .oak-pref-select { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.2); }
+
+        /* Footer */
+        .menu-drawer-foot { padding: 18px 30px 22px; border-top: 1px solid rgba(197,160,89,0.28); background: rgba(4,20,10,0.28); }
+
+        /* Items glide in one after another once the panel opens */
+        @keyframes oakMenuItemIn { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
+        .menu-drawer.open .menu-drawer-body > * { animation: oakMenuItemIn 0.26s cubic-bezier(0.22, 1, 0.36, 1) both; }
+        .menu-drawer.open .menu-drawer-body > *:nth-child(1) { animation-delay: 0s; }
+        .menu-drawer.open .menu-drawer-body > *:nth-child(2) { animation-delay: 0.02s; }
+        .menu-drawer.open .menu-drawer-body > *:nth-child(3) { animation-delay: 0.04s; }
+        .menu-drawer.open .menu-drawer-body > *:nth-child(4) { animation-delay: 0.06s; }
+        .menu-drawer.open .menu-drawer-body > *:nth-child(5) { animation-delay: 0.08s; }
+        .menu-drawer.open .menu-drawer-body > *:nth-child(6) { animation-delay: 0.10s; }
+        .menu-drawer.open .menu-drawer-body > *:nth-child(7) { animation-delay: 0.12s; }
+
+        @media (max-width: 768px) {
+            .menu-drawer { width: min(92vw, 460px); }
+            .menu-drawer-head, .menu-drawer-foot { padding-left: 24px; padding-right: 24px; }
+            .menu-drawer-body { padding-left: 24px; padding-right: 24px; }
+            .menu-list a { font-size: 1.35rem; }
+            .oak-personalization { padding: 16px 14px 12px; }
+        }
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            .menu-drawer { background: linear-gradient(180deg, #0b2d16 0%, #082411 100%); }
+        }
+
+        /* ============================================================
+           SKEWED CAROUSEL — lives in the open space beside the menu panel.
+           Cards tilt and skew as they slide past the centre.
+           ============================================================ */
+        :root { --oak-menu-w: clamp(340px, 34vw, 440px); }
+        .oak-sk {
+            position: fixed; top: 0; bottom: 0; left: 0;
+            width: calc(100vw - var(--oak-menu-w));
+            z-index: 2150; display: none; align-items: center; justify-content: center;
+            pointer-events: none; opacity: 0; visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0s linear 0.25s;
+        }
+        @media (min-width: 900px) { .oak-sk { display: flex; } }
+        body.menu-open .oak-sk { opacity: 1; visibility: visible; transition: opacity 0.3s ease 0.06s, visibility 0s linear 0s; }
+        .oak-sk-inner { width: min(100%, 780px); padding: 0 24px; text-align: center; color: #fff; }
+        .oak-sk-eyebrow { display: block; font-size: 0.7rem; letter-spacing: 4px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 8px; text-shadow: 0 1px 10px rgba(0,0,0,0.5); }
+        .oak-sk-title { font-family: 'Playfair Display', serif; font-weight: 400; font-size: clamp(1.6rem, 2.6vw, 2.3rem); margin-bottom: 8px; text-shadow: 0 2px 16px rgba(0,0,0,0.55); }
+        .oak-sk-stage { position: relative; height: 410px; margin: 0 auto; pointer-events: auto; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
+        .oak-sk-stage.dragging { cursor: grabbing; }
+        .oak-sk-card {
+            position: absolute; left: 50%; top: 50%; width: 220px; height: 310px; margin: -155px 0 0 -110px;
+            display: flex; flex-direction: column; text-align: left; overflow: hidden; cursor: pointer;
+            background: linear-gradient(180deg, rgba(14,52,27,0.82), rgba(6,28,14,0.9));
+            -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+            border: 1px solid rgba(197,160,89,0.55);
+            box-shadow: 0 24px 50px -16px rgba(0,0,0,0.6);
+            transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.35s ease, filter 0.45s ease, border-color 0.3s ease;
+            will-change: transform, opacity;
+        }
+        .oak-sk-card.is-active { border-color: var(--accent-gold); }
+        .oak-sk-card img { width: 100%; height: 218px; object-fit: cover; display: block; pointer-events: none; -webkit-user-drag: none; }
+        .oak-sk-body { padding: 12px 14px; }
+        .oak-sk-cat { display: block; font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 4px; }
+        .oak-sk-name { display: block; font-family: 'Playfair Display', serif; font-size: 0.98rem; line-height: 1.3; color: #fff; }
+        .oak-sk-controls { display: flex; align-items: center; justify-content: center; gap: 14px; margin-top: 8px; pointer-events: auto; }
+        .oak-sk-btn {
+            width: 42px; height: 42px; border-radius: 50%; cursor: pointer;
+            border: 1px solid rgba(197,160,89,0.7); background: rgba(8,36,17,0.55); color: var(--accent-gold);
+            -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); transition: var(--transition-fast);
+        }
+        .oak-sk-btn:hover, .oak-sk-btn:focus-visible { background: var(--accent-gold); color: var(--secondary-dark); }
+        .oak-sk-all {
+            padding: 11px 22px; cursor: pointer; font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase;
+            background: rgba(8,36,17,0.55); color: #fff; border: 1px solid rgba(255,255,255,0.35);
+            -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); transition: var(--transition-fast);
+        }
+        .oak-sk-all:hover, .oak-sk-all:focus-visible { background: var(--accent-gold); border-color: var(--accent-gold); color: var(--secondary-dark); }
+        @media (max-height: 640px) {
+            .oak-sk-stage { height: 340px; }
+            .oak-sk-card { width: 180px; height: 255px; margin: -127px 0 0 -90px; }
+            .oak-sk-card img { height: 175px; }
+        }
+
+        /* Carousel inside the menu panel (phones & small tablets, where there is no free space beside it) */
+        .menu-drawer .oak-sk {
+            position: relative; inset: auto; display: block; width: 100%; z-index: auto;
+            opacity: 1; visibility: visible; pointer-events: auto; transition: none; margin: 22px 0 0;
+        }
+        .menu-drawer .oak-sk-inner { width: 100%; padding: 0; text-align: left; }
+        .menu-drawer .oak-sk-eyebrow { display: flex; align-items: center; gap: 14px; margin: 0 0 8px; text-shadow: none; letter-spacing: 3.5px; }
+        .menu-drawer .oak-sk-eyebrow::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(197,160,89,0.45), rgba(197,160,89,0)); }
+        .menu-drawer .oak-sk-title { display: none; }
+        .menu-drawer .oak-sk-stage { height: 262px; overflow: hidden; }
+        .menu-drawer .oak-sk-card { width: 150px; height: 214px; margin: -107px 0 0 -75px; }
+        .menu-drawer .oak-sk-card img { height: 148px; }
+        .menu-drawer .oak-sk-body { padding: 9px 11px; }
+        .menu-drawer .oak-sk-name { font-size: 0.86rem; }
+        .menu-drawer .oak-sk-controls { gap: 10px; margin-top: 6px; }
+        .menu-drawer .oak-sk-btn { width: 38px; height: 38px; }
+        .menu-drawer .oak-sk-all { padding: 10px 14px; font-size: 0.66rem; letter-spacing: 1.5px; }
+</style>
+
+<style id="oak-menu-perf">
+/* ============================================================
+   MENU PERFORMANCE PATCH
+   Root causes removed: stacked backdrop-filter blurs (overlay + drawer + drawer ::before
+   + carousel cards + every chip/button) re-blurring a playing video and animated header
+   on every frame; filter transitions on carousel cards; staggered item animations;
+   infinite animations running under the menu; scrollbar reflow when scroll is locked.
+   ============================================================ */
+html { scrollbar-gutter: stable; }
+
+/* 1. No backdrop blur anywhere in the menu: use solid, near-identical tints instead */
+.menu-overlay,
+.menu-drawer,
+.menu-drawer::before,
+.menu-chips button,
+.menu-actions button,
+.oak-sk-card,
+.oak-sk-btn,
+.oak-sk-all {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+.menu-overlay { background: rgba(4, 20, 10, 0.55); transition: opacity 0.1s linear, visibility 0s linear 0.1s; }
+.menu-overlay.open { transition: opacity 0.1s linear, visibility 0s; }
+
+.menu-drawer {
+    background:
+        radial-gradient(90% 55% at 0% 0%, rgba(197,160,89,0.14) 0%, rgba(197,160,89,0) 60%),
+        linear-gradient(180deg, #0a2a15 0%, #061c0e 100%);
+    contain: layout paint style;
+    transform: translate3d(100%, 0, 0);
+    will-change: transform;
+    /* closing: very fast */
+    transition: transform 0.1s cubic-bezier(0.4, 0, 1, 1), visibility 0s linear 0.1s;
+}
+.menu-drawer.open {
+    transform: translate3d(0, 0, 0);
+    /* opening: very fast, no overshoot */
+    transition: transform 0.14s cubic-bezier(0.2, 0.9, 0.3, 1), visibility 0s;
+}
+.menu-drawer::before { display: none; }
+
+/* 2. No staggered per-item animations */
+.menu-drawer.open .menu-drawer-body > * { animation: none !important; }
+
+/* 3. Cheaper small controls */
+.menu-chips button { background: rgba(255,255,255,0.07); }
+.menu-actions button { background: rgba(255,255,255,0.06); }
+.menu-list a, .menu-chips button, .menu-actions button { transition-duration: 0.08s; }
+
+/* 4. Carousel: opaque cards, no filter transitions, snappier slide */
+.oak-sk { transition: opacity 0.1s linear, visibility 0s linear 0.1s; }
+body.menu-open .oak-sk { transition: opacity 0.12s linear, visibility 0s; }
+.oak-sk-card {
+    background: linear-gradient(180deg, #0e3419, #061c0e);
+    filter: none !important;
+    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.15s linear;
+    box-shadow: 0 10px 24px -10px rgba(0,0,0,0.6);
+}
+.oak-sk-btn, .oak-sk-all { background: rgba(8,36,17,0.9); }
+
+/* 5. Nothing endless animating behind the open menu */
+body.menu-open header::before,
+body.menu-open header::after,
+body.menu-open .oak-fab::before,
+body.menu-open .vm-live-dot::after,
+body.menu-open .oak-teaser { animation: none !important; }
+body.menu-open .hero-slide,
+body.menu-open .reveal { transition: none !important; }
+</style>
+<style id="oak-menu-layout">
+/* Carousel area beside the menu: solid white so the page behind is hidden (desktop/tablet-landscape) */
+@media (min-width: 900px) {
+    .oak-sk { background: #ffffff; pointer-events: auto; }
+    .oak-sk-eyebrow { text-shadow: none; }
+    .oak-sk-title { color: var(--primary-green); text-shadow: none; }
+}
+/* Carousel placed inside the drawer on small screens stays transparent */
+.menu-drawer .oak-sk { background: transparent; }
+
+/* Phones: menu covers the whole screen */
+@media (max-width: 768px) {
+    .menu-drawer {
+        width: 100vw; max-width: 100vw;
+        height: 100vh; height: 100dvh;
+        border-left: none;
+    }
+    .menu-overlay { display: none; }
+}
+</style>
+<style id="oak-video-nopic">
+.vm-video-frame { background: linear-gradient(135deg, #0e3a1b 0%, #082411 100%) !important; }
+.vm-video-failed .vm-video-frame {
+    background: #0b2d16 url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=900') center / cover no-repeat !important;
+}
+</style>
+<style id="oak-v5">
+.oak-nav-hidden { display: none !important; }
+/* Header glass blur re-blurs the playing video every frame (very heavy on phones): switch it to a solid tint while the video plays */
+html.vm-playing header,
+html.vm-playing header.scrolled,
+html.vm-playing header:not(.scrolled) {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    background: rgba(240, 247, 242, 0.94) !important;
+}
+html.vm-playing header.scrolled.on-dark { background: rgba(8, 36, 17, 0.9) !important; }
+html.vm-playing header::before,
+html.vm-playing header::after,
+html.vm-playing .oak-fab::before { animation: none !important; }
+html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
+</style>
+<style id="oak-ba-video">
+.ba-img > video.ba-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: center center; display: block; pointer-events: none; background: #0b2d16; }
 </style>
 </head>
 <body>
@@ -3641,7 +3942,7 @@
                     <li><a href="#home" class="nav-anchor active-link" onclick="navigateTo('home', event)">Home</a></li>
                     <li><a href="#shop" class="nav-anchor" onclick="navigateTo('shop', event)">Collections</a></li>
                     <li><a href="#portfolio" class="nav-anchor" onclick="navigateTo('portfolio', event)">Designers Corner</a></li>
-                    <li><a href="#story" class="nav-anchor" onclick="navigateTo('story', event)">Our Foundation</a></li>
+                    <li><a href="#story" class="nav-anchor" onclick="navigateTo('story', event)">About Us</a></li>
                     <li><a href="#services" class="nav-anchor" onclick="navigateTo('services', event)">Bespoke Services</a></li>
                 </ul>
             </nav>
@@ -3876,7 +4177,7 @@
                     <!-- Tall video panel (muted, looping, no audio) -->
                     <figure class="vm-video-wrap">
                         <div class="vm-video-frame">
-                            <video class="vm-video" id="vm-video" muted volume="0" loop playsinline preload="none" disablepictureinpicture disableremoteplayback controlslist="nodownload noplaybackrate noremoteplayback" aria-hidden="true" tabindex="-1" poster="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&amp;fit=crop&amp;q=80&amp;w=900">
+                            <video class="vm-video" id="vm-video" muted volume="0" loop playsinline preload="none" disablepictureinpicture disableremoteplayback controlslist="nodownload noplaybackrate noremoteplayback" aria-hidden="true" tabindex="-1">
                                 <source src="https://www.image2url.com/r2/default/videos/1793612102221-4e6184eb-dc16-4fb4-8d63-36bfe54ce903.mp4" type="video/mp4">
                             </video>
                             <figcaption class="vm-video-caption">
@@ -3964,7 +4265,7 @@
         <section class="story-hero">
             <div class="container">
                 <span class="story-title-highlight">Our Roots & Vision</span>
-                <h2 style="font-size: 3rem; color: var(--text-light);">The Foundation</h2>
+                <h2 style="font-size: 3rem; color: var(--text-light);">About Us</h2>
                 <p style="max-width: 600px; margin: 15px auto 0; color: rgba(255,255,255,0.7); font-size: 0.95rem;">Learn how Oak Furniture Interiors turned into an award-winning benchmark of craftsmanship.</p>
             </div>
         </section>
@@ -3973,7 +4274,7 @@
             <div class="container">
                 <div class="story-columns">
                     <div class="story-img-frame">
-                        <img src="https://i.postimg.cc/Bv18HtGR/photo-2026-07-17-09-34-48.jpg" alt="Isack, Founder and Executive Director of Oak Furniture and Interiors">
+                        <img src="https://i.postimg.cc/Bv18HtGR/photo-2026-07-17-09-34-48.jpg" alt="Founder and Executive Director of Oak Furniture and Interiors">
                     </div>
                     <div class="story-text">
                         <span class="story-title-highlight">Message From the CEO</span>
@@ -3984,7 +4285,7 @@
                             <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 14px;">
                                 <img src="https://i.postimg.cc/nzmbqwHc/Chat-GPT-Image-Jul-15-2026-05-53-13-PM.png" alt="Oak Furniture and Interiors logo" style="width: 90px; height: 90px; object-fit: contain; background: #fff; padding: 6px; border: 2px solid var(--accent-gold);">
                                 <div>
-                                    <p style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--accent-gold); margin-bottom: 2px;">Isack Oak Furniture and Interiors</p>
+                                    <p style="font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--accent-gold); margin-bottom: 2px;">Oak Furniture and Interiors</p>
                                     <p style="font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase;">Founder & Executive Director</p>
                                 </div>
                             </div>
@@ -4225,7 +4526,7 @@
                 <button type="button" class="insta-hl" onclick="navigateTo('shop')"><span class="insta-hl-ring"><span><i class="fa-solid fa-star"></i></span></span>New In</button>
                 <button type="button" class="insta-hl" onclick="navigateTo('services')"><span class="insta-hl-ring"><span><i class="fa-solid fa-compass-drafting"></i></span></span>Bespoke</button>
                 <button type="button" class="insta-hl" onclick="navigateTo('portfolio')"><span class="insta-hl-ring"><span><i class="fa-solid fa-images"></i></span></span>Projects</button>
-                <button type="button" class="insta-hl" onclick="navigateTo('story')"><span class="insta-hl-ring"><span><i class="fa-solid fa-tree"></i></span></span>Our Story</button>
+                <button type="button" class="insta-hl" onclick="navigateTo('story')"><span class="insta-hl-ring"><span><i class="fa-solid fa-tree"></i></span></span>About Us</button>
                 <button type="button" class="insta-hl" onclick="document.getElementById('oak-chat-toggle').click()"><span class="insta-hl-ring"><span><i class="fa-solid fa-comment-dots"></i></span></span>Ask Oak Man</button>
             </div>
 
@@ -4248,7 +4549,7 @@
                 <li><a href="#home" class="nav-anchor" onclick="navigateTo('home', event)"><span class="menu-num">01</span>Home</a></li>
                 <li><a href="#shop" class="nav-anchor" onclick="navigateTo('shop', event)"><span class="menu-num">02</span>Collections</a></li>
                 <li><a href="#portfolio" class="nav-anchor" onclick="navigateTo('portfolio', event)"><span class="menu-num">03</span>Designers Corner</a></li>
-                <li><a href="#story" class="nav-anchor" onclick="navigateTo('story', event)"><span class="menu-num">04</span>Our Foundation</a></li>
+                <li><a href="#story" class="nav-anchor" onclick="navigateTo('story', event)"><span class="menu-num">04</span>About Us</a></li>
                 <li><a href="#services" class="nav-anchor" onclick="navigateTo('services', event)"><span class="menu-num">05</span>Bespoke Services</a></li>
             </ul>
 
@@ -4313,6 +4614,20 @@
             </div>
         </div>
     </aside>
+
+    <!-- SKEWED CAROUSEL (beside the open menu) -->
+    <div class="oak-sk" id="oak-sk" aria-label="Featured pieces">
+        <div class="oak-sk-inner">
+            <span class="oak-sk-eyebrow">Featured pieces</span>
+            <h3 class="oak-sk-title">Curated for your space</h3>
+            <div class="oak-sk-stage" id="oak-sk-stage"></div>
+            <div class="oak-sk-controls">
+                <button class="oak-sk-btn" id="oak-sk-prev" type="button" aria-label="Previous piece"><i class="fa-solid fa-arrow-left"></i></button>
+                <button class="oak-sk-all" id="oak-sk-all" type="button">View collections</button>
+                <button class="oak-sk-btn" id="oak-sk-next" type="button" aria-label="Next piece"><i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+    </div>
 
     <!-- MAIN SYSTEM MODALS -->
     <!-- Contact & Quick View Modal -->
@@ -4382,10 +4697,10 @@
 
     <!-- Floating Page Navigation Controls -->
     <div class="page-nav-controls">
-        <button class="page-nav-btn" onclick="moveToRelativePage(-1)" aria-label="Previous Section">
+        <button class="page-nav-btn oak-nav-hidden" id="oak-nav-back" type="button" aria-label="Go back to the previous page" title="Previous page">
             <i class="fa-solid fa-chevron-left"></i>
         </button>
-        <button class="page-nav-btn" onclick="moveToRelativePage(1)" aria-label="Next Section">
+        <button class="page-nav-btn oak-nav-hidden" id="oak-nav-forward" type="button" aria-label="Go to the page you just left" title="Return to the page you just left">
             <i class="fa-solid fa-chevron-right"></i>
         </button>
         <button id="scroll-to-top-btn" class="page-nav-btn btn-scrollup" onclick="topScrollAction()" aria-label="Scroll to top">
@@ -4420,7 +4735,7 @@
                 <div class="footer-col">
                     <h4>Company</h4>
                     <ul>
-                        <li><a href="#story" onclick="navigateTo('story', event)">Our Story</a></li>
+                        <li><a href="#story" onclick="navigateTo('story', event)">About Us</a></li>
                         <li><a href="#portfolio" onclick="navigateTo('portfolio', event)">Our Work</a></li>
                         <li><a href="#services" onclick="navigateTo('services', event)">Bespoke Studio</a></li>
                         <li><a href="#services" onclick="event.preventDefault(); openBookingModal('General Inquiry')">Get in Touch</a></li>
@@ -4994,7 +5309,7 @@
 
             if (!container || !beforeLayer || !afterLayer || !bar || !badge) return;
 
-            const beforeAfterPairs = [
+            const ALL_BA_PAIRS = [
                 {
                     before: "https://i.postimg.cc/N0nZpt93/IMG-20261106-WA0027.jpg?auto=format&fit=crop&q=80&w=900",
                     after: "https://i.postimg.cc/FK6wDvkt/IMG-20261106-WA0026.jpg?auto=format&fit=crop&q=80&w=900"
@@ -5004,10 +5319,83 @@
                     after: "https://i.postimg.cc/XqbjgKd1/photo-2026-11-06-18-41-08.jpg?auto=format&fit=crop&q=80&w=900"
                 },
                 {
+                    /* PAIR 3: images OR videos. To use videos, replace both links with .mp4 / .webm / .mov links. */
                     before: "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80&w=900",
                     after: "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&q=80&w=900"
+                },
+                {
+                    /* PAIR 4: images OR videos. Paste your before / after links here (.mp4 / .webm / .mov, or image links).
+                       While both are left empty this pair is simply skipped. */
+                    before: "https://www.image2url.com/r2/default/videos/1793994546834-539d382c-525d-4175-92cb-c0166fbbad8f.mp4",
+                    after: "https://www.image2url.com/r2/default/videos/1793994526796-49e44d07-2f8e-4201-af7b-6b283c78bc3b.mp4"
                 }
             ];
+            const beforeAfterPairs = ALL_BA_PAIRS.filter(pr => pr && pr.before && pr.after);
+
+            /* Video support: a link ending in .mp4 / .webm / .mov / .m4v / .ogv is played as a muted looping video */
+            const isVideoUrl = (u) => /\.(mp4|webm|mov|m4v|ogv)(\?|#|$)/i.test(String(u || ""));
+            /* Make the slider box take the exact shape of the video, so nothing is cropped and no bars show */
+            const shapeToVideo = (v) => {
+                if (!v || !v.videoWidth || !v.videoHeight) return;
+                const ratio = v.videoWidth / v.videoHeight;
+                container.style.aspectRatio = String(ratio);
+                container.style.height = "auto";
+                container.style.maxHeight = "85vh";
+                container.style.width = "min(100%, calc(85vh * " + ratio.toFixed(4) + "))";
+                container.style.marginLeft = "auto";
+                container.style.marginRight = "auto";
+                window.dispatchEvent(new Event("resize"));
+            };
+            const resetShape = () => {
+                ["aspectRatio", "height", "maxHeight", "width", "marginLeft", "marginRight"].forEach(k => { container.style[k] = ""; });
+                window.dispatchEvent(new Event("resize"));
+            };
+            const layerVideo = (layer) => layer.querySelector("video.ba-video");
+            const clearLayerVideo = (layer) => {
+                const v = layerVideo(layer);
+                if (v) { try { v.pause(); } catch (e) {} v.removeAttribute("src"); try { v.load(); } catch (e) {} v.remove(); }
+            };
+            const setLayerMedia = (layer, url, pair) => {
+                if (isVideoUrl(url)) {
+                    layer.style.backgroundImage = "none";
+                    let v = layerVideo(layer);
+                    if (!v) {
+                        v = document.createElement("video");
+                        v.className = "ba-video";
+                        v.muted = true; v.defaultMuted = true; v.volume = 0;
+                        v.loop = true; v.autoplay = true; v.preload = "auto";
+                        v.setAttribute("muted", ""); v.setAttribute("playsinline", ""); v.setAttribute("webkit-playsinline", "");
+                        v.setAttribute("disablepictureinpicture", ""); v.setAttribute("disableremoteplayback", "");
+                        v.tabIndex = -1; v.setAttribute("aria-hidden", "true");
+                        v.addEventListener("loadedmetadata", () => shapeToVideo(v));
+                        layer.appendChild(v);
+                    }
+                    if (v.readyState >= 1) shapeToVideo(v);
+                    if (v.getAttribute("src") !== url) { v.src = url; try { v.load(); } catch (e) {} }
+                    const pr = v.play(); if (pr && pr.catch) pr.catch(() => {});
+                } else {
+                    clearLayerVideo(layer);
+                    setBgSafe(layer, url);
+                    layer.style.setProperty("--ba-img", "url('" + url + "')");
+                }
+                layer.classList.toggle("ba-fit", !!pair.fit);
+                layer.style.backgroundPosition = pair.position || "";
+            };
+            /* keep a before/after video pair in step, and only play while the slider is on screen */
+            let baOnScreen = true;
+            const baVideos = () => [beforeLayer, afterLayer].map(layerVideo).filter(Boolean);
+            setInterval(() => {
+                const vs = baVideos();
+                if (!vs.length) return;
+                if (!baOnScreen || document.hidden) { vs.forEach(v => { if (!v.paused) v.pause(); }); return; }
+                vs.forEach(v => { if (v.paused) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); } });
+                if (vs.length === 2 && vs[0].readyState > 1 && vs[1].readyState > 1 && Math.abs(vs[0].currentTime - vs[1].currentTime) > 0.3) {
+                    try { vs[1].currentTime = vs[0].currentTime; } catch (e) {}
+                }
+            }, 500);
+            if ("IntersectionObserver" in window) {
+                new IntersectionObserver((entries) => { entries.forEach(en => { baOnScreen = en.isIntersecting; }); }, { threshold: 0.1 }).observe(container);
+            }
 
             let currentPairIndex = 0;
             let currentPositionRatio = 0.5;
@@ -5074,12 +5462,8 @@
 
             const updateBeforeAfterDisplay = () => {
                 const pair = beforeAfterPairs[currentPairIndex];
-                [[beforeLayer, pair.before], [afterLayer, pair.after]].forEach(([layer, url]) => {
-                    setBgSafe(layer, url);
-                    layer.style.setProperty("--ba-img", "url('" + url + "')");
-                    layer.classList.toggle("ba-fit", !!pair.fit);
-                    layer.style.backgroundPosition = pair.position || "";
-                });
+                [[beforeLayer, pair.before], [afterLayer, pair.after]].forEach(([layer, url]) => setLayerMedia(layer, url, pair));
+                if (!isVideoUrl(pair.before) && !isVideoUrl(pair.after)) resetShape();
                 applyPositionRatio(0.5);
                 renderNavDots();
             };
@@ -5387,7 +5771,7 @@
                 trigger.setAttribute("aria-expanded", open ? "true" : "false");
                 trigger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
                 document.body.classList.toggle("menu-open", open);
-                if (open) setTimeout(() => closeBtn.focus({ preventScroll: true }), 120);
+                if (open) requestAnimationFrame(() => closeBtn.focus({ preventScroll: true }));
                 else if (drawer.contains(document.activeElement)) trigger.focus({ preventScroll: true });
             };
 
@@ -5738,7 +6122,7 @@
                     id: "about",
                     kws: ["company", "story", "founder", "founded", "history", "foundation", "isack", "ceo", "team", "artisan", "artisans", "experience", "about us", "about you", "about oak", "about the company"],
                     run: () => M("Oak Furniture & Interiors began in **2016** as a private atelier making custom wardrobes. Today we're a studio of **15 master artisans** with **412 completed interiors**, led by founder Isack. Every piece is hand-finished and built to outlast trends.", {
-                        actions: [navAction("story", "Read our story"), navAction("portfolio", "See our work")], chips: ["Bespoke services", "Browse collections"]
+                        actions: [navAction("story", "About us"), navAction("portfolio", "See our work")], chips: ["Bespoke services", "Browse collections"]
                     })
                 },
                 {
@@ -6676,9 +7060,9 @@
     /* ---- EDIT HERE: add your real customer testimonies. ----
        Set sample:false once a quote is a genuine one (this removes the "Sample" tag). */
     var OAK_TESTIMONIES = [
-        { name: "Customer name", role: "Living room · Residential", quote: "Sample testimonial: replace this with the words of a real Oak customer.", sample: true },
-        { name: "Customer name", role: "Bespoke joinery", quote: "Sample testimonial: replace this with the words of a real Oak customer.", sample: true },
-        { name: "Customer name", role: "Office fit-out · Commercial", quote: "Sample testimonial: replace this with the words of a real Oak customer.", sample: true }
+        { name: "Dr. Mary Amoah", role: "Valued Client · Furniture", quote: "Oak Furniture & Interiors is exceptional at their craft. Every piece is consistently elegant, and they have never disappointed.", sample: false },
+        { name: "Rev. Dr. Samuel", role: "Valued Client", quote: "A job exceptionally well done. My congratulations to the entire team, and every best wish for their continued success.", sample: false },
+        { name: "Papa", role: "Valued Client · Cabinetry", quote: "The cabinets are wonderful and remarkably practical. The work was done to a very high standard.", sample: false }
     ];
     var DURATION = 7000;
 
@@ -6890,6 +7274,10 @@
         if (document.hidden) video.pause(); else tryPlay();
     });
 
+    /* Start downloading as soon as the page has loaded, so it is already buffered when the section appears */
+    window.addEventListener("load", function () { setTimeout(startVideoLoad, 200); });
+    if (video) video.addEventListener("canplay", function () { if (videoWanted) tryPlay(); });
+
     if ("IntersectionObserver" in window) {
         /* Text rotator: runs only while the section is on screen */
         new IntersectionObserver(function (entries) {
@@ -6899,7 +7287,7 @@
         /* Begin downloading shortly before the video scrolls into view */
         new IntersectionObserver(function (entries) {
             entries.forEach(function (entry) { if (entry.isIntersecting) startVideoLoad(); });
-        }, { rootMargin: "900px 0px" }).observe(frameEl || root);
+        }, { rootMargin: "2500px 0px" }).observe(frameEl || root);
 
         /* Play only while the video itself is visible */
         new IntersectionObserver(function (entries) {
@@ -6954,6 +7342,240 @@
     wm.addEventListener("touchstart", function (e) { if (e.touches[0]) on(e.touches[0]); }, { passive: true });
     wm.addEventListener("touchmove", function (e) { if (e.touches[0]) move(e.touches[0]); }, { passive: true });
     wm.addEventListener("touchend", off, { passive: true });
+})();
+</script>
+<script>
+/* Carousel: upright cards that slide and scale. Runs only while the menu is open. */
+(function () {
+    "use strict";
+    var stage = document.getElementById("oak-sk-stage");
+    if (!stage || typeof PRODUCTS_DB === "undefined") return;
+    var items = PRODUCTS_DB.slice(0, 8);
+    var n = items.length, active = 0, timer = null, hovering = false, moved = false;
+    var STEP = 190; /* horizontal spacing between cards; recalculated from the stage width */
+    var cards = items.map(function (p, i) {
+        var c = document.createElement("div");
+        c.className = "oak-sk-card";
+        c.setAttribute("role", "button");
+        c.tabIndex = 0;
+        c.setAttribute("aria-label", p.name);
+        var img = document.createElement("img");
+        img.src = p.image; img.alt = p.name; img.loading = "lazy"; img.draggable = false;
+        var body = document.createElement("div"); body.className = "oak-sk-body";
+        var cat = document.createElement("span"); cat.className = "oak-sk-cat"; cat.textContent = p.category;
+        var nm = document.createElement("span"); nm.className = "oak-sk-name"; nm.textContent = p.name;
+        body.appendChild(cat); body.appendChild(nm);
+        c.appendChild(img); c.appendChild(body);
+        c.dataset.off = "99";
+        c.addEventListener("click", function () {
+            if (moved) return;
+            if (i === active) openPiece(p.id); else go(i);
+        });
+        c.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" || e.key === " ") { e.preventDefault(); if (i === active) openPiece(p.id); else go(i); }
+        });
+        stage.appendChild(c);
+        return c;
+    });
+
+    function openPiece(id) {
+        var close = document.getElementById("site-menu-close");
+        if (close) close.click();
+        setTimeout(function () { if (typeof openQuickView === "function") openQuickView(id); }, 280);
+    }
+
+    function layout() {
+        var sw = stage.clientWidth;
+        if (sw) STEP = Math.max(86, Math.min(190, sw * 0.3));
+        cards.forEach(function (c, i) {
+            var o = ((i - active) % n + n) % n;
+            if (o > n / 2) o -= n;
+            var prev = parseFloat(c.dataset.off);
+            var jump = Math.abs(o - prev) > 3;
+            if (jump) c.style.transition = "none";
+            var abs = Math.abs(o);
+            var scale = Math.max(0.6, 1 - abs * 0.1);
+            c.style.transform = "translateX(" + (o * STEP) + "px) scale(" + scale + ")";
+            c.style.opacity = abs > 2 ? "0" : String(1 - abs * 0.22);
+            c.style.zIndex = String(10 - Math.round(abs));
+            c.style.pointerEvents = abs > 2 ? "none" : "auto";
+            c.style.filter = abs === 0 ? "none" : "brightness(" + (1 - abs * 0.14) + ")";
+            c.classList.toggle("is-active", o === 0);
+            c.tabIndex = o === 0 ? 0 : -1;
+            c.dataset.off = String(o);
+            if (jump) { void c.offsetWidth; c.style.transition = ""; }
+        });
+    }
+    function go(i) { active = ((i % n) + n) % n; layout(); restart(); }
+    function next() { go(active + 1); }
+    function prev() { go(active - 1); }
+
+    function restart() {
+        clearInterval(timer);
+        timer = setInterval(function () {
+            if (document.body.classList.contains("menu-open") && !hovering && !document.hidden) next();
+        }, 2600);
+    }
+
+    document.getElementById("oak-sk-next").addEventListener("click", next);
+    document.getElementById("oak-sk-prev").addEventListener("click", prev);
+    document.getElementById("oak-sk-all").addEventListener("click", function () {
+        var close = document.getElementById("site-menu-close");
+        if (close) close.click();
+        if (typeof navigateTo === "function") navigateTo("shop", null, { showToast: false });
+    });
+    stage.addEventListener("mouseenter", function () { hovering = true; });
+    stage.addEventListener("mouseleave", function () { hovering = false; });
+
+    /* drag / swipe to slide */
+    var startX = 0, dragging = false;
+    stage.addEventListener("pointerdown", function (e) { dragging = true; moved = false; startX = e.clientX; stage.classList.add("dragging"); });
+    window.addEventListener("pointermove", function (e) { if (dragging && Math.abs(e.clientX - startX) > 8) moved = true; });
+    window.addEventListener("pointerup", function (e) {
+        if (!dragging) return;
+        dragging = false; stage.classList.remove("dragging");
+        var dx = e.clientX - startX;
+        if (Math.abs(dx) > 45) { dx < 0 ? next() : prev(); }
+        setTimeout(function () { moved = false; }, 0);
+    });
+    window.addEventListener("pointercancel", function () { dragging = false; stage.classList.remove("dragging"); });
+    /* keep the site-wide swipe-to-change-page gesture from firing here */
+    ["touchstart", "touchend"].forEach(function (ev) { stage.addEventListener(ev, function (e) { e.stopPropagation(); }, { passive: true }); });
+
+    /* Placement: open space beside the menu on wide screens; inside the menu panel on phones and small tablets */
+    var sk = document.getElementById("oak-sk");
+    var drawerBody = document.querySelector("#site-menu-drawer .menu-drawer-body");
+    var navList = drawerBody ? drawerBody.querySelector(".menu-list") : null;
+    var mq = window.matchMedia("(max-width: 899px)");
+    function place() {
+        if (!sk) return;
+        if (mq.matches && navList) {
+            if (navList.nextElementSibling !== sk) navList.parentNode.insertBefore(sk, navList.nextSibling);
+        } else if (sk.parentNode !== document.body) {
+            document.body.appendChild(sk);
+        }
+        requestAnimationFrame(layout);
+    }
+    if (mq.addEventListener) mq.addEventListener("change", place); else if (mq.addListener) mq.addListener(place);
+    window.addEventListener("resize", function () { requestAnimationFrame(layout); });
+    var trigger = document.getElementById("site-menu-trigger");
+    if (trigger) trigger.addEventListener("click", function () { setTimeout(layout, 30); });
+    place();
+    layout();
+    restart();
+})();
+</script>
+
+<script>
+/* Menu perf: pause the background video while the menu is open, resume when it closes */
+(function () {
+    "use strict";
+    var v = document.getElementById("vm-video");
+    if (!v) return;
+    var pausedByMenu = false;
+    function inViewport() {
+        var r = v.getBoundingClientRect();
+        return r.bottom > 0 && r.top < window.innerHeight;
+    }
+    new MutationObserver(function () {
+        if (document.body.classList.contains("menu-open")) {
+            if (!v.paused) { pausedByMenu = true; try { v.pause(); } catch (e) {} }
+        } else if (pausedByMenu) {
+            pausedByMenu = false;
+            if (inViewport() && !document.hidden) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+        }
+    }).observe(document.body, { attributes: true, attributeFilter: ["class"] });
+})();
+</script>
+<script>
+/* Carousel: mouse wheel + arrow keys move the images while the menu is open */
+(function () {
+    "use strict";
+    var sk = document.getElementById("oak-sk");
+    var stage = document.getElementById("oak-sk-stage");
+    var nextBtn = document.getElementById("oak-sk-next");
+    var prevBtn = document.getElementById("oak-sk-prev");
+    if (!sk || !stage || !nextBtn || !prevBtn) return;
+    function menuOpen() { return document.body.classList.contains("menu-open"); }
+    var acc = 0, lastStep = 0, resetT = null;
+    function step(dir) {
+        var now = Date.now();
+        if (now - lastStep < 140) return;
+        lastStep = now;
+        (dir > 0 ? nextBtn : prevBtn).click();
+    }
+    /* Wheel: down / right = next, up / left = previous. Works anywhere in the white area on wide screens,
+       and over the carousel itself when it sits inside the phone menu. */
+    sk.addEventListener("wheel", function (e) {
+        if (!menuOpen()) return;
+        var inDrawer = sk.parentNode !== document.body;
+        if (inDrawer && !stage.contains(e.target)) return;
+        var d = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+        if (!d) return;
+        e.preventDefault();
+        acc += d;
+        clearTimeout(resetT);
+        resetT = setTimeout(function () { acc = 0; }, 180);
+        if (Math.abs(acc) >= 30) { step(acc > 0 ? 1 : -1); acc = 0; }
+    }, { passive: false });
+    /* Arrow keys */
+    document.addEventListener("keydown", function (e) {
+        if (!menuOpen() || e.ctrlKey || e.metaKey || e.altKey) return;
+        var t = e.target, tag = t && t.tagName ? t.tagName.toLowerCase() : "";
+        if (tag === "input" || tag === "textarea" || tag === "select") return;
+        var dir = 0;
+        if (e.key === "ArrowRight" || e.key === "ArrowDown") dir = 1;
+        else if (e.key === "ArrowLeft" || e.key === "ArrowUp") dir = -1;
+        if (!dir) return;
+        e.preventDefault();
+        step(dir);
+    });
+})();
+</script>
+<script>
+/* Page arrows: left = back to the previous page, right = forward to the page you just left.
+   Hidden until the visitor has navigated. */
+(function () {
+    "use strict";
+    var backBtn = document.getElementById("oak-nav-back");
+    var fwdBtn = document.getElementById("oak-nav-forward");
+    if (!backBtn || !fwdBtn || typeof window.activateView !== "function") return;
+    var stack = [], pos = -1, internal = false;
+    var origActivate = window.activateView;
+
+    function refresh() {
+        backBtn.classList.toggle("oak-nav-hidden", !(pos > 0));
+        fwdBtn.classList.toggle("oak-nav-hidden", !(pos >= 0 && pos < stack.length - 1));
+    }
+    window.activateView = function (id, opts) {
+        opts = opts || {};
+        if (!internal) {
+            if (!stack.length) { stack = [id]; pos = 0; }
+            else if (stack[pos] !== id) {
+                if (opts.historyAction === "none") {          /* browser back / forward button */
+                    if (pos > 0 && stack[pos - 1] === id) pos--;
+                    else if (pos < stack.length - 1 && stack[pos + 1] === id) pos++;
+                    else { stack = stack.slice(0, pos + 1); stack.push(id); pos++; }
+                } else {                                        /* a new page was opened */
+                    stack = stack.slice(0, pos + 1); stack.push(id); pos++;
+                }
+            }
+        }
+        var r = origActivate.apply(this, arguments);
+        refresh();
+        return r;
+    };
+    function go(delta) {
+        var target = pos + delta;
+        if (target < 0 || target >= stack.length) return;
+        pos = target;
+        internal = true;
+        try { window.navigateTo(stack[pos], null, { showToast: false }); } finally { internal = false; }
+        refresh();
+    }
+    backBtn.addEventListener("click", function () { go(-1); });
+    fwdBtn.addEventListener("click", function () { go(1); });
+    refresh();
 })();
 </script>
 </body>
