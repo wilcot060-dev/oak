@@ -3898,6 +3898,41 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
 <style id="oak-ba-video">
 .ba-img > video.ba-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; object-position: center center; display: block; pointer-events: none; background: #0b2d16; }
 </style>
+
+<style id="oak-performance-refinements">
+    /* Keep scroll reveals compositor-friendly and avoid promoting every gallery image to its own GPU layer. */
+    .reveal { transition: opacity .38s ease, transform .38s cubic-bezier(.25, 1, .5, 1); }
+    .gallery-item img, .insta-card img { will-change: auto; }
+    .feature-box, .product-card, .gallery-item, .service-media, .insta-card { backface-visibility: visible; }
+
+    /* The silver placeholder remains visible, but only near-screen images animate. */
+    .oak-image-loading::after { animation: none; background-position: 50% 0; opacity: .55; }
+    .oak-image-loading.oak-image-near::after { animation: oakSilverShimmer 1.8s linear infinite; opacity: 1; }
+
+    /* Reduce the amount of work performed by the sticky glass while retaining its translucent look. */
+    header, header.scrolled, header:not(.scrolled) {
+        -webkit-backdrop-filter: blur(1.25px) saturate(145%);
+        backdrop-filter: blur(1.25px) saturate(145%);
+    }
+    header::before { animation: none !important; }
+
+    @media (max-width: 768px) {
+        header, header.scrolled, header:not(.scrolled) {
+            -webkit-backdrop-filter: none !important;
+            backdrop-filter: none !important;
+            background: rgba(240, 247, 242, .95);
+        }
+        header.scrolled.on-dark { background: rgba(8, 36, 17, .94) !important; }
+        .ba-container { max-width: 100%; }
+        .ba-img > video.ba-video { object-fit: contain; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .oak-image-loading.oak-image-near::after { animation: none; }
+        .reveal { transition: none; transform: none; }
+    }
+</style>
+
 </head>
 <body>
     <!-- Glass refraction filter used by the header -->
@@ -4819,7 +4854,7 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
         };
         const PAGE_VIEW_ORDER = ["home", "shop", "portfolio", "story", "services"];
         let currentPageViewKey = "home";
-        let scrollSaveFrame = null;
+        let scrollSaveTimer = null;
 
         function updateCurrentPageView(targetViewId) {
             const index = PAGE_VIEW_ORDER.indexOf(targetViewId);
@@ -4856,11 +4891,14 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
         }
 
         function queueScrollSave(viewId = getActiveViewId()) {
-            if (scrollSaveFrame) return;
-            scrollSaveFrame = requestAnimationFrame(() => {
-                scrollSaveFrame = null;
-                saveScrollPosition(viewId);
-            });
+            // Storage access is synchronous. Debounce it so scrolling never performs a
+            // JSON parse/stringify + sessionStorage write on every animation frame.
+            if (scrollSaveTimer) clearTimeout(scrollSaveTimer);
+            const viewToSave = viewId;
+            scrollSaveTimer = window.setTimeout(() => {
+                scrollSaveTimer = null;
+                saveScrollPosition(viewToSave);
+            }, 260);
         }
 
         function restoreStoredScrollPosition(viewId) {
@@ -5324,19 +5362,30 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
                     after: "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&q=80&w=900"
                 },
                 {
-                    /* PAIR 4: images OR videos. Paste your before / after links here (.mp4 / .webm / .mov, or image links).
-                       While both are left empty this pair is simply skipped. */
+                    /* PAIR 4: the two original video sources are retained. They are fetched only when this pair is selected and the slider is near the viewport. */
                     before: "https://www.image2url.com/r2/default/videos/1793994546834-539d382c-525d-4175-92cb-c0166fbbad8f.mp4",
                     after: "https://www.image2url.com/r2/default/videos/1793994526796-49e44d07-2f8e-4201-af7b-6b283c78bc3b.mp4"
                 }
             ];
             const beforeAfterPairs = ALL_BA_PAIRS.filter(pr => pr && pr.before && pr.after);
+            if (!beforeAfterPairs.length) return;
 
-            /* Video support: a link ending in .mp4 / .webm / .mov / .m4v / .ogv is played as a muted looping video */
             const isVideoUrl = (u) => /\.(mp4|webm|mov|m4v|ogv)(\?|#|$)/i.test(String(u || ""));
-            /* Make the slider box take the exact shape of the video, so nothing is cropped and no bars show */
+            const layerVideo = (layer) => layer.querySelector("video.ba-video");
+            const baVideos = () => [beforeLayer, afterLayer].map(layerVideo).filter(Boolean);
+            let baOnScreen = false;
+            let settingPairMedia = false;
+            let currentPairIndex = 0;
+            let currentPositionRatio = 0.5;
+
+            const pauseBAVideos = () => {
+                baVideos().forEach(v => { if (!v.paused) { try { v.pause(); } catch (e) {} } });
+            };
+
             const shapeToVideo = (v) => {
-                if (!v || !v.videoWidth || !v.videoHeight) return;
+                // Use the BEFORE clip as the frame's aspect-ratio reference. Both clips
+                // retain object-fit:contain, so differing source ratios are never distorted.
+                if (!v || layerVideo(beforeLayer) !== v || !v.videoWidth || !v.videoHeight) return;
                 const ratio = v.videoWidth / v.videoHeight;
                 container.style.aspectRatio = String(ratio);
                 container.style.height = "auto";
@@ -5344,17 +5393,53 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
                 container.style.width = "min(100%, calc(85vh * " + ratio.toFixed(4) + "))";
                 container.style.marginLeft = "auto";
                 container.style.marginRight = "auto";
-                window.dispatchEvent(new Event("resize"));
             };
+
             const resetShape = () => {
                 ["aspectRatio", "height", "maxHeight", "width", "marginLeft", "marginRight"].forEach(k => { container.style[k] = ""; });
-                window.dispatchEvent(new Event("resize"));
             };
-            const layerVideo = (layer) => layer.querySelector("video.ba-video");
+
+            const tryStartBAVideos = () => {
+                const vs = baVideos();
+                if (!vs.length) return;
+                if (!baOnScreen || document.hidden) { pauseBAVideos(); return; }
+                // Wait until both clips can actually render a frame, then start them
+                // in the same task. This avoids one clip running far ahead of the other.
+                if (vs.some(v => v.readyState < 2)) return;
+                if (vs.length === 2 && Math.abs(vs[0].currentTime - vs[1].currentTime) > 0.25) {
+                    try { vs[1].currentTime = vs[0].currentTime; } catch (e) {}
+                }
+                const starts = vs.map(v => {
+                    if (!v.paused) return Promise.resolve();
+                    try { return Promise.resolve(v.play()).catch(() => {}); }
+                    catch (e) { return Promise.resolve(); }
+                });
+                Promise.all(starts).catch(() => {});
+            };
+
+            const loadVisibleBAVideos = () => {
+                if (!baOnScreen || document.hidden) return;
+                baVideos().forEach(v => {
+                    v.preload = "auto";
+                    if (!v.dataset.baRequested) {
+                        v.dataset.baRequested = "1";
+                        // Explicitly kick off resource selection after switching from preload=none.
+                        try { v.load(); } catch (e) {}
+                    }
+                });
+                tryStartBAVideos();
+            };
+
             const clearLayerVideo = (layer) => {
                 const v = layerVideo(layer);
-                if (v) { try { v.pause(); } catch (e) {} v.removeAttribute("src"); try { v.load(); } catch (e) {} v.remove(); }
+                if (!v) return;
+                try { v.pause(); } catch (e) {}
+                v.preload = "none";
+                v.removeAttribute("src");
+                try { v.load(); } catch (e) {}
+                v.remove();
             };
+
             const setLayerMedia = (layer, url, pair) => {
                 if (isVideoUrl(url)) {
                     layer.style.backgroundImage = "none";
@@ -5362,43 +5447,70 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
                     if (!v) {
                         v = document.createElement("video");
                         v.className = "ba-video";
-                        v.muted = true; v.defaultMuted = true; v.volume = 0;
-                        v.loop = true; v.autoplay = true; v.preload = "auto";
-                        v.setAttribute("muted", ""); v.setAttribute("playsinline", ""); v.setAttribute("webkit-playsinline", "");
-                        v.setAttribute("disablepictureinpicture", ""); v.setAttribute("disableremoteplayback", "");
-                        v.tabIndex = -1; v.setAttribute("aria-hidden", "true");
+                        v.muted = true;
+                        v.defaultMuted = true;
+                        v.volume = 0;
+                        v.loop = true;
+                        v.autoplay = false;
+                        v.preload = "none";
+                        v.playsInline = true;
+                        v.setAttribute("muted", "");
+                        v.setAttribute("playsinline", "");
+                        v.setAttribute("webkit-playsinline", "");
+                        v.setAttribute("disablepictureinpicture", "");
+                        v.setAttribute("disableremoteplayback", "");
+                        v.tabIndex = -1;
+                        v.setAttribute("aria-hidden", "true");
                         v.addEventListener("loadedmetadata", () => shapeToVideo(v));
+                        v.addEventListener("canplay", tryStartBAVideos);
+                        v.addEventListener("waiting", () => {
+                            // If one side stalls, pause its partner instead of letting the
+                            // comparison drift apart while the browser buffers.
+                            baVideos().forEach(other => { if (other !== v && !other.paused) other.pause(); });
+                        });
                         layer.appendChild(v);
                     }
-                    if (v.readyState >= 1) shapeToVideo(v);
-                    if (v.getAttribute("src") !== url) { v.src = url; try { v.load(); } catch (e) {} }
-                    const pr = v.play(); if (pr && pr.catch) pr.catch(() => {});
+                    if (v.getAttribute("src") !== url) {
+                        try { v.pause(); } catch (e) {}
+                        v.preload = "none";
+                        v.src = url;
+                    }
+                    if (baOnScreen && !document.hidden && !settingPairMedia) loadVisibleBAVideos();
                 } else {
                     clearLayerVideo(layer);
-                    setBgSafe(layer, url);
+                    if (typeof window.setBgSafe === "function") window.setBgSafe(layer, url);
+                    else layer.style.backgroundImage = "url('" + url.replace(/'/g, "%27") + "')";
                     layer.style.setProperty("--ba-img", "url('" + url + "')");
                 }
                 layer.classList.toggle("ba-fit", !!pair.fit);
                 layer.style.backgroundPosition = pair.position || "";
             };
-            /* keep a before/after video pair in step, and only play while the slider is on screen */
-            let baOnScreen = true;
-            const baVideos = () => [beforeLayer, afterLayer].map(layerVideo).filter(Boolean);
-            setInterval(() => {
+
+            // Sync only on the media clock's own updates. No permanent 500ms polling loop.
+            const beforeClock = () => {
+                if (!baOnScreen || document.hidden) return;
                 const vs = baVideos();
-                if (!vs.length) return;
-                if (!baOnScreen || document.hidden) { vs.forEach(v => { if (!v.paused) v.pause(); }); return; }
-                vs.forEach(v => { if (v.paused) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => {}); } });
-                if (vs.length === 2 && vs[0].readyState > 1 && vs[1].readyState > 1 && Math.abs(vs[0].currentTime - vs[1].currentTime) > 0.3) {
+                if (vs.length !== 2 || vs[0].paused || vs[1].paused || vs[1].readyState < 2) return;
+                if (Math.abs(vs[0].currentTime - vs[1].currentTime) > 0.7) {
                     try { vs[1].currentTime = vs[0].currentTime; } catch (e) {}
                 }
-            }, 500);
+            };
             if ("IntersectionObserver" in window) {
-                new IntersectionObserver((entries) => { entries.forEach(en => { baOnScreen = en.isIntersecting; }); }, { threshold: 0.1 }).observe(container);
+                const baVisibilityObserver = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        baOnScreen = entry.isIntersecting;
+                        if (baOnScreen) loadVisibleBAVideos();
+                        else pauseBAVideos();
+                    });
+                }, { threshold: 0.05, rootMargin: "80px 0px" });
+                baVisibilityObserver.observe(container);
+            } else {
+                baOnScreen = true;
             }
-
-            let currentPairIndex = 0;
-            let currentPositionRatio = 0.5;
+            document.addEventListener("visibilitychange", () => {
+                if (document.hidden) pauseBAVideos();
+                else loadVisibleBAVideos();
+            });
 
             const applyPositionRatio = (positionRatio) => {
                 const clampedRatio = Math.min(1, Math.max(0, positionRatio));
@@ -5411,13 +5523,13 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
 
             const processTransform = (xOffset) => {
                 const rect = container.getBoundingClientRect();
-                const positionRatio = (xOffset - rect.left) / rect.width;
-                applyPositionRatio(positionRatio);
+                if (!rect.width) return;
+                applyPositionRatio((xOffset - rect.left) / rect.width);
             };
 
             const dragMove = (e) => {
                 const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                processTransform(clientX);
+                if (typeof clientX === "number") processTransform(clientX);
             };
 
             const cleanupEvents = () => {
@@ -5428,19 +5540,16 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
             };
 
             const initMove = () => {
-                window.addEventListener("mousemove", dragMove);
-                window.addEventListener("mouseup", cleanupEvents);
-                window.addEventListener("touchmove", dragMove);
-                window.addEventListener("touchend", cleanupEvents);
+                window.addEventListener("mousemove", dragMove, { passive: true });
+                window.addEventListener("mouseup", cleanupEvents, { once: true });
+                window.addEventListener("touchmove", dragMove, { passive: true });
+                window.addEventListener("touchend", cleanupEvents, { once: true });
             };
 
             const startDragging = (event) => {
                 event.preventDefault();
-                if (event.touches && event.touches.length) {
-                    processTransform(event.touches[0].clientX);
-                } else if (event.clientX) {
-                    processTransform(event.clientX);
-                }
+                if (event.touches && event.touches.length) processTransform(event.touches[0].clientX);
+                else if (typeof event.clientX === "number") processTransform(event.clientX);
                 initMove();
             };
 
@@ -5461,11 +5570,20 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
             };
 
             const updateBeforeAfterDisplay = () => {
+                pauseBAVideos();
+                resetShape();
                 const pair = beforeAfterPairs[currentPairIndex];
+                settingPairMedia = true;
                 [[beforeLayer, pair.before], [afterLayer, pair.after]].forEach(([layer, url]) => setLayerMedia(layer, url, pair));
-                if (!isVideoUrl(pair.before) && !isVideoUrl(pair.after)) resetShape();
+                settingPairMedia = false;
+                const firstVideo = layerVideo(beforeLayer);
+                if (firstVideo && !firstVideo.dataset.baClockBound) {
+                    firstVideo.dataset.baClockBound = "1";
+                    firstVideo.addEventListener("timeupdate", beforeClock);
+                }
                 applyPositionRatio(0.5);
                 renderNavDots();
+                if (baOnScreen) loadVisibleBAVideos();
             };
 
             [container, bar, badge].forEach(element => {
@@ -5487,7 +5605,7 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
                 });
             }
 
-            window.addEventListener("resize", () => applyPositionRatio(currentPositionRatio));
+            window.addEventListener("resize", () => applyPositionRatio(currentPositionRatio), { passive: true });
             updateBeforeAfterDisplay();
         }
 
@@ -5734,16 +5852,20 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
             const header = document.getElementById("site-header");
             const topBtn = document.getElementById("scroll-to-top-btn");
             if (!header) return;
-
-            window.addEventListener("scroll", () => {
-                if (window.scrollY > 80) {
-                    header.classList.add("scrolled");
-                    if (topBtn) topBtn.classList.add("show");
-                } else {
-                    header.classList.remove("scrolled");
-                    if (topBtn) topBtn.classList.remove("show");
-                }
-            });
+            let framePending = false;
+            const updateScrollUI = () => {
+                framePending = false;
+                const scrolled = (window.scrollY || window.pageYOffset || 0) > 80;
+                header.classList.toggle("scrolled", scrolled);
+                if (topBtn) topBtn.classList.toggle("show", scrolled);
+            };
+            const queueScrollUI = () => {
+                if (framePending) return;
+                framePending = true;
+                requestAnimationFrame(updateScrollUI);
+            };
+            window.addEventListener("scroll", queueScrollUI, { passive: true });
+            updateScrollUI();
         }
 
         function topScrollAction() {
@@ -6734,17 +6856,20 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
 
         /* REVEAL ON SCROLL ENGINE */
         function initScrollAnimation() {
-            const revealEls = document.querySelectorAll(".reveal");
-            if (!revealEls || revealEls.length === 0) return;
-
+            const revealEls = document.querySelectorAll(".reveal:not(.visible)");
+            if (!revealEls.length) return;
+            if (!("IntersectionObserver" in window)) {
+                revealEls.forEach(el => el.classList.add("visible"));
+                return;
+            }
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
                     }
                 });
-            }, { threshold: 0.1 });
-
+            }, { threshold: 0.05, rootMargin: "0px 0px 120px 0px" });
             revealEls.forEach(el => observer.observe(el));
         }
 
@@ -6815,43 +6940,71 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
 (function () {
     "use strict";
 
-    /* Image loading shimmer: keep the layout stable and reveal each image only when it is ready. */
-    function initSilverImageLoading() {
-        const images = Array.from(document.images);
-        images.forEach(function (img) {
-            if (!img || img.closest(".oak-loader-mark")) return;
-            const host = img.closest(".product-image-container, .gallery-item, .insta-card, .service-media, .story-img-frame, .insta-avatar, .ba-container") || img.parentElement;
-            if (!host) return;
-            host.classList.add("oak-image-loading");
-            const done = function () {
-                host.classList.add("oak-image-ready");
-                host.classList.remove("oak-image-loading");
-            };
-            if (img.complete) {
-                if (img.naturalWidth > 0) done();
-                else { host.classList.add("oak-image-ready"); host.classList.remove("oak-image-loading"); }
-            } else {
-                img.addEventListener("load", done, { once: true });
-                img.addEventListener("error", function () {
-                    host.classList.add("oak-image-ready");
-                    host.classList.remove("oak-image-loading");
-                }, { once: true });
-            }
-        });
+    /* Image loading shimmer: process only new images (not the whole document on each DOM insert). */
+    const trackedImages = new WeakSet();
+    let imageNearObserver = null;
+    if ("IntersectionObserver" in window) {
+        imageNearObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (!entry.isIntersecting) return;
+                entry.target.classList.add("oak-image-near");
+                imageNearObserver.unobserve(entry.target);
+            });
+        }, { rootMargin: "280px 0px" });
     }
+
+    function trackOakImage(img) {
+        if (!img || img.tagName !== "IMG" || trackedImages.has(img) || img.closest(".oak-loader-mark")) return;
+        trackedImages.add(img);
+        if (!img.hasAttribute("decoding")) img.decoding = "async";
+
+        const protectedVisual = img.closest(".hero-section, .oak-page-loader, .vm-video-frame");
+        if (!protectedVisual && !img.hasAttribute("fetchpriority")) {
+            const hiddenPage = img.closest(".page-view:not(.active-view)");
+            const rect = img.getBoundingClientRect();
+            if (hiddenPage || rect.top > window.innerHeight * 1.2) img.loading = "lazy";
+        }
+
+        const host = img.closest(".product-image-container, .gallery-item, .insta-card, .service-media, .story-img-frame, .insta-avatar, .ba-container") || img.parentElement;
+        if (!host) return;
+        host.classList.add("oak-image-loading");
+        if (imageNearObserver) imageNearObserver.observe(host);
+
+        const done = function () {
+            host.classList.add("oak-image-ready");
+            host.classList.remove("oak-image-loading", "oak-image-near");
+            if (imageNearObserver) imageNearObserver.unobserve(host);
+        };
+        if (img.complete && img.naturalWidth > 0) {
+            done();
+        } else if (!img.getAttribute("src") && !img.currentSrc) {
+            img.addEventListener("load", done, { once: true });
+            img.addEventListener("error", done, { once: true });
+        } else if (img.complete) {
+            done();
+        } else {
+            img.addEventListener("load", done, { once: true });
+            img.addEventListener("error", done, { once: true });
+        }
+    }
+
+    function scanOakImages(root) {
+        if (!root) return;
+        if (root.nodeType === 1 && root.matches && root.matches("img")) trackOakImage(root);
+        if (root.querySelectorAll) root.querySelectorAll("img").forEach(trackOakImage);
+    }
+
     if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", initSilverImageLoading, { once: true });
+        document.addEventListener("DOMContentLoaded", function () { scanOakImages(document); }, { once: true });
     } else {
-        initSilverImageLoading();
+        scanOakImages(document);
     }
-    /* Images inserted later (product filters, feeds, and dynamic sections) receive the same treatment. */
+    /* Dynamically rendered products and feed tiles are handled incrementally. */
     if ("MutationObserver" in window && document.body) {
         const imageObserver = new MutationObserver(function (records) {
             records.forEach(function (record) {
                 record.addedNodes.forEach(function (node) {
-                    if (node.nodeType !== 1) return;
-                    if (node.matches && node.matches("img")) initSilverImageLoading();
-                    else if (node.querySelector && node.querySelector("img")) initSilverImageLoading();
+                    if (node.nodeType === 1) scanOakImages(node);
                 });
             });
         });
@@ -6999,7 +7152,7 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
     "use strict";
     var header = document.getElementById("site-header");
     if (!header) return;
-    var ticking = false, lastState = null;
+    var ticking = false, lastState = null, lastRun = 0;
 
     function parseColor(str) {
         var m = /rgba?\(([^)]+)\)/.exec(str || "");
@@ -7040,14 +7193,21 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
     function queue() {
         if (ticking) return;
         ticking = true;
-        requestAnimationFrame(update);
+        var wait = Math.max(0, 120 - (Date.now() - lastRun));
+        window.setTimeout(function () {
+            requestAnimationFrame(function () {
+                ticking = false;
+                lastRun = Date.now();
+                update();
+            });
+        }, wait);
     }
     window.addEventListener("scroll", queue, { passive: true });
-    window.addEventListener("resize", queue);
-    window.addEventListener("load", queue);
-    document.addEventListener("click", function () { setTimeout(queue, 150); setTimeout(queue, 600); });
-    /* catches slide changes and page-view transitions; slower and skipped when the tab is hidden to keep the main thread free for video */
-    setInterval(function () { if (!document.hidden) queue(); }, 1500);
+    window.addEventListener("resize", queue, { passive: true });
+    window.addEventListener("load", queue, { once: true });
+    document.addEventListener("click", function () { window.setTimeout(queue, 180); });
+    /* A low-frequency check catches automatic hero-slide changes without scanning the page on every frame. */
+    window.setInterval(function () { if (!document.hidden) queue(); }, 3000);
     queue();
 })();
 </script>
@@ -7274,8 +7434,8 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
         if (document.hidden) video.pause(); else tryPlay();
     });
 
-    /* Start downloading as soon as the page has loaded, so it is already buffered when the section appears */
-    window.addEventListener("load", function () { setTimeout(startVideoLoad, 200); });
+    /* Keep this large background video off the initial page-load critical path. Its
+       observer starts the request shortly before the section is reached. */
     if (video) video.addEventListener("canplay", function () { if (videoWanted) tryPlay(); });
 
     if ("IntersectionObserver" in window) {
@@ -7287,7 +7447,7 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
         /* Begin downloading shortly before the video scrolls into view */
         new IntersectionObserver(function (entries) {
             entries.forEach(function (entry) { if (entry.isIntersecting) startVideoLoad(); });
-        }, { rootMargin: "2500px 0px" }).observe(frameEl || root);
+        }, { rootMargin: "850px 0px" }).observe(frameEl || root);
 
         /* Play only while the video itself is visible */
         new IntersectionObserver(function (entries) {
