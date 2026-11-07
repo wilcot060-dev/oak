@@ -17,10 +17,19 @@
     <title>OAK Furniture & Interiors | Oak Furniture and Interiors</title>
     
     <!-- Google Fonts: Playfair Display for editorial luxury, Poppins for clean modern UI -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- FontAwesome for iconography -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://i.postimg.cc" crossorigin>
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+    <link rel="preload" as="image" href="https://i.postimg.cc/44tX3mL1/cy-Nez118Yy82gwxgf24PQSLoo1vw-VZCcd6T-dg-SEJUXTq4ct-U-a-DWZ4o-HO-A-Wpl4tyda-Q0On8Qega6Qy2yu-DVnxp-GX.jpg=1600" fetchpriority="high">
+    <!-- Fonts and icons load without blocking the first paint -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript>
+        <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    </noscript>
     
     <style>
         /* COLOR PALETTE & DESIGN SYSTEM
@@ -3417,7 +3426,7 @@
         }
         .vm-video-frame {
             position: relative; overflow: hidden; aspect-ratio: 4 / 5; min-height: 560px; width: 100%;
-            background: #0b2d16 url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=900') center / cover no-repeat;
+            background: linear-gradient(135deg, #0e3a1b, #082411);
             box-shadow: 0 40px 90px rgba(8,36,17,.35);
         }
         /* Video layer: kept simple on purpose. Extra GPU hints (containment, 3D transforms, hidden backfaces) can slow or glitch playback on some phones. */
@@ -3425,7 +3434,6 @@
         .vm-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; border: 0; background: transparent; pointer-events: none; }
         /* While the video is on screen, pause the header's endless shimmer so the device can focus on playback */
         html.vm-playing header::before { animation-play-state: paused; }
-        .vm-video-failed .vm-video { display: none; }
         .vm-video-frame::after {
             content: ''; position: absolute; inset: 0; pointer-events: none;
             background: linear-gradient(to top, rgba(8,36,17,.78) 0%, rgba(8,36,17,0) 42%), linear-gradient(to bottom, rgba(8,36,17,.25) 0%, rgba(8,36,17,0) 22%);
@@ -3875,21 +3883,10 @@ body.menu-open .reveal { transition: none !important; }
 </style>
 <style id="oak-video-nopic">
 .vm-video-frame { background: linear-gradient(135deg, #0e3a1b 0%, #082411 100%) !important; }
-.vm-video-failed .vm-video-frame {
-    background: #0b2d16 url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=900') center / cover no-repeat !important;
-}
 </style>
 <style id="oak-v5">
 .oak-nav-hidden { display: none !important; }
 /* Header glass blur re-blurs the playing video every frame (very heavy on phones): switch it to a solid tint while the video plays */
-html.vm-playing header,
-html.vm-playing header.scrolled,
-html.vm-playing header:not(.scrolled) {
-    -webkit-backdrop-filter: none !important;
-    backdrop-filter: none !important;
-    background: rgba(240, 247, 242, 0.94) !important;
-}
-html.vm-playing header.scrolled.on-dark { background: rgba(8, 36, 17, 0.9) !important; }
 html.vm-playing header::before,
 html.vm-playing header::after,
 html.vm-playing .oak-fab::before { animation: none !important; }
@@ -3910,19 +3907,9 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
     .oak-image-loading.oak-image-near::after { animation: oakSilverShimmer 1.8s linear infinite; opacity: 1; }
 
     /* Reduce the amount of work performed by the sticky glass while retaining its translucent look. */
-    header, header.scrolled, header:not(.scrolled) {
-        -webkit-backdrop-filter: blur(1.25px) saturate(145%);
-        backdrop-filter: blur(1.25px) saturate(145%);
-    }
     header::before { animation: none !important; }
 
     @media (max-width: 768px) {
-        header, header.scrolled, header:not(.scrolled) {
-            -webkit-backdrop-filter: none !important;
-            backdrop-filter: none !important;
-            background: rgba(240, 247, 242, .95);
-        }
-        header.scrolled.on-dark { background: rgba(8, 36, 17, .94) !important; }
         .ba-container { max-width: 100%; }
         .ba-img > video.ba-video { object-fit: contain; }
     }
@@ -3933,6 +3920,295 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
     }
 </style>
 
+<style id="oak-v6-glass-perf">
+/* =====================================================================
+   LIQUID GLASS — same look on phones and desktops
+   A clear, tinted pane: real backdrop blur + strong saturation (the "liquid" colour boost),
+   a bright rim light on every edge, an inner glow, a curved specular highlight and a soft
+   floating shadow. All highlights are static, so there is no animation cost.
+   ===================================================================== */
+header,
+header.scrolled,
+header:not(.scrolled) {
+    background:
+        radial-gradient(130% 190% at 14% -70%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 58%),
+        linear-gradient(180deg, rgba(255,255,255,0.34) 0%, rgba(255,255,255,0.10) 48%, rgba(214,236,222,0.20) 100%);
+    -webkit-backdrop-filter: blur(14px) saturate(190%) brightness(1.07) contrast(1.03);
+    backdrop-filter: blur(14px) saturate(190%) brightness(1.07) contrast(1.03);
+    border-bottom: 1px solid rgba(255,255,255,0.55);
+    box-shadow:
+        0 14px 30px -14px rgba(8,36,17,0.38),
+        0 3px 10px -4px rgba(8,36,17,0.14),
+        inset 0 1.5px 0 rgba(255,255,255,0.95),
+        inset 0 -1px 0 rgba(255,255,255,0.35),
+        inset 1px 0 0 rgba(255,255,255,0.35),
+        inset -1px 0 0 rgba(255,255,255,0.35),
+        inset 0 0 26px rgba(255,255,255,0.20),
+        inset 0 -12px 18px -14px rgba(8,36,17,0.16);
+}
+/* At the very top the pane is a little denser so the logo and links stay crisp over any picture */
+header:not(.scrolled) {
+    background:
+        radial-gradient(130% 190% at 14% -70%, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0) 58%),
+        linear-gradient(180deg, rgba(255,255,255,0.58) 0%, rgba(244,250,246,0.40) 100%);
+}
+/* Over dark sections: smoky green-tinted glass with white rim light */
+header.scrolled.on-dark {
+    background:
+        radial-gradient(130% 190% at 14% -70%, rgba(255,255,255,0.26) 0%, rgba(255,255,255,0) 58%),
+        linear-gradient(180deg, rgba(8,36,17,0.46) 0%, rgba(8,36,17,0.28) 100%);
+    border-bottom-color: rgba(255,255,255,0.22);
+    box-shadow:
+        0 16px 34px -14px rgba(0,0,0,0.5),
+        0 3px 10px -4px rgba(0,0,0,0.3),
+        inset 0 1.5px 0 rgba(255,255,255,0.45),
+        inset 0 -1px 0 rgba(255,255,255,0.12),
+        inset 0 0 26px rgba(255,255,255,0.08);
+}
+/* Curved specular sheen across the top of the pane (static) */
+header::before,
+header:not(.scrolled)::before {
+    opacity: 1;
+    animation: none !important;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0) 34%),
+        radial-gradient(55% 160% at 10% -50%, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 62%),
+        linear-gradient(112deg, transparent 34%, rgba(255,255,255,0.34) 46%, rgba(255,255,255,0.05) 54%, transparent 62%);
+    background-size: 100% 100%, 100% 100%, 100% 100%;
+    background-position: 0 0;
+    mix-blend-mode: soft-light;
+}
+header.scrolled.on-dark::before { opacity: 0.7; }
+/* Glass menu button */
+header .menu-btn,
+header:not(.scrolled) .menu-btn {
+    background: linear-gradient(180deg, rgba(255,255,255,0.55), rgba(255,255,255,0.12));
+    -webkit-backdrop-filter: blur(8px) saturate(180%);
+    backdrop-filter: blur(8px) saturate(180%);
+    box-shadow: 0 5px 12px -5px rgba(8,36,17,0.28), inset 0 1.5px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(255,255,255,0.3);
+}
+/* Page arrows + scroll-up button: the same liquid glass over a dark-green tint */
+.page-nav-btn {
+    background: linear-gradient(180deg, rgba(255,255,255,0.30) 0%, rgba(8,36,17,0.55) 100%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    backdrop-filter: blur(10px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.5);
+    box-shadow: 0 10px 24px -8px rgba(8,36,17,0.5), inset 0 1.5px 0 rgba(255,255,255,0.7), inset 0 -1px 0 rgba(255,255,255,0.18), inset 0 0 14px rgba(255,255,255,0.12);
+}
+.page-nav-btn:hover, .page-nav-btn:focus-visible { background: linear-gradient(180deg, rgba(255,255,255,0.55), var(--accent-gold)); }
+/* Phones: a slightly smaller blur radius keeps the glass smooth over the video */
+@media (max-width: 768px) {
+    header, header.scrolled, header:not(.scrolled) {
+        -webkit-backdrop-filter: blur(11px) saturate(185%) brightness(1.06);
+        backdrop-filter: blur(11px) saturate(185%) brightness(1.06);
+    }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    header, header.scrolled, header:not(.scrolled) { background: rgba(240,247,242,0.92); }
+    header.scrolled.on-dark { background: rgba(8,36,17,0.9); }
+}
+
+/* =====================================================================
+   CALMER, FASTER MOTION
+   ===================================================================== */
+/* Scroll reveals: short, small movement */
+.reveal { transform: translateY(12px); transition: opacity .22s ease, transform .22s ease; }
+.reveal.visible { transform: none; }
+/* Hero text: appears together in a fraction of a second instead of one line at a time over ~2s */
+.hero-slide { transition: opacity .5s ease !important; }
+.hero-slide .hero-subtitle,
+.hero-slide .hero-title,
+.hero-slide .hero-desc,
+.hero-slide .hero-btn-group { transition: opacity .3s ease, transform .3s ease !important; }
+.hero-slide .hero-subtitle { transition-delay: .05s !important; }
+.hero-slide .hero-title    { transition-delay: .10s !important; }
+.hero-slide .hero-desc     { transition-delay: .15s !important; }
+.hero-slide .hero-btn-group{ transition-delay: .20s !important; }
+.hero-subtitle, .hero-title, .hero-desc, .hero-btn-group { transform: translateY(14px); }
+/* Endless background animations switched off */
+.oak-fab::before { animation: none !important; opacity: 0; }
+.vm-live-dot::after { animation: none !important; opacity: 0; }
+.oak-image-loading::after,
+.oak-image-loading.oak-image-near::after { display: none; animation: none; }
+header::before, header::after { animation: none !important; }
+/* Hover/tap feedback: quicker */
+.feature-box, .product-card { transition-duration: .18s; }
+.service-media img { transition-duration: .3s !important; }
+/* Don't paint off-screen footer content until it is near */
+footer { content-visibility: auto; contain-intrinsic-size: 1px 600px; }
+</style>
+<style id="oak-v7-water-glass">
+/* ============== VIDEO: always the video, always the video's own shape (no crop, no stretch) ============== */
+@media (min-width: 961px) {
+    .vm-video-wrap { width: min(100%, calc(82vh * var(--vm-r, .8))); justify-self: center; align-self: center; }
+    .vm-video-frame { aspect-ratio: var(--vm-r, .8); min-height: 0; max-height: none; }
+}
+.vm-video { object-fit: cover; object-position: center center; }
+
+/* ============== WATER GLASS HEADER ==============
+   Clear like a sheet of water: only a whisper of blur (so it does not look frosted), a big colour boost,
+   a bright meniscus rim, glowing depth, a wet specular streak and a light-split edge.
+   No displacement/refraction filter, so nothing behind it is ever warped, and the small blur radius is cheap. */
+header,
+header.scrolled,
+header:not(.scrolled) {
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.05) 40%, rgba(200,232,214,0.08) 72%, rgba(255,255,255,0.18) 100%);
+    -webkit-backdrop-filter: blur(3.5px) saturate(215%) brightness(1.1) contrast(1.04);
+    backdrop-filter: blur(3.5px) saturate(215%) brightness(1.1) contrast(1.04);
+    border-bottom: 1px solid rgba(255,255,255,0.75);
+    box-shadow:
+        0 20px 30px -18px rgba(8,36,17,0.45),
+        0 2px 6px rgba(8,36,17,0.10),
+        inset 0 2px 1px rgba(255,255,255,0.98),
+        inset 0 -2px 2px rgba(255,255,255,0.6),
+        inset 2px 0 2px -1px rgba(255,255,255,0.65),
+        inset -2px 0 2px -1px rgba(255,255,255,0.65),
+        inset 0 14px 22px -14px rgba(255,255,255,0.75),
+        inset 0 -18px 24px -18px rgba(70,160,115,0.38);
+}
+/* At rest on the light page: a little more body so the logo and links stay perfectly readable */
+header:not(.scrolled) {
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.46) 0%, rgba(255,255,255,0.18) 45%, rgba(214,238,224,0.20) 100%);
+}
+header.scrolled.on-dark {
+    background:
+        linear-gradient(180deg, rgba(10,50,28,0.40) 0%, rgba(8,36,17,0.12) 45%, rgba(30,90,60,0.14) 100%);
+    -webkit-backdrop-filter: blur(3.5px) saturate(220%) brightness(1.12) contrast(1.05);
+    backdrop-filter: blur(3.5px) saturate(220%) brightness(1.12) contrast(1.05);
+    border-bottom-color: rgba(255,255,255,0.35);
+    box-shadow:
+        0 20px 32px -18px rgba(0,0,0,0.55),
+        inset 0 2px 1px rgba(255,255,255,0.6),
+        inset 0 -2px 2px rgba(255,255,255,0.22),
+        inset 2px 0 2px -1px rgba(255,255,255,0.3),
+        inset -2px 0 2px -1px rgba(255,255,255,0.3),
+        inset 0 14px 22px -14px rgba(255,255,255,0.28),
+        inset 0 -18px 24px -18px rgba(90,200,150,0.3);
+}
+/* Wet highlights: surface sheen, a bright droplet glint top-left, a soft light pool bottom-right, and a thin
+   light-split line along the lower edge. All static (no animation). */
+header::before,
+header:not(.scrolled)::before,
+header.scrolled.on-dark::before {
+    opacity: 1;
+    animation: none !important;
+    mix-blend-mode: normal;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.80) 0%, rgba(255,255,255,0.22) 13%, rgba(255,255,255,0) 42%),
+        radial-gradient(38% 120% at 7% -25%, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0) 62%),
+        radial-gradient(30% 110% at 93% 135%, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0) 66%),
+        linear-gradient(101deg, transparent 31%, rgba(255,255,255,0.5) 42%, rgba(255,255,255,0.07) 48%, transparent 56%),
+        linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.95) 12%, rgba(150,225,255,0.75) 32%, rgba(255,255,255,0.98) 50%, rgba(255,215,170,0.65) 68%, rgba(255,255,255,0.95) 88%, transparent 100%);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 2px;
+    background-position: 0 0, 0 0, 0 0, 0 0, 0 100%;
+    background-repeat: no-repeat;
+}
+header.scrolled.on-dark::before { opacity: 0.6; }
+/* Menu button: a clear glass bead */
+header .menu-btn,
+header:not(.scrolled) .menu-btn {
+    background: linear-gradient(180deg, rgba(255,255,255,0.50) 0%, rgba(255,255,255,0.06) 60%, rgba(255,255,255,0.22) 100%);
+    -webkit-backdrop-filter: blur(3px) saturate(210%) brightness(1.08);
+    backdrop-filter: blur(3px) saturate(210%) brightness(1.08);
+    box-shadow: 0 6px 12px -6px rgba(8,36,17,0.35), inset 0 2px 1px rgba(255,255,255,0.95), inset 0 -2px 2px rgba(255,255,255,0.45), inset 0 8px 12px -8px rgba(255,255,255,0.7);
+}
+.page-nav-btn { -webkit-backdrop-filter: blur(4px) saturate(200%); backdrop-filter: blur(4px) saturate(200%); }
+
+/* While the header (or the round buttons) sit directly over the playing video, the blur is paused so the video
+   stays perfectly smooth. The glass look stays; only the live blur under it is skipped for that moment. */
+html.oak-hdr-over-video header,
+html.oak-hdr-over-video header.scrolled,
+html.oak-hdr-over-video header:not(.scrolled),
+html.oak-hdr-over-video header.scrolled.on-dark,
+html.oak-hdr-over-video header .menu-btn {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+}
+html.oak-hdr-over-video header,
+html.oak-hdr-over-video header:not(.scrolled) {
+    background:
+        linear-gradient(180deg, rgba(240,250,244,0.58) 0%, rgba(226,243,233,0.42) 100%);
+}
+html.oak-hdr-over-video header.scrolled.on-dark {
+    background: linear-gradient(180deg, rgba(8,36,17,0.62) 0%, rgba(8,36,17,0.48) 100%);
+}
+html.vm-playing .page-nav-btn { -webkit-backdrop-filter: none; backdrop-filter: none; }
+</style>
+<style id="oak-v8">
+/* ===== Header: pure liquid glass. No white borders; the lower edge only casts a soft shadow on what is beneath. ===== */
+header,
+header.scrolled,
+header:not(.scrolled) {
+    border-bottom: 0 !important;
+    box-shadow:
+        0 10px 16px -8px rgba(8,36,17,0.26),
+        0 22px 32px -18px rgba(8,36,17,0.20),
+        inset 0 18px 26px -24px rgba(255,255,255,0.45),
+        inset 0 -20px 26px -24px rgba(70,160,115,0.18);
+}
+header.scrolled.on-dark {
+    border-bottom: 0 !important;
+    box-shadow:
+        0 12px 18px -8px rgba(0,0,0,0.42),
+        0 24px 34px -18px rgba(0,0,0,0.34),
+        inset 0 18px 26px -24px rgba(255,255,255,0.22),
+        inset 0 -20px 26px -24px rgba(90,200,150,0.16);
+}
+header::before,
+header:not(.scrolled)::before,
+header.scrolled.on-dark::before {
+    background:
+        radial-gradient(38% 120% at 7% -25%, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0) 62%),
+        radial-gradient(30% 110% at 93% 130%, rgba(255,255,255,0.20) 0%, rgba(255,255,255,0) 66%),
+        linear-gradient(101deg, transparent 31%, rgba(255,255,255,0.32) 42%, rgba(255,255,255,0.05) 48%, transparent 56%);
+    background-size: 100% 100%, 100% 100%, 100% 100%;
+    background-position: 0 0, 0 0, 0 0;
+    background-repeat: no-repeat;
+}
+/* the soft shadow cast onto the page elements beneath the header */
+header::after,
+header:not(.scrolled)::after,
+header.scrolled::after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 22px;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(8,36,17,0.20) 0%, rgba(8,36,17,0.09) 38%, rgba(8,36,17,0.025) 72%, rgba(8,36,17,0) 100%);
+    transform: translateY(100%);
+    opacity: 1;
+    animation: none;
+}
+header.scrolled.on-dark::after { background: linear-gradient(180deg, rgba(0,0,0,0.34) 0%, rgba(0,0,0,0.14) 38%, rgba(0,0,0,0.04) 72%, rgba(0,0,0,0) 100%); }
+html.oak-hdr-over-video header, html.oak-hdr-over-video header:not(.scrolled), html.oak-hdr-over-video header.scrolled { border-bottom: 0 !important; }
+
+/* ===== Vision video caption: scales with the video frame so "HAND-FINISHED" is never cut off ===== */
+.vm-video-frame { container-type: inline-size; }
+.vm-video-caption {
+    left: 26px; right: 26px; bottom: 24px;
+    left: clamp(12px, 6.5cqw, 26px); right: clamp(12px, 6.5cqw, 26px); bottom: clamp(12px, 5.5cqw, 24px);
+    flex-wrap: wrap; align-items: flex-end; gap: 8px 10px;
+}
+.vm-video-caption > div { flex: 1 1 auto; min-width: 0; }
+.vm-video-caption strong { font-size: clamp(.95rem, 5.6cqw, 1.3rem); overflow-wrap: anywhere; }
+.vm-video-caption > div span { font-size: clamp(.5rem, 2.4cqw, .66rem); letter-spacing: clamp(1px, .65cqw, 2.5px); overflow-wrap: anywhere; }
+.vm-video-caption .vm-live-dot {
+    flex: 0 0 auto; max-width: 100%; overflow: visible; white-space: nowrap; line-height: 1.2;
+    font-size: clamp(.5rem, 2.3cqw, .62rem); letter-spacing: clamp(.5px, .45cqw, 1.6px);
+    padding: clamp(4px, 1.5cqw, 6px) clamp(8px, 3cqw, 12px); gap: clamp(5px, 1.8cqw, 8px);
+}
+
+/* ===== Curved loop text ===== */
+.oak-curve-loop { background: var(--bg-white); overflow: hidden; padding: 0 0 34px; }
+.oak-curve-loop svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
+.oak-curve-loop svg.dragging { cursor: grabbing; }
+.oak-curve-loop text { font-family: 'Playfair Display', Georgia, serif; font-weight: 600; letter-spacing: .05em; fill: url(#oak-cl-grad); }
+.oak-curve-loop .cl-meas { visibility: hidden; }
+</style>
 </head>
 <body>
     <!-- Glass refraction filter used by the header -->
@@ -4041,7 +4317,7 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
             </div>
 
             <!-- Slide 4 -->
-            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&q=80&w=1600');">
+            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&q=65&w=1600');">
                 <div class="container">
                     <div class="hero-content">
                         <span class="hero-subtitle">Studio Craftsmanship</span>
@@ -4056,7 +4332,7 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
             </div>
 
             <!-- Slide 5 -->
-            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80&w=1600');">
+            <div class="hero-slide" style="background-image: url('https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=65&w=1600');">
                 <div class="container">
                     <div class="hero-content">
                         <span class="hero-subtitle">Luxury Materials</span>
@@ -4361,6 +4637,25 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
                 </div>
             </div>
         </section>
+
+        <!-- CURVED LOOP: scrolling text on a curve, directly beneath the milestones -->
+        <section class="oak-curve-loop" id="oak-curve-loop" aria-label="OAK Furniture, Interior and Decors">
+            <svg role="img" aria-label="OAK Furniture Interior and Decors" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <path id="oak-curve-path" d="M0,0 Q0,0 0,0" fill="none"></path>
+                    <linearGradient id="oak-cl-grad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="600" y2="0" spreadMethod="repeat">
+                        <stop offset="0" style="stop-color:#082411"></stop>
+                        <stop offset="0.22" style="stop-color:#14452a"></stop>
+                        <stop offset="0.5" style="stop-color:var(--accent-gold)"></stop>
+                        <stop offset="0.6" style="stop-color:#f0d896"></stop>
+                        <stop offset="0.78" style="stop-color:#14452a"></stop>
+                        <stop offset="1" style="stop-color:#082411"></stop>
+                    </linearGradient>
+                </defs>
+                <text class="cl-meas" aria-hidden="true"></text>
+                <text class="cl-main" aria-hidden="true"><textPath href="#oak-curve-path" startOffset="0"></textPath></text>
+            </svg>
+        </section>
     </div>
 
     <!-- SECTION V: SERVICES & CONSULTATION VIEW -->
@@ -4379,7 +4674,7 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
                     <!-- Service 1 -->
                     <div class="service-row">
                         <div class="service-media">
-                            <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=80&w=800" alt="Custom Joinery">
+                            <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&q=65&w=800" alt="Custom Joinery">
                         </div>
                         <div class="service-content">
                             <div class="service-num">01</div>
@@ -4392,7 +4687,7 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
                     <!-- Service 2 -->
                     <div class="service-row">
                         <div class="service-media">
-                            <img src="https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?auto=format&fit=crop&q=80&w=800" alt="Space Layout Planning">
+                            <img src="https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?auto=format&fit=crop&q=65&w=800" alt="Space Layout Planning">
                         </div>
                         <div class="service-content">
                             <div class="service-num">02</div>
@@ -4808,10 +5103,10 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
             { id: "p2", name: "Organized aesthetic", category: "living", desc: "This custom wardrobe unit combines high-gloss dark wood finishings with open hanging sections, built-in drawers, and tinted glass accents to create an elegant, contemporary storage solution.", image: "https://i.postimg.cc/cH7k3hhD/photo-2026-10-18-16-42-17.jpg=600" },
             { id: "p3", name: "Refined Minimalism", category: "dining", desc: "This walk-in closet space features polished warm-wood cabinetry, open shelving, and integrated drawer storage set against light marbled flooring to deliver a refined and organized aesthetic.", image: "https://i.postimg.cc/G2PgDKKg/photo-2026-10-18-16-42-20.jpg=600" },
             { id: "p4", name: "Modern Bumblebee", category: "living", desc: "This modern kitchen features high-contrast bright yellow cabinetry paired with sleek, white-veined black marble countertops and matching dark flooring to create a bold, vibrant aesthetic.", image: "https://i.postimg.cc/fTQyLgtQ/photo-2026-11-01-08-20-52.jpg=600" },
-            { id: "p5", name: "Ergonomic Studio Worktop", category: "office", desc: "Minimalist desk designed with organic oils and solid oak supports.", image: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=600" },
-            { id: "p6", name: "Upholstered Bouclé Chair", category: "living", desc: "Understated luxury chair with exceptional lumbar alignment.", image: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=80&w=600" },
-            { id: "p7", name: "Antiquated Vanity Mirror Set", category: "bedroom", desc: "Solid brass border framing custom cut mirror glass.", image: "https://images.unsplash.com/photo-1617806118233-18e1db207f62?auto=format&fit=crop&q=80&w=600" },
-            { id: "p8", name: "Symmetric Travertine Coffee Block", category: "living", desc: "A singular blocks design emphasizing pure geometric massing.", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=600" },
+            { id: "p5", name: "Ergonomic Studio Worktop", category: "office", desc: "Minimalist desk designed with organic oils and solid oak supports.", image: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=65&w=600" },
+            { id: "p6", name: "Upholstered Bouclé Chair", category: "living", desc: "Understated luxury chair with exceptional lumbar alignment.", image: "https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?auto=format&fit=crop&q=65&w=600" },
+            { id: "p7", name: "Antiquated Vanity Mirror Set", category: "bedroom", desc: "Solid brass border framing custom cut mirror glass.", image: "https://images.unsplash.com/photo-1617806118233-18e1db207f62?auto=format&fit=crop&q=65&w=600" },
+            { id: "p8", name: "Symmetric Travertine Coffee Block", category: "living", desc: "A singular blocks design emphasizing pure geometric massing.", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=65&w=600" },
             { id: "p9", name: "Gold Tiered Elegance", category: "living", desc: "This tiered coffee table pairs a warm gold finish with a clean, layered silhouette to anchor the lounge with understated luxury.", image: "https://i.postimg.cc/CKGG5HCz/Elegant-Gold-Tiered-Coffee-Table-Lounge.png" },
             { id: "p10", name: "Kitchen Workspace", category: "dining", desc: "This kitchen workspace blends hand-finished cabinetry with a practical, open layout built for cooking, gathering, and everyday living.", image: "https://i.postimg.cc/LsKkm01w/Kitechen_workspace.jpg" },
             { id: "p11", name: "Tailored Cabinet", category: "living", desc: "This custom cabinet combines refined joinery with generous storage, keeping the room organized while adding a polished feature piece.", image: "https://i.postimg.cc/Z5yFthCV/cabinet.jpg" },
@@ -4825,23 +5120,23 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
         ];
 
         const PORTFOLIO_DB = [
-            { id: "gal1", category: "residential", subtitle: "Living Concept", title: "Oasis Villa", img: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=600" },
-            { id: "gal2", category: "commercial", subtitle: "Bespoke Workspace", title: "Meridian Executive", img: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=600" },
-            { id: "gal3", category: "residential", subtitle: "Master Suite", title: "Nirvana Room Setup", img: "https://images.unsplash.com/photo-1505693395321-883724634266?auto=format&fit=crop&q=80&w=600" },
-            { id: "gal4", category: "residential", subtitle: "Bespoke Lounge", title: "Sartorial Living Layout", img: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=600" },
-            { id: "gal5", category: "commercial", subtitle: "Design Studio", title: "Avenue Co-Work", img: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=600" },
-            { id: "gal6", category: "residential", subtitle: "Open Plan Kitchen", title: "Monolith Atrium", img: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&q=80&w=600" }
+            { id: "gal1", category: "residential", subtitle: "Living Concept", title: "Oasis Villa", img: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=65&w=600" },
+            { id: "gal2", category: "commercial", subtitle: "Bespoke Workspace", title: "Meridian Executive", img: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=65&w=600" },
+            { id: "gal3", category: "residential", subtitle: "Master Suite", title: "Nirvana Room Setup", img: "https://images.unsplash.com/photo-1505693395321-883724634266?auto=format&fit=crop&q=65&w=600" },
+            { id: "gal4", category: "residential", subtitle: "Bespoke Lounge", title: "Sartorial Living Layout", img: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=65&w=600" },
+            { id: "gal5", category: "commercial", subtitle: "Design Studio", title: "Avenue Co-Work", img: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=65&w=600" },
+            { id: "gal6", category: "residential", subtitle: "Open Plan Kitchen", title: "Monolith Atrium", img: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&q=65&w=600" }
         ];
 
         const INSTAGRAM_DB = [
-            { img: "https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=900", tag: "Interior Styling", caption: "Elevated design is in the details. Soft upholstery balanced against warm, hand-finished timber.", featured: true },
-            { img: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=600", tag: "Bespoke", caption: "Made to measure for the space it lives in." },
-            { img: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=80&w=600", tag: "Living", caption: "Calm palettes, layered textures, quiet luxury." },
-            { img: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=80&w=600", tag: "Workspace", caption: "A desk designed for focus, finished by hand." },
-            { img: "https://images.unsplash.com/photo-1538688525198-9b88f6f53126?auto=format&fit=crop&q=80&w=600", tag: "Craftsmanship", caption: "Every joint checked, every surface finished." },
-            { img: "https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?auto=format&fit=crop&q=80&w=600", tag: "Details", caption: "Brass, grain and the small things that make a room." },
-            { img: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=80&w=600", tag: "Layout", caption: "Plan the flow before a single piece is built." },
-            { img: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=80&w=600", tag: "Studio", caption: "Light, space and furniture working together." }
+            { img: "https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=65&w=900", tag: "Interior Styling", caption: "Elevated design is in the details. Soft upholstery balanced against warm, hand-finished timber.", featured: true },
+            { img: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=65&w=600", tag: "Bespoke", caption: "Made to measure for the space it lives in." },
+            { img: "https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&q=65&w=600", tag: "Living", caption: "Calm palettes, layered textures, quiet luxury." },
+            { img: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&q=65&w=600", tag: "Workspace", caption: "A desk designed for focus, finished by hand." },
+            { img: "https://images.unsplash.com/photo-1538688525198-9b88f6f53126?auto=format&fit=crop&q=65&w=600", tag: "Craftsmanship", caption: "Every joint checked, every surface finished." },
+            { img: "https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?auto=format&fit=crop&q=65&w=600", tag: "Details", caption: "Brass, grain and the small things that make a room." },
+            { img: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=65&w=600", tag: "Layout", caption: "Plan the flow before a single piece is built." },
+            { img: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&q=65&w=600", tag: "Studio", caption: "Light, space and furniture working together." }
         ];
 
         /* SYSTEM STATE */
@@ -5358,8 +5653,8 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
                 },
                 {
                     /* PAIR 3: images OR videos. To use videos, replace both links with .mp4 / .webm / .mov links. */
-                    before: "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=80&w=900",
-                    after: "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&q=80&w=900"
+                    before: "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&q=65&w=900",
+                    after: "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&q=65&w=900"
                 },
                 {
                     /* PAIR 4: the two original video sources are retained. They are fetched only when this pair is selected and the slider is near the viewport. */
@@ -7020,13 +7315,14 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
         loaderLogo.addEventListener("error", function () { loaderMark.classList.add("logo-unavailable"); }, { once: true });
     }
     if (loader) {
-        const finishLoader = function () { loader.classList.add("is-done"); };
-        const duration = 3000;
-        if (document.readyState === "loading") {
-            document.addEventListener("DOMContentLoaded", function () { window.setTimeout(finishLoader, duration); }, { once: true });
-        } else {
-            window.setTimeout(finishLoader, duration);
-        }
+        const loaderStart = performance.now();
+        const MIN_SHOW = 700, MAX_SHOW = 1800;
+        let loaderDone = false;
+        const finishLoader = function () { if (loaderDone) return; loaderDone = true; loader.classList.add("is-done"); };
+        const whenReady = function () { window.setTimeout(finishLoader, Math.max(0, MIN_SHOW - (performance.now() - loaderStart))); };
+        if (document.readyState === "complete") whenReady();
+        else window.addEventListener("load", whenReady, { once: true });
+        window.setTimeout(finishLoader, MAX_SHOW);   /* never hold the page longer than this, even on slow networks */
     }
 
     /* User preferences are small, validated, local-only values; never store personal data. */
@@ -7337,15 +7633,17 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
     var htmlEl = document.documentElement;
     var frameEl = root.querySelector(".vm-video-frame");
     var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    var saveData = !!(conn && conn.saveData);
-    var verySlow = !!(conn && /(^|-)2g$/.test(conn.effectiveType || ""));
+    var saveData = false;   /* the video always loads */
+    var verySlow = false;
     var videoLoaded = false, videoWanted = false, guardTimer = null;
 
+    /* If the file hiccups, quietly try again; the picture fallback has been removed on purpose */
+    var retries = 0;
     function videoFailed() {
-        root.classList.add("vm-video-failed");
         htmlEl.classList.remove("vm-playing");
-        clearInterval(guardTimer);
-        if (video) { try { video.pause(); } catch (e) { /* ignore */ } }
+        if (!video || retries >= 5) return;
+        retries++;
+        setTimeout(function () { try { video.load(); } catch (e) { /* ignore */ } forcePlay = false; armForce(); tryPlay(); }, 1200 * retries);
     }
 
     function startVideoLoad() {
@@ -7353,16 +7651,40 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
         videoLoaded = true;
         video.preload = "auto";
         try { video.load(); } catch (e) { /* ignore */ }
+        armForce();
+    }
+
+    /* Smooth start: wait until a few seconds are buffered so playback never pauses to catch up.
+       If that takes longer than 2.5 s the video starts anyway. */
+    var forcePlay = false, forceTimer = null;
+    function armForce() {
+        clearTimeout(forceTimer);
+        forceTimer = setTimeout(function () { forcePlay = true; tryPlay(); }, 2500);
+    }
+    function enoughBuffered() {
+        if (video.readyState >= 4) return true;
+        if (video.readyState < 3) return false;
+        try {
+            var b = video.buffered, t = video.currentTime;
+            for (var i = 0; i < b.length; i++) {
+                if (t >= b.start(i) - 0.1 && t <= b.end(i)) {
+                    return (b.end(i) - t) >= 2.5 || (isFinite(video.duration) && b.end(i) >= video.duration - 0.2);
+                }
+            }
+        } catch (e) { /* ignore */ }
+        return false;
     }
 
     function tryPlay() {
-        if (!video || !videoLoaded || !videoWanted || document.hidden) return;
+        if (!video || !videoLoaded || !videoWanted || document.hidden || !video.paused) return;
+        if (!forcePlay && !enoughBuffered()) return;
         var p = video.play(); /* the browser waits for data and starts by itself; no manual buffer checks */
         if (p && p.catch) p.catch(function () { /* autoplay blocked (e.g. low-power mode): retried on first touch */ });
     }
 
     /* Dropped-frame guard: checks every 3 seconds for the first ~40 seconds of playback */
-    function startGuard() {
+    function startGuard() { return; }   /* dropped-frame fallback removed */
+    function startGuardUnused() {
         if (!video || !video.getVideoPlaybackQuality || guardTimer) return;
         var lastTotal = 0, lastDropped = 0, bad = 0, runs = 0;
         guardTimer = setInterval(function () {
@@ -7400,7 +7722,7 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
         /* Match the frame to the video's real shape on small screens so it is never stretched or cropped */
         video.addEventListener("loadedmetadata", function () {
             if (!video.videoWidth || !video.videoHeight) return;
-            var r = Math.min(1.6, Math.max(0.6, video.videoWidth / video.videoHeight));
+            var r = Math.min(2.2, Math.max(0.4, video.videoWidth / video.videoHeight));
             root.style.setProperty("--vm-r", r.toFixed(4));
         });
         var srcEl = video.querySelector("source");
@@ -7436,7 +7758,7 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
 
     /* Keep this large background video off the initial page-load critical path. Its
        observer starts the request shortly before the section is reached. */
-    if (video) video.addEventListener("canplay", function () { if (videoWanted) tryPlay(); });
+    if (video) ["canplay", "canplaythrough", "loadeddata", "progress"].forEach(function (ev) { video.addEventListener(ev, function () { if (videoWanted) tryPlay(); }); });
 
     if ("IntersectionObserver" in window) {
         /* Text rotator: runs only while the section is on screen */
@@ -7736,6 +8058,114 @@ html.vm-playing .vm-live-dot::after { animation: none; opacity: 0; }
     backBtn.addEventListener("click", function () { go(-1); });
     fwdBtn.addEventListener("click", function () { go(1); });
     refresh();
+})();
+</script>
+<script>
+/* Pauses the header's live blur only while it overlaps the Vision video (keeps playback smooth) */
+(function () {
+    "use strict";
+    var frame = document.querySelector(".vm-video-frame");
+    var header = document.querySelector("header");
+    if (!frame || !header) return;
+    var root = document.documentElement, on = false, ticking = false;
+    function update() {
+        ticking = false;
+        var r = frame.getBoundingClientRect();
+        var hb = header.getBoundingClientRect().bottom;
+        var over = r.height > 0 && r.top < hb && r.bottom > 0;
+        if (over !== on) { on = over; root.classList.toggle("oak-hdr-over-video", over); }
+    }
+    function queue() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
+    window.addEventListener("scroll", queue, { passive: true });
+    window.addEventListener("resize", queue, { passive: true });
+    window.addEventListener("load", queue, { once: true });
+    queue();
+})();
+</script>
+<script>
+/* Curved loop: text that scrolls endlessly along a curve. Drag to push it either way. Runs only while visible. */
+(function () {
+    "use strict";
+    var sec = document.getElementById("oak-curve-loop");
+    if (!sec) return;
+    var svg = sec.querySelector("svg"), path = svg.querySelector("path"), grad = svg.querySelector("#oak-cl-grad");
+    var gradW = 600, gShift = 0;
+    var main = svg.querySelector("text.cl-main"), tp = main.querySelector("textPath"), meas = svg.querySelector("text.cl-meas");
+    var TEXT = "OAK\u2726 Furniture \u2726 Interior\u2726 and \u2726 Decors \u2726";
+    var unit = (TEXT + " ").replace(/ /g, "\u00A0");
+    var SPEED = 70;                       /* pixels per second */
+    var offset = 0, copyW = 0, builtW = 0, dir = -1, running = false, last = 0, dragging = false, lastX = 0;
+    var reduced = function () {
+        return (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) ||
+               document.documentElement.classList.contains("oak-reduced-motion");
+    };
+
+    function build() {
+        var W = Math.round(sec.clientWidth);
+        if (!W) return;
+        var fs = Math.min(64, Math.max(26, W * 0.05));
+        var depth = Math.min(210, Math.max(60, W * 0.13));
+        var y0 = fs * 1.1, H = Math.ceil(y0 + depth + fs * 0.7);
+        svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+        path.setAttribute("d", "M-60," + y0 + " Q" + (W / 2) + "," + (y0 + depth * 2) + " " + (W + 60) + "," + y0);
+        gradW = Math.max(360, W * 0.7);
+        grad.setAttribute("x2", gradW);
+        main.setAttribute("font-size", fs);
+        meas.setAttribute("font-size", fs);
+        meas.textContent = unit;
+        var w = meas.getComputedTextLength();
+        if (!w) return;                    /* fonts not ready yet; retried when they load */
+        copyW = w;
+        var len = path.getTotalLength();
+        tp.textContent = new Array(Math.ceil(len / copyW) + 3).join(unit);
+        builtW = W;
+        paint();
+    }
+    function paint() {
+        if (!copyW) return;
+        offset = ((offset % copyW) + copyW) % copyW;
+        tp.setAttribute("startOffset", String(offset - copyW));
+    }
+    function tick(ts) {
+        if (!running) return;
+        var dt = Math.min(0.05, (ts - last) / 1000);
+        last = ts;
+        gShift = (gShift + 110 * dt) % gradW;   /* the colour wave flows across all the text */
+        grad.setAttribute("gradientTransform", "translate(" + gShift.toFixed(1) + " 0)");
+        if (!dragging) { offset += dir * SPEED * dt; paint(); }
+        requestAnimationFrame(tick);
+    }
+    function start() {
+        if (running || reduced() || document.hidden) return;
+        running = true; last = performance.now(); requestAnimationFrame(tick);
+    }
+    function stop() { running = false; }
+
+    /* Drag to move the text; the direction you drag becomes the direction it keeps flowing */
+    svg.addEventListener("pointerdown", function (e) { dragging = true; lastX = e.clientX; svg.classList.add("dragging"); try { svg.setPointerCapture(e.pointerId); } catch (x) {} });
+    svg.addEventListener("pointermove", function (e) {
+        if (!dragging) return;
+        var dx = e.clientX - lastX; lastX = e.clientX;
+        if (dx) { offset += dx; dir = dx > 0 ? 1 : -1; paint(); }
+    });
+    function release() { dragging = false; svg.classList.remove("dragging"); }
+    svg.addEventListener("pointerup", release);
+    svg.addEventListener("pointercancel", release);
+
+    if ("IntersectionObserver" in window) {
+        new IntersectionObserver(function (entries) {
+            entries.forEach(function (en) {
+                if (en.isIntersecting) { if (Math.round(sec.clientWidth) !== builtW) build(); start(); }
+                else stop();
+            });
+        }, { rootMargin: "100px 0px" }).observe(sec);
+    } else { build(); start(); }
+
+    document.addEventListener("visibilitychange", function () { if (document.hidden) stop(); else if (sec.offsetParent) start(); });
+    var rt = null;
+    window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { if (sec.clientWidth) build(); }, 150); }, { passive: true });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (sec.clientWidth) build(); });
+    build();
 })();
 </script>
 </body>
