@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="oak-loading">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -3227,7 +3227,7 @@
             background: var(--bg-light); color: var(--primary-green);
             opacity: 1; visibility: visible; pointer-events: all;
         }
-        .oak-page-loader.is-done { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .16s ease, visibility 0s linear .16s; }
+        .oak-page-loader.is-done { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .5s ease, visibility 0s linear .5s; }
         .oak-page-loader.is-done .oak-loader-mark img,
         .oak-page-loader.is-done .oak-loader-wordmark,
         .oak-page-loader.is-done .oak-loader-rule { animation-play-state: paused; }
@@ -3258,6 +3258,69 @@
         .hero-title { text-wrap: balance; }
         .hero-desc, .feature-box p, .service-content p, .story-text p { text-wrap: pretty; }
         .gallery-item img, .insta-card img { will-change: transform; }
+
+        /* Collections progressive browsing controls */
+        .oak-infinite-toggle { margin-top: 24px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 44px; padding: 11px 22px; font-size: .72rem; letter-spacing: 1.8px; }
+        .oak-infinite-toggle[aria-pressed="true"] { background: var(--accent-gold); color: var(--secondary-dark); border-color: var(--accent-gold); }
+        .oak-load-more-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 38px 0 8px; }
+        .oak-load-more-wrap[hidden] { display: none; }
+        .oak-load-more-wrap button { min-width: 190px; display: inline-flex; align-items: center; justify-content: center; gap: 12px; }
+        .oak-load-more-count { color: var(--text-muted); font-size: .7rem; letter-spacing: 1px; text-transform: uppercase; }
+        @media (max-width: 600px) { .oak-infinite-toggle { margin-top: 20px; } .oak-load-more-wrap { padding-top: 28px; } }
+
+        /* OAK Night Mode: warm charcoal, softened surfaces and preserved brass accents. */
+        html.oak-night-mode { color-scheme: dark; --bg-light: #151714; --bg-white: #1d211d; --text-dark: #eeeae1; --text-muted: #b0ada3; --border-color: #383d36; }
+        html.oak-night-mode body { background-color: var(--bg-light); color: var(--text-dark); }
+        html.oak-night-mode .info-grid-section,
+        html.oak-night-mode .shop-layout,
+        html.oak-night-mode .services-section,
+        html.oak-night-mode .story-section,
+        html.oak-night-mode .contact-section,
+        html.oak-night-mode .newsletter-section,
+        html.oak-night-mode .faq-section,
+        html.oak-night-mode .portfolio-section { background-color: var(--bg-light); color: var(--text-dark); }
+        html.oak-night-mode .feature-box,
+        html.oak-night-mode .product-card,
+        html.oak-night-mode .service-card,
+        html.oak-night-mode .portfolio-card,
+        html.oak-night-mode .contact-card,
+        html.oak-night-mode .shop-utility-panel,
+        html.oak-night-mode .oak-modal-content,
+        html.oak-night-mode .faq-item { background: #20251f; color: var(--text-dark); border-color: var(--border-color); }
+        html.oak-night-mode .modern-section-title h2,
+        html.oak-night-mode .feature-box h3,
+        html.oak-night-mode .product-name,
+        html.oak-night-mode .service-content h3,
+        html.oak-night-mode .story-text h2,
+        html.oak-night-mode .portfolio-card h3,
+        html.oak-night-mode .contact-card h3 { color: #eeeae1; }
+        html.oak-night-mode .feature-box p,
+        html.oak-night-mode .product-info,
+        html.oak-night-mode .product-cat,
+        html.oak-night-mode .service-content p,
+        html.oak-night-mode .story-text p,
+        html.oak-night-mode .portfolio-card p { color: #b0ada3; }
+        html.oak-night-mode .shop-search-input,
+        html.oak-night-mode .shop-sort-select,
+        html.oak-night-mode .form-input,
+        html.oak-night-mode .newsletter-input { color: #eeeae1; background: #20251f; border-color: #454b42; }
+        html.oak-night-mode .shop-search-input::placeholder,
+        html.oak-night-mode .form-input::placeholder { color: #99978e; }
+        html.oak-night-mode .filter-btn { color: #d9d5ca; border-color: #555b50; }
+        html.oak-night-mode .filter-btn.active-filter,
+        html.oak-night-mode .filter-btn:hover { color: #171914; }
+        html.oak-night-mode .site-header { background: rgba(21, 23, 20, .96); border-bottom-color: #343a32; }
+        html.oak-night-mode .site-header nav a,
+        html.oak-night-mode .menu-btn { color: #eeeae1; }
+        html.oak-night-mode .stats-counter-section,
+        html.oak-night-mode .insta-feed-section { background: #1b201a; color: #eeeae1; }
+        html.oak-night-mode .insta-head h2,
+        html.oak-night-mode .insta-bio h3 { color: #eeeae1; }
+        html.oak-night-mode .footer-main,
+        html.oak-night-mode footer { background-color: #0d100d; }
+        html.oak-night-mode .oak-load-more-count { color: #b0ada3; }
+        html.oak-night-mode .product-image { background: #282d27; }
+        html.oak-night-mode .shop-sort-select option { background: #20251f; color: #eeeae1; }
 
         /* Personalization lives inside the existing menu and keeps the same restrained palette. */
         .oak-personalization { margin-top: 30px; padding-top: 2px; border-top: 1px solid rgba(197,160,89,.25); }
@@ -4209,6 +4272,87 @@ html.oak-hdr-over-video header, html.oak-hdr-over-video header:not(.scrolled), h
 .oak-curve-loop text { font-family: 'Playfair Display', Georgia, serif; font-weight: 600; letter-spacing: .05em; fill: url(#oak-cl-grad); }
 .oak-curve-loop .cl-meas { visibility: hidden; }
 </style>
+
+<style id="oak-v9">
+/* ===== Scroll lock while the branded loader is on screen (released after the fade completes) ===== */
+html.oak-loading, html.oak-loading body {
+    overflow: hidden !important;
+    overscroll-behavior: none;
+    touch-action: none;
+}
+/* Smoother hand-off: the loader fades out gently instead of snapping away */
+.oak-page-loader.is-done { transition: opacity .5s ease, visibility 0s linear .5s; }
+
+/* ===== Page arrows: solid colours, no gradients ===== */
+.page-nav-controls .page-nav-btn {
+    background: #082411 !important;
+    background-image: none !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    border: 1px solid #082411;
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(8, 36, 17, 0.28);
+}
+.page-nav-controls .page-nav-btn:hover,
+.page-nav-controls .page-nav-btn:focus-visible {
+    background: #12381f !important;
+    background-image: none !important;
+    border-color: #12381f;
+    color: #ffffff;
+}
+.page-nav-controls .page-nav-btn.btn-scrollup {
+    background: var(--accent-gold) !important;
+    background-image: none !important;
+    border-color: var(--accent-gold);
+    color: #ffffff;
+    box-shadow: 0 8px 20px rgba(138, 102, 31, 0.32);
+}
+.page-nav-controls .page-nav-btn.btn-scrollup:hover,
+.page-nav-controls .page-nav-btn.btn-scrollup:focus-visible {
+    background: var(--accent-gold-hover) !important;
+    background-image: none !important;
+    border-color: var(--accent-gold-hover);
+    color: #ffffff;
+}
+
+/* ===== Privacy: consent checkbox, form notes, policy dialog ===== */
+.oak-consent { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; font-size: .78rem; line-height: 1.6; color: rgba(255,255,255,.75); }
+.oak-consent input { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 3px; accent-color: var(--accent-gold); cursor: pointer; }
+.oak-consent a, .oak-form-note a { color: var(--accent-gold); text-decoration: underline; text-underline-offset: 3px; }
+.oak-form-note { margin: 12px 0 0 !important; font-size: .72rem !important; line-height: 1.5; color: rgba(255,255,255,.5) !important; }
+.oak-privacy-link { cursor: pointer; }
+
+.oak-privacy-overlay {
+    position: fixed; inset: 0; z-index: 100003; display: flex; align-items: center; justify-content: center; padding: 20px;
+    background: rgba(8, 36, 17, .72);
+    opacity: 0; visibility: hidden;
+    transition: opacity .3s ease, visibility 0s linear .3s;
+}
+.oak-privacy-overlay.open { opacity: 1; visibility: visible; transition-delay: 0s; }
+.oak-privacy-box {
+    width: 100%; max-width: 680px; max-height: min(86vh, 760px); display: flex; flex-direction: column;
+    background: var(--bg-white); border-top: 4px solid var(--accent-gold); box-shadow: 0 30px 80px rgba(0,0,0,.4);
+    transform: translateY(14px) scale(.985); opacity: 0; transition: transform .35s ease, opacity .3s ease;
+}
+.oak-privacy-overlay.open .oak-privacy-box { transform: none; opacity: 1; }
+.oak-privacy-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 26px 30px 16px; border-bottom: 1px solid var(--border-color); }
+.oak-privacy-head span { display: block; font-size: .68rem; letter-spacing: 3px; text-transform: uppercase; color: var(--accent-gold); margin-bottom: 4px; }
+.oak-privacy-head h2 { font-size: 1.7rem; color: var(--primary-green); line-height: 1.2; }
+.oak-privacy-x { flex: 0 0 auto; width: 38px; height: 38px; border: 1px solid var(--border-color); border-radius: 50%; background: transparent; color: var(--text-dark); cursor: pointer; transition: var(--transition-fast); }
+.oak-privacy-x:hover, .oak-privacy-x:focus-visible { border-color: var(--accent-gold); color: var(--accent-gold); }
+.oak-privacy-body { padding: 18px 30px 8px; overflow-y: auto; overscroll-behavior: contain; font-size: .86rem; line-height: 1.7; color: var(--text-muted); }
+.oak-privacy-body .oak-pp-lead { padding: 12px 14px; margin-bottom: 8px; background: var(--bg-light); border-left: 3px solid var(--accent-gold); color: var(--text-dark); }
+.oak-privacy-body h3 { font-family: 'Poppins', sans-serif; font-weight: 600; font-size: .8rem; letter-spacing: 1.2px; text-transform: uppercase; color: var(--primary-green); margin: 20px 0 6px; }
+.oak-privacy-body ul { margin: 6px 0 0 18px; }
+.oak-privacy-body li { margin-bottom: 4px; }
+.oak-privacy-body a { color: var(--accent-gold-hover); }
+.oak-privacy-foot { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; padding: 16px 30px 22px; border-top: 1px solid var(--border-color); }
+body.oak-privacy-open { overflow: hidden; }
+@media (max-width: 600px) {
+    .oak-privacy-head, .oak-privacy-body, .oak-privacy-foot { padding-left: 20px; padding-right: 20px; }
+    .oak-privacy-foot .btn-gold, .oak-privacy-foot .btn-outline-dark { width: 100%; justify-content: center; }
+}
+</style>
 </head>
 <body>
     <!-- Glass refraction filter used by the header -->
@@ -4512,6 +4656,9 @@ html.oak-hdr-over-video header, html.oak-hdr-over-video header:not(.scrolled), h
                 <span class="story-title-highlight">Exquisite Furniture & Accents</span>
                 <h2 style="font-size: 3rem; color: var(--text-light);">Curated Collections</h2>
                 <p style="max-width: 600px; margin: 15px auto 0; color: rgba(255,255,255,0.7); font-size: 0.95rem;">Filter our dynamic collections by space category to explore tailored structural luxury.</p>
+                <button type="button" class="btn-outline-gold oak-infinite-toggle" id="oak-infinite-toggle" aria-pressed="false" aria-label="Infinite Scroll" title="Enable automatic loading as you scroll">
+                    <i class="fa-solid fa-arrows-down-to-line" aria-hidden="true"></i><span>Infinite Scroll</span>
+                </button>
             </div>
         </section>
 
@@ -4541,6 +4688,10 @@ html.oak-hdr-over-video header, html.oak-hdr-over-video header:not(.scrolled), h
                 <!-- Products Display -->
                 <div class="products-grid" id="shop-products-container">
                     <!-- Dynamic Loading via Javascript array -->
+                </div>
+                <div class="oak-load-more-wrap" id="oak-load-more-wrap" hidden>
+                    <button type="button" class="btn-outline-dark" id="oak-load-more">Load More <i class="fa-solid fa-arrow-down" aria-hidden="true"></i></button>
+                    <p class="oak-load-more-count" id="oak-load-more-count" aria-live="polite"></p>
                 </div>
             </div>
         </section>
@@ -4805,6 +4956,12 @@ html.oak-hdr-over-video header, html.oak-hdr-over-video header:not(.scrolled), h
                                 <label class="form-label" for="book-notes">Project Properties / Material Focus</label>
                                 <textarea class="form-input" id="book-notes" rows="4" placeholder="Detail any existing sizing dimensions, materials preferred (e.g., Solid Walnut, Brass accents), and visual constraints..."></textarea>
                             </div>
+                            <div class="booking-full-width">
+                                <label class="oak-consent">
+                                    <input type="checkbox" id="book-consent" required>
+                                    <span>I have read the <a href="#privacy" class="oak-privacy-link" data-oak-privacy>Privacy Policy</a> and consent to Oak Furniture &amp; Interiors using my details to respond to this request.</span>
+                                </label>
+                            </div>
                             <div class="booking-full-width" style="text-align: center; margin-top: 20px;">
                                 <button type="submit" class="btn-gold" style="width: 100%; justify-content: center;">Submit Studio Session Booking</button>
                             </div>
@@ -4920,6 +5077,10 @@ html.oak-hdr-over-video header, html.oak-hdr-over-video header:not(.scrolled), h
                     <button type="button" class="oak-theme-swatch" data-oak-tone="slate" aria-pressed="false"><span class="oak-swatch-dot"></span>Slate</button>
                 </div>
 
+                <label class="oak-pref-toggle" for="oak-pref-night">
+                    <span><strong>Night mode</strong><small>Switch to a refined, low-light palette</small></span>
+                    <input type="checkbox" id="oak-pref-night" aria-label="Enable night mode">
+                </label>
                 <label class="oak-pref-toggle" for="oak-pref-compact">
                     <span><strong>Compact collection cards</strong><small>See more pieces at once</small></span>
                     <input type="checkbox" id="oak-pref-compact">
@@ -5079,12 +5240,13 @@ html.oak-hdr-over-video header, html.oak-hdr-over-video header:not(.scrolled), h
                         <input class="newsletter-input" type="email" required placeholder="E.g., design@domain.com">
                         <button class="newsletter-btn" type="submit"><i class="fa-solid fa-paper-plane"></i></button>
                     </form>
+                    <p class="oak-form-note">By subscribing you agree to our <a href="#privacy" class="oak-privacy-link" data-oak-privacy>Privacy Policy</a>.</p>
                 </div>
             </div>
 
             <div class="footer-bottom">
                 <p>&copy; 2026 Oak Furniture & Interiors. All rights reserved.</p>
-                <p>Designed with understated luxury.</p>
+                <p><a href="#privacy" class="oak-privacy-link" data-oak-privacy style="color: rgba(255,255,255,0.6);">Privacy Policy</a> &middot; Designed with understated luxury.</p>
             </div>
         </div>
 
@@ -5468,6 +5630,30 @@ html.oak-hdr-over-video header, html.oak-hdr-over-video header:not(.scrolled), h
         }
 
         /* LIVE SEARCH, SORTING & FILTERING */
+        let shopVisibleCount = 12;
+        let shopFilteredCount = 0;
+        let shopInfiniteEnabled = false;
+        let shopScrollObserver = null;
+
+        function updateShopLoadControls(total, shown) {
+            const wrap = document.getElementById("oak-load-more-wrap");
+            const count = document.getElementById("oak-load-more-count");
+            const button = document.getElementById("oak-load-more");
+            if (wrap) wrap.hidden = shown >= total || total === 0;
+            if (count) count.textContent = "Showing " + shown + " of " + total + " collections";
+            if (button) button.innerHTML = shopInfiniteEnabled ? 'Loading as you scroll <i class="fa-solid fa-arrows-down-to-line" aria-hidden="true"></i>' : 'Load More <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>';
+        }
+
+        function appendNextShopBatch() {
+            const target = document.getElementById("shop-products-container");
+            if (!target || target.children.length >= shopFilteredCount) return;
+            const current = target.children.length;
+            const next = Math.min(current + 12, shopFilteredCount);
+            const slice = window.__oakFilteredProducts || [];
+            for (let i = current; i < next; i++) target.appendChild(createProductCard(slice[i]));
+            updateShopLoadControls(shopFilteredCount, next);
+        }
+
         function applyShopFiltersAndSorting() {
             const searchInput = document.getElementById("shop-search-query");
             const sortSelect = document.getElementById("shop-sort-order");
@@ -5476,42 +5662,58 @@ html.oak-hdr-over-video header, html.oak-hdr-over-video header:not(.scrolled), h
 
             const query = searchInput ? searchInput.value.toLowerCase().trim() : "";
             const sortVal = sortSelect ? sortSelect.value : "default";
-
             let filtered = PRODUCTS_DB.slice();
+            if (activeShopCategory !== "all") filtered = filtered.filter(p => p.category === activeShopCategory);
+            if (query) filtered = filtered.filter(p => p.name.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query));
+            if (sortVal === "name-asc") filtered.sort((a, b) => a.name.localeCompare(b.name));
+            else filtered.sort((a, b) => a.id.localeCompare(b.id));
 
-            // Step 1: Category Filter
-            if (activeShopCategory !== "all") {
-                filtered = filtered.filter(p => p.category === activeShopCategory);
-            }
-
-            // Step 2: Search Query Filter
-            if (query) {
-                filtered = filtered.filter(p => p.name.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query));
-            }
-
-            // Step 3: Sort logic
-            if (sortVal === "name-asc") {
-                filtered.sort((a, b) => a.name.localeCompare(b.name));
-            } else {
-                // Restore default order
-                filtered.sort((a, b) => a.id.localeCompare(b.id));
-            }
-
+            window.__oakFilteredProducts = filtered;
+            shopFilteredCount = filtered.length;
+            shopVisibleCount = 12;
             target.innerHTML = "";
             if (filtered.length === 0) {
                 target.innerHTML = `
                     <div style="grid-column: 1 / -1; text-align: center; padding: 50px 0; color: var(--text-muted);">
                         <i class="fa-solid fa-hourglass-empty" style="font-size: 2.5rem; margin-bottom: 15px; color: var(--accent-gold);"></i>
                         <p>No masterpieces found matching your search options.</p>
-                    </div>
-                `;
+                    </div>`;
+                updateShopLoadControls(0, 0);
                 return;
             }
-
-            filtered.forEach(prod => {
-                target.appendChild(createProductCard(prod));
-            });
+            const initial = filtered.slice(0, 12);
+            initial.forEach(prod => target.appendChild(createProductCard(prod)));
+            updateShopLoadControls(filtered.length, initial.length);
+            if (shopScrollObserver) shopScrollObserver.disconnect();
+            if (shopInfiniteEnabled) observeShopLoadTrigger();
         }
+
+        function observeShopLoadTrigger() {
+            if (!("IntersectionObserver" in window)) return;
+            const sentinel = document.getElementById("oak-load-more-wrap");
+            if (!sentinel || sentinel.hidden) return;
+            if (shopScrollObserver) shopScrollObserver.disconnect();
+            shopScrollObserver = new IntersectionObserver(function (entries) {
+                if (entries.some(entry => entry.isIntersecting) && shopInfiniteEnabled) appendNextShopBatch();
+            }, { rootMargin: "260px 0px" });
+            shopScrollObserver.observe(sentinel);
+        }
+
+        const loadMoreButton = document.getElementById("oak-load-more");
+        if (loadMoreButton) loadMoreButton.addEventListener("click", function () {
+            appendNextShopBatch();
+            if (shopInfiniteEnabled) observeShopLoadTrigger();
+        });
+        const infiniteToggle = document.getElementById("oak-infinite-toggle");
+        if (infiniteToggle) infiniteToggle.addEventListener("click", function () {
+            shopInfiniteEnabled = !shopInfiniteEnabled;
+            infiniteToggle.setAttribute("aria-pressed", shopInfiniteEnabled ? "true" : "false");
+            infiniteToggle.innerHTML = shopInfiniteEnabled
+                ? '<i class="fa-solid fa-infinity" aria-hidden="true"></i><span>Infinite Scroll On</span>'
+                : '<i class="fa-solid fa-arrows-down-to-line" aria-hidden="true"></i><span>Infinite Scroll</span>';
+            if (shopScrollObserver) shopScrollObserver.disconnect();
+            if (shopInfiniteEnabled) observeShopLoadTrigger();
+        });
 
         function filterShopProducts(category, btnElement) {
             document.querySelectorAll("#shop-view .filter-btn").forEach(btn => btn.classList.remove("active-filter"));
@@ -6170,6 +6372,7 @@ html.oak-hdr-over-video header, html.oak-hdr-over-video header:not(.scrolled), h
         function overlayIsOpen() {
             const modal = document.getElementById("generic-system-modal");
             return document.body.classList.contains("oak-open") ||
+                   document.body.classList.contains("oak-privacy-open") ||
                    document.body.classList.contains("menu-open") ||
                    !!(modal && modal.classList.contains("active-modal"));
         }
@@ -6398,7 +6601,8 @@ html.oak-hdr-over-video header, html.oak-hdr-over-video header:not(.scrolled), h
             }
             function startBooking() {
                 state.flow = { step: "service", data: {} };
-                return M("Wonderful — let's set up a design consultation. Which service are you interested in?", { chips: SERVICE_CHIPS });
+                if (window.oakPrivacy) window.oakPrivacy.notice();
+                return M("Wonderful — let's set up a design consultation. I'll ask for your name and phone number so our team can reply; they are used only for this request (see our **Privacy Policy**). Which service are you interested in?", { chips: SERVICE_CHIPS, actions: [{ type: "privacy", label: "Read Privacy Policy" }] });
             }
             function flowStep(c) {
                 const f = state.flow;
@@ -6967,6 +7171,9 @@ html.oak-hdr-over-video header, html.oak-hdr-over-video header:not(.scrolled), h
                     case "booking":
                         send("Book a consultation");
                         break;
+                    case "privacy":
+                        if (window.oakPrivacy) window.oakPrivacy.open();
+                        break;
                     case "bookingform":
                         navigateTo("services", null, { showToast: false });
                         setTimeout(() => {
@@ -7306,23 +7513,52 @@ html.oak-hdr-over-video header, html.oak-hdr-over-video header:not(.scrolled), h
         imageObserver.observe(document.body, { childList: true, subtree: true });
     }
 
-    /* Branded loader: repeat the slower 1.5-second zoom/colour cycle for the full three-second loader display. */
+    /* Branded loader controller.
+       Keep the original three-second logo sequence, wait for the page load when possible,
+       and retain a hard timeout so a slow/broken resource can never trap the visitor. */
     const loader = document.getElementById("oak-page-loader");
-    const loaderMark = document.querySelector(".oak-loader-mark");
+    const loaderMark = loader && loader.querySelector(".oak-loader-mark");
     const loaderLogo = document.getElementById("oak-loader-logo");
-    const reducedMotionQuery = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)");
     if (loaderLogo && loaderMark) {
-        loaderLogo.addEventListener("error", function () { loaderMark.classList.add("logo-unavailable"); }, { once: true });
+        const showWordmarkFallback = function () {
+            loaderMark.classList.add("logo-unavailable");
+        };
+        loaderLogo.addEventListener("error", showWordmarkFallback, { once: true });
+        /* The image may have failed before this late-running script attached its listener. */
+        if (loaderLogo.complete && loaderLogo.naturalWidth === 0) showWordmarkFallback();
     }
+
     if (loader) {
-        const loaderStart = performance.now();
-        const MIN_SHOW = 700, MAX_SHOW = 1800;
+        const loaderStart = (window.performance && performance.now) ? performance.now() : Date.now();
+        const MIN_SHOW = 3000;
+        const MAX_SHOW = 6500;
         let loaderDone = false;
-        const finishLoader = function () { if (loaderDone) return; loaderDone = true; loader.classList.add("is-done"); };
-        const whenReady = function () { window.setTimeout(finishLoader, Math.max(0, MIN_SHOW - (performance.now() - loaderStart))); };
-        if (document.readyState === "complete") whenReady();
-        else window.addEventListener("load", whenReady, { once: true });
-        window.setTimeout(finishLoader, MAX_SHOW);   /* never hold the page longer than this, even on slow networks */
+        let finishTimer = 0;
+
+        const unlockAfterFade = function () {
+            if (typeof window.oakUnlockScroll === "function") window.oakUnlockScroll();
+        };
+        const finishLoader = function () {
+            if (loaderDone) return;
+            loaderDone = true;
+            if (finishTimer) window.clearTimeout(finishTimer);
+            loader.classList.add("is-done");
+            /* Keep scroll locked until the fade has completed, then release it exactly once. */
+            window.setTimeout(unlockAfterFade, 540);
+        };
+        const finishAfterMinimum = function () {
+            const now = (window.performance && performance.now) ? performance.now() : Date.now();
+            const elapsed = now - loaderStart;
+            window.setTimeout(finishLoader, Math.max(0, MIN_SHOW - elapsed));
+        };
+
+        if (document.readyState === "complete") {
+            finishAfterMinimum();
+        } else {
+            window.addEventListener("load", finishAfterMinimum, { once: true });
+        }
+        /* Network or script failures must never leave the overlay or scroll lock stuck. */
+        finishTimer = window.setTimeout(finishLoader, MAX_SHOW);
     }
 
     /* User preferences are small, validated, local-only values; never store personal data. */
@@ -7331,6 +7567,7 @@ html.oak-hdr-over-video header, html.oak-hdr-over-video header:not(.scrolled), h
     const roomSelect = document.getElementById("oak-pref-room");
     const compactInput = document.getElementById("oak-pref-compact");
     const motionInput = document.getElementById("oak-pref-motion");
+    const nightInput = document.getElementById("oak-pref-night");
     const toneButtons = Array.from(document.querySelectorAll("[data-oak-tone]"));
     const status = document.getElementById("oak-pref-status");
     const palettes = Object.freeze({
@@ -7340,7 +7577,7 @@ html.oak-hdr-over-video header, html.oak-hdr-over-video header:not(.scrolled), h
         slate: { accent: "#94a6bb", hover: "#788ba2" }
     });
     const rooms = new Set(["living", "bedroom", "dining", "office"]);
-    const prefs = { tone: "brass", room: "living", compact: false, reduceMotion: !!(reducedMotionQuery && reducedMotionQuery.matches) };
+    const prefs = { tone: "brass", room: "living", compact: false, reduceMotion: !!(reducedMotionQuery && reducedMotionQuery.matches), nightMode: false };
 
     function showStatus(message) { if (status) status.textContent = message; }
     function readPrefs() {
@@ -7351,6 +7588,7 @@ html.oak-hdr-over-video header, html.oak-hdr-over-video header:not(.scrolled), h
             if (rooms.has(saved.room)) prefs.room = saved.room;
             prefs.compact = saved.compact === true;
             if (typeof saved.reduceMotion === "boolean") prefs.reduceMotion = saved.reduceMotion;
+            prefs.nightMode = saved.nightMode === true;
         } catch (_) { /* Storage may be disabled in private or restricted browsing modes. */ }
     }
     function applyPrefs(persist) {
@@ -7358,11 +7596,13 @@ html.oak-hdr-over-video header, html.oak-hdr-over-video header:not(.scrolled), h
         root.style.setProperty("--accent-gold", palette.accent);
         root.style.setProperty("--accent-gold-hover", palette.hover);
         root.classList.toggle("oak-compact-grid", prefs.compact);
+        root.classList.toggle("oak-night-mode", prefs.nightMode);
         root.classList.toggle("oak-reduced-motion", prefs.reduceMotion);
         root.classList.toggle("oak-motion-override", !prefs.reduceMotion);
         if (roomSelect) roomSelect.value = prefs.room;
         if (compactInput) compactInput.checked = prefs.compact;
         if (motionInput) motionInput.checked = prefs.reduceMotion;
+        if (nightInput) nightInput.checked = prefs.nightMode;
         toneButtons.forEach(function (button) { button.setAttribute("aria-pressed", button.getAttribute("data-oak-tone") === prefs.tone ? "true" : "false"); });
         if (persist) {
             try {
@@ -7386,16 +7626,18 @@ html.oak-hdr-over-video header, html.oak-hdr-over-video header:not(.scrolled), h
     if (roomSelect) roomSelect.addEventListener("change", function () { if (rooms.has(roomSelect.value)) prefs.room = roomSelect.value; });
     if (compactInput) compactInput.addEventListener("change", function () { prefs.compact = compactInput.checked; applyPrefs(false); });
     if (motionInput) motionInput.addEventListener("change", function () { prefs.reduceMotion = motionInput.checked; applyPrefs(false); });
+    if (nightInput) nightInput.addEventListener("change", function () { prefs.nightMode = nightInput.checked; applyPrefs(false); showStatus(prefs.nightMode ? "Night mode is on. Save preferences to keep this choice." : "Night mode is off. Save preferences to keep this choice."); });
     const saveBtn = document.getElementById("oak-pref-save");
     if (saveBtn) saveBtn.addEventListener("click", function () {
         if (roomSelect && rooms.has(roomSelect.value)) prefs.room = roomSelect.value;
         if (compactInput) prefs.compact = compactInput.checked;
         if (motionInput) prefs.reduceMotion = motionInput.checked;
+        if (nightInput) prefs.nightMode = nightInput.checked;
         applyPrefs(true);
     });
     const resetBtn = document.getElementById("oak-pref-reset");
     if (resetBtn) resetBtn.addEventListener("click", function () {
-        prefs.tone = "brass"; prefs.room = "living"; prefs.compact = false;
+        prefs.tone = "brass"; prefs.room = "living"; prefs.compact = false; prefs.nightMode = false;
         prefs.reduceMotion = !!(reducedMotionQuery && reducedMotionQuery.matches);
         applyPrefs(true);
     });
@@ -7448,7 +7690,7 @@ html.oak-hdr-over-video header, html.oak-hdr-over-video header:not(.scrolled), h
     "use strict";
     var header = document.getElementById("site-header");
     if (!header) return;
-    var ticking = false, lastState = null, lastRun = 0;
+    var ticking = false, lastState = null, lastRun = 0, lastToggle = 0;
 
     function parseColor(str) {
         var m = /rgba?\(([^)]+)\)/.exec(str || "");
@@ -7479,10 +7721,18 @@ html.oak-hdr-over-video header, html.oak-hdr-over-video header:not(.scrolled), h
         var rect = header.getBoundingClientRect();
         var y = Math.min(window.innerHeight - 1, Math.max(0, rect.bottom + 4));
         var w = window.innerWidth;
-        var votes = [0.2, 0.5, 0.8].map(function (f) { return isDarkAt(w * f, y); });
-        var dark = votes.filter(Boolean).length >= 2;
-        if (dark !== lastState) {
+        var votes = [0.15, 0.35, 0.5, 0.65, 0.85].map(function (f) { return isDarkAt(w * f, y); });
+        var darkCount = votes.filter(Boolean).length;
+        /* Hysteresis: switch only on a clear verdict (all dark / none dark). A mixed reading means the
+           boundary between two sections is under the header, so the current look is kept. */
+        var dark = lastState;
+        if (darkCount === votes.length) dark = true;
+        else if (darkCount === 0) dark = false;
+        else if (dark === null) dark = darkCount >= 3;
+        /* Minimum dwell time so the colours can never flip back and forth while the boundary is passing. */
+        if (dark !== lastState && (lastState === null || Date.now() - lastToggle > 500)) {
             lastState = dark;
+            lastToggle = Date.now();
             header.classList.toggle("on-dark", dark);
         }
     }
@@ -8072,7 +8322,10 @@ html.oak-hdr-over-video header, html.oak-hdr-over-video header:not(.scrolled), h
         ticking = false;
         var r = frame.getBoundingClientRect();
         var hb = header.getBoundingClientRect().bottom;
-        var over = r.height > 0 && r.top < hb && r.bottom > 0;
+        /* Hysteresis band: enter only when clearly overlapping, leave only when clearly clear (no edge flicker). */
+        var over = on
+            ? (r.height > 0 && r.top < hb + 16 && r.bottom > -16)
+            : (r.height > 0 && r.top < hb - 16 && r.bottom > 16);
         if (over !== on) { on = over; root.classList.toggle("oak-hdr-over-video", over); }
     }
     function queue() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
@@ -8166,6 +8419,184 @@ html.oak-hdr-over-video header, html.oak-hdr-over-video header:not(.scrolled), h
     window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(function () { if (sec.clientWidth) build(); }, 150); }, { passive: true });
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (sec.clientWidth) build(); });
     build();
+})();
+</script>
+<!-- PRIVACY POLICY DIALOG -->
+<div class="oak-privacy-overlay" id="oak-privacy-overlay" aria-hidden="true">
+    <div class="oak-privacy-box" role="dialog" aria-modal="true" aria-labelledby="oak-privacy-title" tabindex="-1" id="oak-privacy-box">
+        <div class="oak-privacy-head">
+            <div><span>Your privacy matters</span><h2 id="oak-privacy-title">Privacy Policy</h2></div>
+            <button type="button" class="oak-privacy-x" id="oak-privacy-x" aria-label="Close privacy policy"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="oak-privacy-body">
+            <p class="oak-pp-lead">Before you share personal details with us, please read how we handle them. Please do <strong>not</strong> share payment card numbers, passwords, ID numbers or other highly sensitive information through this website or the chat assistant.</p>
+
+            <h3>1. Who we are</h3>
+            <p>This website is operated by Oak Furniture &amp; Interiors ("Oak", "we", "us"), a furniture and interior design business. We are the party responsible for the personal information described below.</p>
+
+            <h3>2. Information we collect</h3>
+            <ul>
+                <li><strong>Details you give us:</strong> name, email address, phone or WhatsApp number, preferred session date, and project notes (such as room size, materials or style preferences) when you use the booking form, the chat assistant, the newsletter sign-up or WhatsApp links.</li>
+                <li><strong>Your preferences on this device:</strong> display choices (accent colour, room, compact cards, reduced motion), chat history for the current visit, and your acknowledgement of this policy.</li>
+                <li><strong>Technical data:</strong> your IP address and browser details are visible to the third-party services listed in section 5 when their content loads.</li>
+            </ul>
+
+            <h3>3. How we use it</h3>
+            <ul>
+                <li>To reply to your enquiry, arrange consultations and quote for furniture or design work.</li>
+                <li>To send style recommendations and catalogue news, only if you subscribed to the newsletter.</li>
+                <li>To operate, secure and improve the website.</li>
+            </ul>
+            <p>We do not sell your personal information.</p>
+
+            <h3>4. Your consent</h3>
+            <p>We process the details you submit because you choose to provide them and ask us to respond. You may withdraw consent at any time by contacting us (section 10); this does not affect what was done before withdrawal.</p>
+
+            <h3>5. Sharing and third parties</h3>
+            <ul>
+                <li><strong>WhatsApp (Meta):</strong> booking and enquiry forms open WhatsApp with a pre-filled message. Once sent, it is handled under WhatsApp's own terms and privacy policy.</li>
+                <li><strong>Content providers:</strong> fonts, icons, images and video are loaded from third-party services (for example Google Fonts, cdnjs, Unsplash and image hosts), which may receive your IP address and browser information.</li>
+                <li><strong>Voice input:</strong> if you use the microphone in the chat, your browser may send audio to its speech-recognition provider.</li>
+                <li><strong>Social links:</strong> Instagram, Facebook and Pinterest are separate services with their own policies.</li>
+                <li>We may also disclose information where required by law.</li>
+            </ul>
+
+            <h3>6. Storage on your device</h3>
+            <p>We use your browser's local and session storage for the preferences, chat history and policy acknowledgement described above. Nothing sensitive is stored there, and you can clear it at any time through your browser settings or the "Reset" option in the menu.</p>
+
+            <h3>7. Retention</h3>
+            <p>We keep enquiry and booking details only as long as needed to respond to you, deliver the work you request and meet legal or accounting obligations, then delete or anonymise them.</p>
+
+            <h3>8. Security</h3>
+            <p>We take reasonable steps to protect your information. No method of transmission over the internet is completely secure, so please share only what is necessary.</p>
+
+            <h3>9. Your rights</h3>
+            <p>Depending on where you live, you may have the right to access, correct, delete or restrict the use of your personal information, to object to its use, and to withdraw consent or unsubscribe at any time.</p>
+
+            <h3>10. Children</h3>
+            <p>This website is not directed at children, and we do not knowingly collect personal information from anyone under 18.</p>
+
+            <h3>11. Changes to this policy</h3>
+            <p>We may update this policy from time to time. The latest version is always available from the "Privacy Policy" link on this website. Last updated: 8 November 2026.</p>
+
+            <h3>12. Contact us</h3>
+            <p>For any privacy request or question, message us on WhatsApp at <a href="https://wa.me/255655761313" target="_blank" rel="noopener noreferrer">+255 655 761 313</a>.</p>
+        </div>
+        <div class="oak-privacy-foot">
+            <button type="button" class="btn-outline-dark" id="oak-privacy-close">Close</button>
+            <button type="button" class="btn-gold" id="oak-privacy-accept">I understand &amp; continue</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* Seamless scroll lock during page load (released by the loader once it has faded out) */
+(function () {
+    "use strict";
+    var root = document.documentElement;
+    var locked = root.classList.contains("oak-loading");
+    function block(e) { if (locked) e.preventDefault(); }
+    function blockKeys(e) {
+        if (!locked) return;
+        if ([32, 33, 34, 35, 36, 37, 38, 39, 40].indexOf(e.keyCode) > -1) e.preventDefault();
+    }
+    window.addEventListener("wheel", block, { passive: false });
+    window.addEventListener("touchmove", block, { passive: false });
+    window.addEventListener("keydown", blockKeys, true);
+    window.oakUnlockScroll = function () {
+        if (!locked) return;
+        locked = false;
+        root.classList.remove("oak-loading");
+    };
+    /* Safety net: never leave the page locked */
+    window.setTimeout(window.oakUnlockScroll, 7500);
+})();
+</script>
+
+<script>
+/* Privacy policy: shown before personal details are shared (booking form, newsletter, chat booking) */
+(function () {
+    "use strict";
+    var KEY = "oak-privacy-ack-v1";
+    var overlay = document.getElementById("oak-privacy-overlay");
+    var box = document.getElementById("oak-privacy-box");
+    var acceptBtn = document.getElementById("oak-privacy-accept");
+    var closeBtn = document.getElementById("oak-privacy-close");
+    var xBtn = document.getElementById("oak-privacy-x");
+    if (!overlay || !box) return;
+    var returnFocus = null, pendingField = null;
+
+    function acknowledged() { try { return window.localStorage.getItem(KEY) === "1"; } catch (e) { return !!window.__oakPrivacyAck; } }
+    function remember() { window.__oakPrivacyAck = true; try { window.localStorage.setItem(KEY, "1"); } catch (e) { /* storage unavailable */ } }
+
+    function open() {
+        returnFocus = document.activeElement;
+        overlay.classList.add("open");
+        overlay.setAttribute("aria-hidden", "false");
+        document.body.classList.add("oak-privacy-open");
+        acceptBtn.textContent = acknowledged() ? "Got it" : "I understand & continue";
+        window.setTimeout(function () { box.focus({ preventScroll: true }); var body = box.querySelector(".oak-privacy-body"); if (body) body.scrollTop = 0; }, 30);
+    }
+    function close() {
+        overlay.classList.remove("open");
+        overlay.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("oak-privacy-open");
+        var target = pendingField || returnFocus;
+        pendingField = null;
+        if (target && target.focus && document.contains(target)) { try { target.focus({ preventScroll: true }); } catch (e) { /* ignore */ } }
+    }
+    function accept() {
+        remember();
+        close();
+    }
+    function notice() { if (!acknowledged()) open(); }
+
+    window.oakPrivacy = { open: open, close: close, notice: notice, acknowledged: acknowledged };
+
+    acceptBtn.addEventListener("click", accept);
+    closeBtn.addEventListener("click", function () { pendingField = null; close(); });
+    xBtn.addEventListener("click", function () { pendingField = null; close(); });
+    overlay.addEventListener("click", function (e) { if (e.target === overlay) { pendingField = null; close(); } });
+    document.addEventListener("keydown", function (e) {
+        if (!overlay.classList.contains("open")) return;
+        if (e.key === "Escape") { e.stopPropagation(); pendingField = null; close(); }
+        if (e.key === "Tab") {   /* keep keyboard focus inside the dialog */
+            var f = Array.prototype.slice.call(box.querySelectorAll("button, a[href]")).filter(function (n) { return n.offsetParent !== null; });
+            if (!f.length) return;
+            var first = f[0], last = f[f.length - 1];
+            if (e.shiftKey && (document.activeElement === first || document.activeElement === box)) { e.preventDefault(); last.focus(); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        }
+    }, true);
+
+    /* Any "Privacy Policy" link opens the dialog */
+    document.addEventListener("click", function (e) {
+        var link = e.target.closest && e.target.closest("[data-oak-privacy]");
+        if (!link) return;
+        e.preventDefault();
+        open();
+    });
+
+    /* Gate 1: the moment someone starts typing personal details into the booking form or newsletter */
+    document.addEventListener("focusin", function (e) {
+        if (acknowledged() || overlay.classList.contains("open")) return;
+        var t = e.target;
+        if (!t || !t.closest) return;
+        if (t.matches("input, textarea, select") && t.closest("#bespoke-booking-form, .newsletter-form")) {
+            pendingField = t;
+            open();
+        }
+    });
+
+    /* Gate 2: never submit personal details before the policy has been acknowledged */
+    document.addEventListener("submit", function (e) {
+        var f = e.target;
+        if (!f || !f.matches || !f.matches("#bespoke-booking-form, .newsletter-form")) return;
+        if (acknowledged()) return;
+        e.preventDefault();
+        e.stopPropagation();
+        open();
+    }, true);
 })();
 </script>
 </body>
