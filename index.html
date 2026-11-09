@@ -3261,9 +3261,19 @@
 
         /* Collections progressive browsing controls */
         .oak-infinite-toggle { margin-top: 24px; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 44px; padding: 11px 22px; font-size: .72rem; letter-spacing: 1.8px; }
-        .oak-infinite-toggle[aria-pressed="true"] { background: var(--accent-gold); color: var(--secondary-dark); border-color: var(--accent-gold); }
+        .oak-infinite-toggle { gap: 14px; }
+        .oak-switch-track { position: relative; flex: 0 0 auto; width: 44px; height: 24px; border-radius: 999px; border: 1px solid var(--accent-gold); background: rgba(255,255,255,.08); transition: background .25s ease; }
+        .oak-switch-track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--accent-gold); transition: transform .25s ease, background .25s ease; }
+        .oak-infinite-toggle[aria-checked="true"] .oak-switch-track { background: var(--accent-gold); }
+        .oak-infinite-toggle[aria-checked="true"] .oak-switch-track::after { transform: translateX(20px); background: #fff; }
+        .oak-switch-icon { display: none; color: var(--accent-gold); font-size: 1.05rem; }
+        .oak-infinite-toggle[aria-checked="true"] .oak-switch-icon { display: inline-block; animation: oakInfPop .3s ease; }
+        @keyframes oakInfPop { from { opacity: 0; transform: scale(.4) rotate(-90deg); } to { opacity: 1; transform: none; } }
+        .oak-switch-state { min-width: 2.2em; text-align: left; font-weight: 600; }
+        .oak-infinite-toggle:focus-visible .oak-switch-track { outline: 2px solid var(--accent-gold); outline-offset: 3px; }
         .oak-load-more-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 38px 0 8px; }
         .oak-load-more-wrap[hidden] { display: none; }
+        .oak-infinite-toggle[hidden] { display: none; }
         .oak-load-more-wrap button { min-width: 190px; display: inline-flex; align-items: center; justify-content: center; gap: 12px; }
         .oak-load-more-count { color: var(--text-muted); font-size: .7rem; letter-spacing: 1px; text-transform: uppercase; }
         @media (max-width: 600px) { .oak-infinite-toggle { margin-top: 20px; } .oak-load-more-wrap { padding-top: 28px; } }
@@ -4332,7 +4342,7 @@ html.oak-loading, html.oak-loading body {
 .oak-privacy-box {
     width: 100%; max-width: 680px; max-height: min(86vh, 760px); display: flex; flex-direction: column;
     background: var(--bg-white); border-top: 4px solid var(--accent-gold); box-shadow: 0 30px 80px rgba(0,0,0,.4);
-    transform: translateY(14px) scale(.985); opacity: 0; transition: transform .35s ease, opacity .3s ease;
+    transform: translateY(34px) scale(.93); opacity: 0; transition: transform .6s cubic-bezier(.34,1.56,.64,1), opacity .3s ease;
 }
 .oak-privacy-overlay.open .oak-privacy-box { transform: none; opacity: 1; }
 .oak-privacy-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 26px 30px 16px; border-bottom: 1px solid var(--border-color); }
@@ -4352,6 +4362,267 @@ body.oak-privacy-open { overflow: hidden; }
     .oak-privacy-head, .oak-privacy-body, .oak-privacy-foot { padding-left: 20px; padding-right: 20px; }
     .oak-privacy-foot .btn-gold, .oak-privacy-foot .btn-outline-dark { width: 100%; justify-content: center; }
 }
+</style>
+<style id="oak-v10">
+/* ================= Oak Man — premium redesign (white & gold, springy motion shared with the Privacy dialog) ================= */
+.oak-assistant-shell { --oak-spring: cubic-bezier(.34,1.56,.64,1); }
+
+/* Window chrome */
+.oak-assistant-shell .oak-chat-popup {
+    border: 1px solid rgba(197,160,89,.35);
+    border-radius: 26px;
+    box-shadow: 0 40px 90px rgba(8,36,17,.38), 0 0 0 1px rgba(255,255,255,.6) inset, 0 0 0 4px rgba(197,160,89,.10);
+}
+.oak-chat-header {
+    position: relative;
+    padding: 16px 16px 16px 18px;
+    background:
+        radial-gradient(120% 160% at 0% 0%, rgba(255,255,255,.22) 0%, transparent 55%),
+        linear-gradient(135deg, #c9a45c 0%, #a67c2e 52%, #7d5a17 100%);
+    box-shadow: 0 6px 18px rgba(125,90,23,.28);
+    z-index: 2;
+}
+.oak-chat-header::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.65), transparent);
+}
+.oak-avatar { width: 46px; height: 46px; box-shadow: 0 0 0 2px rgba(255,255,255,.9), 0 0 0 5px rgba(255,255,255,.22), 0 6px 14px rgba(0,0,0,.18); }
+.oak-chat-title strong { font-size: 1.18rem; letter-spacing: .6px; }
+.oak-status-dot { box-shadow: 0 0 0 3px rgba(75,224,138,.28); animation: oakOnline 2.4s ease-in-out infinite; }
+@keyframes oakOnline { 0%,100% { box-shadow: 0 0 0 2px rgba(75,224,138,.35); } 50% { box-shadow: 0 0 0 6px rgba(75,224,138,0); } }
+.oak-icon-btn { width: 38px; height: 38px; backdrop-filter: blur(4px); }
+.oak-icon-btn:hover, .oak-icon-btn:focus-visible { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(0,0,0,.2); }
+#oak-chat-close:hover, #oak-chat-close:focus-visible { transform: rotate(90deg); }
+
+/* Conversation */
+.oak-chat-messages {
+    background:
+        radial-gradient(520px 220px at 100% 0%, rgba(197,160,89,.10), transparent 70%),
+        radial-gradient(420px 220px at 0% 100%, rgba(8,36,17,.05), transparent 70%),
+        var(--oak-cream);
+}
+.oak-message.bot { border-radius: 20px 20px 20px 6px; box-shadow: 0 4px 14px rgba(60,44,10,.07); }
+.oak-message.user { border-radius: 20px 20px 6px 20px; background: linear-gradient(135deg, #c5a059 0%, #8f6a22 100%); }
+.oak-mini-avatar { box-shadow: 0 3px 8px rgba(138,102,31,.35); }
+.oak-action, .oak-chip { box-shadow: 0 2px 8px rgba(138,102,31,.10); }
+.oak-action:hover, .oak-chip:hover, .oak-action:focus-visible, .oak-chip:focus-visible { transform: translateY(-1px); box-shadow: 0 8px 18px rgba(138,102,31,.28); }
+.oak-card { border-radius: 16px; transition: transform .35s var(--oak-spring), box-shadow .3s ease; }
+.oak-card:hover { transform: translateY(-3px); box-shadow: 0 14px 28px rgba(60,44,10,.16); }
+.oak-chat-chips { padding: 12px 16px; background: linear-gradient(180deg, #fff, #fffdf8); }
+.oak-chat-input { padding: 12px 16px 8px; }
+.oak-chat-input input { height: 46px; }
+.oak-send { background: linear-gradient(135deg, #c5a059, #8f6a22); border-color: #8f6a22; box-shadow: 0 6px 16px rgba(138,102,31,.35); }
+.oak-send:active, .oak-round-btn:active { transform: scale(.92); }
+
+/* Launcher: soft spring on press */
+.oak-fab { transition: transform .35s var(--oak-spring), box-shadow .3s ease; }
+.oak-fab:active { transform: scale(.9); }
+
+/* ---------- Desktop / tablet: bounce open and closed, exactly like the Privacy dialog ---------- */
+.oak-assistant-shell .oak-chat-popup.open { animation: oakBounceIn .65s both; }
+.oak-assistant-shell .oak-chat-popup.closing { animation: oakBounceOut .4s both; }
+@keyframes oakBounceIn {
+    0%   { opacity: 0; transform: translate(-50%, calc(-50% + 56px)) scale(.9); animation-timing-function: cubic-bezier(.2,.9,.3,1); }
+    50%  { opacity: 1; transform: translate(-50%, calc(-50% - 9px)) scale(1.014); animation-timing-function: ease-in-out; }
+    75%  { transform: translate(-50%, calc(-50% + 3px)) scale(.997); animation-timing-function: ease-in-out; }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+@keyframes oakBounceOut {
+    0%   { opacity: 1; transform: translate(-50%, -50%) scale(1); animation-timing-function: ease-out; }
+    28%  { opacity: 1; transform: translate(-50%, calc(-50% - 8px)) scale(1.012); animation-timing-function: cubic-bezier(.5,0,.9,.5); }
+    100% { opacity: 0; transform: translate(-50%, calc(-50% + 48px)) scale(.9); }
+}
+.oak-backdrop { transition: opacity .45s ease, visibility 0s linear .45s; }
+
+/* Content reveals as the window settles (class set by script for ~2s after opening) */
+.oak-chat-popup.intro .oak-chat-header > * { animation: oakRise .55s var(--oak-spring) both; }
+.oak-chat-popup.intro .oak-chat-header > :nth-child(1) { animation-delay: .30s; }
+.oak-chat-popup.intro .oak-chat-header > :nth-child(2) { animation-delay: .36s; }
+.oak-chat-popup.intro .oak-chat-header > :nth-child(3) { animation-delay: .42s; }
+.oak-chat-popup.intro .oak-chat-header > :nth-child(4) { animation-delay: .48s; }
+.oak-chat-popup.intro .oak-chat-header > :nth-child(5) { animation-delay: .54s; }
+.oak-chat-popup.intro .oak-chip,
+.oak-chat-popup.intro .oak-action { animation: oakRise .55s var(--oak-spring) both; animation-delay: calc(.5s + var(--i, 0) * .07s); }
+.oak-chat-popup.intro .oak-chip:nth-child(1) { --i: 0; } .oak-chat-popup.intro .oak-chip:nth-child(2) { --i: 1; }
+.oak-chat-popup.intro .oak-chip:nth-child(3) { --i: 2; } .oak-chat-popup.intro .oak-chip:nth-child(4) { --i: 3; }
+.oak-chat-popup.intro .oak-chip:nth-child(5) { --i: 4; } .oak-chat-popup.intro .oak-chip:nth-child(6) { --i: 5; }
+.oak-chat-popup.intro .oak-chip:nth-child(n+7) { --i: 6; }
+.oak-chat-popup.intro .oak-chat-input, .oak-chat-popup.intro .oak-chat-foot { animation: oakRise .5s ease both; animation-delay: .6s; }
+@keyframes oakRise { from { opacity: 0; transform: translateY(16px) scale(.96); } to { opacity: 1; transform: none; } }
+
+/* ---------- Phones: golden shape is thrown up, then the white sheet rises and covers it ---------- */
+.oak-throw {
+    display: none; position: fixed; left: 0; right: 0; bottom: 0; height: 100vh; height: 100dvh;
+    pointer-events: none; z-index: 50; will-change: transform;
+    background:
+        radial-gradient(120% 60% at 50% 0%, rgba(255,255,255,.35), transparent 60%),
+        linear-gradient(180deg, #ecd69b 0%, #c5a059 38%, #8a661f 100%);
+    border-radius: 50% 50% 0 0 / 16% 16% 0 0;
+    transform: translateY(112%);
+}
+@media (max-width: 600px) {
+    .oak-throw { display: block; }
+    .oak-throw.go   { animation: oakThrowUp .62s both; }
+    .oak-throw.back { animation: oakThrowDown .46s .08s both; }
+
+    .oak-assistant-shell .oak-chat-popup {
+        left: 0; right: 0; top: 12px; bottom: auto;
+        width: 100%; max-width: 100%;
+        height: calc(100vh - 12px); height: calc(100dvh - 12px); max-height: none;
+        border: none; border-radius: 28px 28px 0 0;
+        box-shadow: 0 -14px 40px rgba(60,44,10,.25);
+        transform: translateY(105%);
+        transform-origin: bottom center;
+    }
+    .oak-assistant-shell .oak-chat-popup.open    { transform: none; animation: oakSheetUp .72s .2s both; }
+    .oak-assistant-shell .oak-chat-popup.closing { transform: translateY(105%); animation: oakSheetDown .42s both; }
+    .oak-chat-header { padding-top: calc(16px + env(safe-area-inset-top)); border-radius: 28px 28px 0 0; }
+    .oak-chat-popup.intro .oak-chat-header > :nth-child(1) { animation-delay: .78s; }
+    .oak-chat-popup.intro .oak-chat-header > :nth-child(2) { animation-delay: .84s; }
+    .oak-chat-popup.intro .oak-chat-header > :nth-child(3) { animation-delay: .90s; }
+    .oak-chat-popup.intro .oak-chat-header > :nth-child(4) { animation-delay: .96s; }
+    .oak-chat-popup.intro .oak-chat-header > :nth-child(5) { animation-delay: 1.02s; }
+    .oak-chat-popup.intro .oak-chip, .oak-chat-popup.intro .oak-action { animation-delay: calc(.95s + var(--i, 0) * .08s); }
+    .oak-chat-popup.intro .oak-chat-input, .oak-chat-popup.intro .oak-chat-foot { animation-delay: 1.05s; }
+    .oak-chat-chips { padding: 12px 14px; }
+    .oak-chip { min-height: 40px; padding: 9px 17px; }
+    .oak-action { min-height: 42px; }
+    .oak-chat-input { padding: 12px 14px 6px; }
+    .oak-card { flex-basis: 70vw; max-width: 260px; }
+    .oak-chat-messages { padding: 18px 14px 12px; }
+}
+@keyframes oakThrowUp {
+    0%   { transform: translateY(112%); border-radius: 50% 50% 0 0 / 16% 16% 0 0; animation-timing-function: cubic-bezier(.15,.85,.25,1); }
+    72%  { transform: translateY(-1.5%); border-radius: 44% 44% 0 0 / 7% 7% 0 0; animation-timing-function: ease-in-out; }
+    100% { transform: translateY(0); border-radius: 28px 28px 0 0 / 28px 28px 0 0; }
+}
+@keyframes oakThrowDown {
+    0%   { transform: translateY(0); border-radius: 28px 28px 0 0; animation-timing-function: cubic-bezier(.5,0,.9,.5); }
+    100% { transform: translateY(112%); border-radius: 50% 50% 0 0 / 16% 16% 0 0; }
+}
+@keyframes oakSheetUp {
+    0%   { transform: translateY(105%); animation-timing-function: cubic-bezier(.2,.85,.3,1); }
+    68%  { transform: translateY(-9px); animation-timing-function: ease-in-out; }
+    84%  { transform: translateY(4px);  animation-timing-function: ease-in-out; }
+    100% { transform: translateY(0); }
+}
+@keyframes oakSheetDown {
+    0%   { transform: translateY(0); animation-timing-function: cubic-bezier(.5,0,.9,.5); }
+    22%  { transform: translateY(-8px); animation-timing-function: cubic-bezier(.55,0,.9,.5); }
+    100% { transform: translateY(105%); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .oak-assistant-shell .oak-chat-popup.open { animation: oakFadeIn .2s both !important; }
+    .oak-assistant-shell .oak-chat-popup.closing { animation: oakFadeOut .2s both !important; }
+    .oak-throw.go, .oak-throw.back { animation-duration: .01s !important; animation-delay: 0s !important; }
+    .oak-chat-popup.intro * { animation: none !important; }
+}
+
+/* ===== Rectangular, like the Privacy dialog: square corners, gold top rule, same shadow ===== */
+.oak-assistant-shell .oak-chat-popup,
+.oak-assistant-shell .oak-chat-popup.open,
+.oak-assistant-shell .oak-chat-popup.closing { border-radius: 0 !important; }
+.oak-assistant-shell .oak-chat-popup {
+    border: none; border-top: 4px solid var(--oak-gold);
+    box-shadow: 0 30px 80px rgba(0,0,0,.4);
+}
+.oak-chat-header { border-radius: 0 !important; }
+.oak-message.bot, .oak-message.user, .oak-typing { border-radius: 2px !important; }
+.oak-card { border-radius: 0; }
+.oak-card-btns button { border-radius: 0; }
+.oak-action, .oak-chip, .oak-chat-input input, .oak-round-btn { border-radius: 0; }
+.oak-throw { border-radius: 0 !important; }
+@media (max-width: 600px) {
+    .oak-assistant-shell .oak-chat-popup { border: none; border-top: 4px solid var(--oak-gold); box-shadow: 0 -14px 40px rgba(0,0,0,.3); top: 14px; height: calc(100vh - 14px); height: calc(100dvh - 14px); }
+    .oak-chat-header { border-radius: 0 !important; }
+}
+@keyframes oakThrowUp {
+    0%   { transform: translateY(112%); animation-timing-function: cubic-bezier(.15,.85,.25,1); }
+    72%  { transform: translateY(-1.5%); animation-timing-function: ease-in-out; }
+    100% { transform: translateY(0); }
+}
+@keyframes oakThrowDown {
+    0%   { transform: translateY(0); animation-timing-function: cubic-bezier(.5,0,.9,.5); }
+    100% { transform: translateY(112%); }
+}
+</style>
+<style id="oak-v11">
+/* ================= Oak Man as a rectangular side panel: slides in from the left, square like the Privacy dialog ================= */
+.oak-assistant-shell { --oak-panel-w: 440px; }
+.oak-assistant-shell .oak-chat-popup {
+    left: -20px; right: auto; top: 0; bottom: 0;
+    width: calc(var(--oak-panel-w) + 20px); max-width: none;
+    height: 100vh; height: 100dvh; max-height: none;
+    padding-left: 20px; box-sizing: border-box;
+    border: none; border-top: 4px solid var(--oak-gold); border-right: 3px solid var(--oak-gold);
+    border-radius: 0;
+    box-shadow: 28px 0 70px rgba(8,36,17,.35);
+    transform: translateX(-104%); transform-origin: left center;
+    animation: none;
+}
+.oak-assistant-shell .oak-chat-popup.open    { transform: none; animation: oakPanelIn .6s both; }
+.oak-assistant-shell .oak-chat-popup.closing { transform: translateX(-104%); animation: oakPanelOut .42s both; }
+.oak-backdrop { backdrop-filter: blur(3px); background: rgba(8,36,17,.45); }
+.oak-assistant-shell .oak-chat-messages { padding: 20px 18px; }
+.oak-assistant-shell .oak-row.bot .oak-col { max-width: 100%; }
+.oak-assistant-shell .oak-message.bot { max-width: 94%; }
+@keyframes oakPanelIn {
+    0%   { transform: translateX(-104%); animation-timing-function: cubic-bezier(.2,.85,.3,1); }
+    68%  { transform: translateX(14px);  animation-timing-function: ease-in-out; }
+    84%  { transform: translateX(-4px);  animation-timing-function: ease-in-out; }
+    100% { transform: translateX(0); }
+}
+@keyframes oakPanelOut {
+    0%   { transform: translateX(0); animation-timing-function: ease-out; }
+    24%  { transform: translateX(12px); animation-timing-function: cubic-bezier(.55,0,.9,.5); }
+    100% { transform: translateX(-104%); }
+}
+.oak-chat-popup.intro .oak-chat-header > :nth-child(1) { animation-delay: .28s; }
+.oak-chat-popup.intro .oak-chat-header > :nth-child(2) { animation-delay: .34s; }
+.oak-chat-popup.intro .oak-chat-header > :nth-child(3) { animation-delay: .40s; }
+.oak-chat-popup.intro .oak-chat-header > :nth-child(4) { animation-delay: .46s; }
+.oak-chat-popup.intro .oak-chat-header > :nth-child(5) { animation-delay: .52s; }
+.oak-chat-popup.intro .oak-chip, .oak-chat-popup.intro .oak-action { animation-delay: calc(.45s + var(--i, 0) * .07s); }
+.oak-chat-popup.intro .oak-chat-input, .oak-chat-popup.intro .oak-chat-foot { animation-delay: .55s; }
+.oak-chat-chips { flex-wrap: wrap; overflow-x: visible; max-height: 38%; overflow-y: auto; }
+/* nothing floats over the panel while it is open */
+body.oak-open .right-floating-container, body.oak-open .page-nav-controls { display: none; }
+
+@media (max-width: 600px) {
+    .oak-assistant-shell { --oak-panel-w: 88vw; }
+    .oak-assistant-shell .oak-chat-popup {
+        left: -20px; right: auto; top: 0; bottom: 0;
+        width: calc(88vw + 20px); height: 100vh; height: 100dvh;
+        border-radius: 0; border-top: 4px solid var(--oak-gold); border-right: 3px solid var(--oak-gold);
+        box-shadow: 18px 0 50px rgba(8,36,17,.4);
+        transform: translateX(-104%);
+    }
+    .oak-assistant-shell .oak-chat-popup.open    { transform: none; animation: oakPanelIn .62s .16s both; }
+    .oak-assistant-shell .oak-chat-popup.closing { transform: translateX(-104%); animation: oakPanelOut .42s both; }
+    .oak-chat-header { padding-top: calc(16px + env(safe-area-inset-top)); padding-left: 16px; }
+    .oak-chat-popup.intro .oak-chat-header > :nth-child(1) { animation-delay: .62s; }
+    .oak-chat-popup.intro .oak-chat-header > :nth-child(2) { animation-delay: .68s; }
+    .oak-chat-popup.intro .oak-chat-header > :nth-child(3) { animation-delay: .74s; }
+    .oak-chat-popup.intro .oak-chat-header > :nth-child(4) { animation-delay: .80s; }
+    .oak-chat-popup.intro .oak-chat-header > :nth-child(5) { animation-delay: .86s; }
+    .oak-chat-popup.intro .oak-chip, .oak-chat-popup.intro .oak-action { animation-delay: calc(.8s + var(--i, 0) * .07s); }
+    .oak-chat-popup.intro .oak-chat-input, .oak-chat-popup.intro .oak-chat-foot { animation-delay: .9s; }
+    .oak-chat-header { gap: 8px; }
+    .oak-avatar { width: 40px; height: 40px; }
+    .oak-chat-header .oak-icon-btn { width: 34px; height: 34px; }
+    .oak-chat-title strong { font-size: 1.05rem; }
+    .oak-status { font-size: .6rem; letter-spacing: .2px; }
+    .oak-card { flex-basis: 62vw; max-width: 240px; }
+    .oak-throw {
+        left: 0; right: auto; top: 0; bottom: 0; width: calc(88vw + 8px); height: auto;
+        background: linear-gradient(90deg, #8a661f 0%, #c5a059 55%, #ecd69b 100%);
+        transform: translateX(-104%);
+    }
+    .oak-throw.go   { animation: oakSlabIn .5s both; }
+    .oak-throw.back { animation: oakSlabOut .42s .08s both; }
+}
+@keyframes oakSlabIn  { 0% { transform: translateX(-104%); animation-timing-function: cubic-bezier(.15,.85,.25,1); } 100% { transform: translateX(0); } }
+@keyframes oakSlabOut { 0% { transform: translateX(0); animation-timing-function: cubic-bezier(.5,0,.9,.5); } 100% { transform: translateX(-104%); } }
 </style>
 </head>
 <body>
@@ -4656,8 +4927,10 @@ body.oak-privacy-open { overflow: hidden; }
                 <span class="story-title-highlight">Exquisite Furniture & Accents</span>
                 <h2 style="font-size: 3rem; color: var(--text-light);">Curated Collections</h2>
                 <p style="max-width: 600px; margin: 15px auto 0; color: rgba(255,255,255,0.7); font-size: 0.95rem;">Filter our dynamic collections by space category to explore tailored structural luxury.</p>
-                <button type="button" class="btn-outline-gold oak-infinite-toggle" id="oak-infinite-toggle" aria-pressed="false" aria-label="Infinite Scroll" title="Enable automatic loading as you scroll">
-                    <i class="fa-solid fa-arrows-down-to-line" aria-hidden="true"></i><span>Infinite Scroll</span>
+                <button type="button" class="btn-outline-gold oak-infinite-toggle" id="oak-infinite-toggle" role="switch" aria-checked="false" aria-label="Infinite Scroll" title="Switch on to show every collection and keep scrolling">
+                    <i class="fa-solid fa-infinity oak-switch-icon" aria-hidden="true"></i><span class="oak-switch-label">Infinite Scroll</span>
+                    <span class="oak-switch-track" aria-hidden="true"></span>
+                    <span class="oak-switch-state" id="oak-infinite-state">Off</span>
                 </button>
             </div>
         </section>
@@ -5148,9 +5421,12 @@ body.oak-privacy-open { overflow: hidden; }
                 Looking for the perfect piece? I can help you browse or book a design session.
             </div>
 
+            <!-- Gold shape thrown up on phones before the white sheet covers it -->
+            <div class="oak-throw" id="oak-throw" aria-hidden="true"></div>
+
             <!-- Chat window -->
             <section class="oak-chat-popup" id="oak-chat-popup" role="dialog" aria-label="Oak Man website assistant" aria-hidden="true">
-                <header class="oak-chat-header">
+                <div class="oak-chat-header">
                     <div class="oak-avatar"><i class="fa-solid fa-tree"></i></div>
                     <div class="oak-chat-title">
                         <strong>Oak Man</strong>
@@ -5159,14 +5435,13 @@ body.oak-privacy-open { overflow: hidden; }
                     <button class="oak-icon-btn" id="oak-chat-human" type="button" aria-label="Chat with our team on WhatsApp" title="Chat with our team on WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
                     <button class="oak-icon-btn" id="oak-chat-clear" type="button" aria-label="Restart conversation" title="Restart conversation"><i class="fa-solid fa-rotate-right"></i></button>
                     <button class="oak-icon-btn" id="oak-chat-close" type="button" aria-label="Close chat" title="Close"><i class="fa-solid fa-xmark"></i></button>
-                </header>
+                </div>
 
                 <div class="oak-chat-messages" id="oak-chat-messages" role="log" aria-live="polite"></div>
                 <div class="oak-chat-chips" id="oak-chat-chips"></div>
 
                 <form class="oak-chat-input" id="oak-chat-form" autocomplete="off">
                     <input id="oak-chat-input" type="text" maxlength="500" placeholder="Type your message…" aria-label="Type your message" enterkeyhint="send">
-                    <button class="oak-round-btn oak-mic" id="oak-chat-mic" type="button" aria-label="Speak your message"><i class="fa-solid fa-microphone"></i></button>
                     <button class="oak-round-btn oak-send" type="submit" aria-label="Send message"><i class="fa-solid fa-paper-plane"></i></button>
                 </form>
                 <div class="oak-chat-foot">Automated assistant · Enquiries are confirmed by our team</div>
@@ -5278,7 +5553,9 @@ body.oak-privacy-open { overflow: hidden; }
             { id: "p15", name: "Signature Wardrobe", category: "bedroom", desc: "This wardrobe unit combines smooth panelling with well-planned internal storage to deliver a clean, timeless bedroom statement.", image: "https://i.postimg.cc/zfZwqPgx/wardrobe_1.jpg" },
             { id: "p16", name: "Executive Workspace", category: "office", desc: "This workspace pairs a sleek work surface with integrated storage and a polished finish to elevate a professional or home office.", image: "https://i.postimg.cc/qvCXVdzm/workspace.jpg" },
             { id: "p17", name: "Refined Display Cabinet", category: "living", desc: "This cabinet combines warm timber tones with clean lines and practical storage, adding quiet sophistication to the living space.", image: "https://i.postimg.cc/xdDG9Fzw/cabinet_2.jpg" },
-            { id: "p18", name: "Modern Grey Lounge", category: "living", desc: "This modern lounge layers soft grey tones with sculpted furniture and ambient lighting to create a calm, inviting evening atmosphere.", image: "https://i.postimg.cc/3wXXNCjX/Modern-Grey-Lounge-at-Night.png" }
+            { id: "p18", name: "Modern Grey Lounge", category: "living", desc: "This modern lounge layers soft grey tones with sculpted furniture and ambient lighting to create a calm, inviting evening atmosphere.", image: "https://i.postimg.cc/3wXXNCjX/Modern-Grey-Lounge-at-Night.png" },
+            { id: "p19", name: "Signature Interior Piece", category: "living", desc: "A hand-finished bespoke piece from our workshop, crafted with refined joinery and a warm, contemporary finish to suit the way you live.", image: "https://i.postimg.cc/X7jSFNBZ/photo-2026-11-08-21-30-28.jpg" },
+            { id: "p20", name: "Crafted Interior Feature", category: "living", desc: "A tailored feature piece with clean lines, careful detailing and a polished finish, made to measure for your space.", image: "https://i.postimg.cc/gkzFRcLx/photo-2026-11-08-21-30-53.jpg" }
         ];
 
         const PORTFOLIO_DB = [
@@ -5630,28 +5907,66 @@ body.oak-privacy-open { overflow: hidden; }
         }
 
         /* LIVE SEARCH, SORTING & FILTERING */
-        let shopVisibleCount = 12;
+        const SHOP_PAGE_SIZE = 12;          /* images revealed per step; change here to change everywhere */
+        let shopVisibleCount = SHOP_PAGE_SIZE;
         let shopFilteredCount = 0;
-        let shopInfiniteEnabled = false;
-        let shopScrollObserver = null;
+        let shopShowAll = false;            /* true while "Infinite Scroll" has opened everything */
 
-        function updateShopLoadControls(total, shown) {
+        /* One place decides what both buttons look like and when they appear. */
+        function updateShopLoadControls() {
+            const total = shopFilteredCount;
+            const shown = Math.min(shopVisibleCount, total);
             const wrap = document.getElementById("oak-load-more-wrap");
             const count = document.getElementById("oak-load-more-count");
             const button = document.getElementById("oak-load-more");
-            if (wrap) wrap.hidden = shown >= total || total === 0;
+            const toggle = document.getElementById("oak-infinite-toggle");
+            const finished = shown >= total;
+            const canPage = total > SHOP_PAGE_SIZE;
+
+            /* Load More -> (every click adds another batch) -> Go Back once everything is showing */
+            if (wrap) wrap.hidden = !canPage || shopShowAll;
             if (count) count.textContent = "Showing " + shown + " of " + total + " collections";
-            if (button) button.innerHTML = shopInfiniteEnabled ? 'Loading as you scroll <i class="fa-solid fa-arrows-down-to-line" aria-hidden="true"></i>' : 'Load More <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>';
+            if (button) {
+                button.dataset.mode = finished ? "back" : "more";
+                button.innerHTML = finished
+                    ? 'Go Back <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>'
+                    : 'Load ' + Math.min(SHOP_PAGE_SIZE, total - shown) + ' More <i class="fa-solid fa-arrow-down" aria-hidden="true"></i>';
+            }
+            /* Infinite Scroll is a real on/off switch: On opens everything, Off returns to the first batch */
+            if (toggle) {
+                toggle.hidden = !canPage && !shopShowAll;
+                toggle.setAttribute("aria-checked", shopShowAll ? "true" : "false");
+                toggle.title = shopShowAll ? "Switch off to return to the first " + SHOP_PAGE_SIZE : "Switch on to show every collection and keep scrolling";
+                const state = document.getElementById("oak-infinite-state");
+                if (state) state.textContent = shopShowAll ? "On" : "Off";
+            }
         }
 
-        function appendNextShopBatch() {
+        function renderShopCards(upTo) {
             const target = document.getElementById("shop-products-container");
-            if (!target || target.children.length >= shopFilteredCount) return;
-            const current = target.children.length;
-            const next = Math.min(current + 12, shopFilteredCount);
-            const slice = window.__oakFilteredProducts || [];
-            for (let i = current; i < next; i++) target.appendChild(createProductCard(slice[i]));
-            updateShopLoadControls(shopFilteredCount, next);
+            if (!target) return;
+            const list = window.__oakFilteredProducts || [];
+            const end = Math.min(upTo, list.length);
+            for (let i = target.children.length; i < end; i++) target.appendChild(createProductCard(list[i]));
+            shopVisibleCount = Math.max(shopVisibleCount, end);
+        }
+
+        function scrollShopGridIntoView() {
+            const target = document.getElementById("shop-products-container");
+            if (!target) return;
+            const top = target.getBoundingClientRect().top + window.pageYOffset - 150;
+            window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+        }
+
+        function resetShopToFirstPage() {
+            const target = document.getElementById("shop-products-container");
+            shopShowAll = false;
+            shopVisibleCount = SHOP_PAGE_SIZE;
+            if (target) {
+                while (target.children.length > SHOP_PAGE_SIZE) target.removeChild(target.lastChild);
+            }
+            updateShopLoadControls();
+            scrollShopGridIntoView();
         }
 
         function applyShopFiltersAndSorting() {
@@ -5670,7 +5985,8 @@ body.oak-privacy-open { overflow: hidden; }
 
             window.__oakFilteredProducts = filtered;
             shopFilteredCount = filtered.length;
-            shopVisibleCount = 12;
+            shopShowAll = false;                 /* a new search/filter always starts from the first batch */
+            shopVisibleCount = SHOP_PAGE_SIZE;
             target.innerHTML = "";
             if (filtered.length === 0) {
                 target.innerHTML = `
@@ -5678,41 +5994,25 @@ body.oak-privacy-open { overflow: hidden; }
                         <i class="fa-solid fa-hourglass-empty" style="font-size: 2.5rem; margin-bottom: 15px; color: var(--accent-gold);"></i>
                         <p>No masterpieces found matching your search options.</p>
                     </div>`;
-                updateShopLoadControls(0, 0);
+                updateShopLoadControls();
                 return;
             }
-            const initial = filtered.slice(0, 12);
-            initial.forEach(prod => target.appendChild(createProductCard(prod)));
-            updateShopLoadControls(filtered.length, initial.length);
-            if (shopScrollObserver) shopScrollObserver.disconnect();
-            if (shopInfiniteEnabled) observeShopLoadTrigger();
-        }
-
-        function observeShopLoadTrigger() {
-            if (!("IntersectionObserver" in window)) return;
-            const sentinel = document.getElementById("oak-load-more-wrap");
-            if (!sentinel || sentinel.hidden) return;
-            if (shopScrollObserver) shopScrollObserver.disconnect();
-            shopScrollObserver = new IntersectionObserver(function (entries) {
-                if (entries.some(entry => entry.isIntersecting) && shopInfiniteEnabled) appendNextShopBatch();
-            }, { rootMargin: "260px 0px" });
-            shopScrollObserver.observe(sentinel);
+            renderShopCards(SHOP_PAGE_SIZE);
+            updateShopLoadControls();
         }
 
         const loadMoreButton = document.getElementById("oak-load-more");
         if (loadMoreButton) loadMoreButton.addEventListener("click", function () {
-            appendNextShopBatch();
-            if (shopInfiniteEnabled) observeShopLoadTrigger();
+            if (loadMoreButton.dataset.mode === "back") { resetShopToFirstPage(); return; }
+            renderShopCards(shopVisibleCount + SHOP_PAGE_SIZE);   /* another batch, on top of what is showing */
+            updateShopLoadControls();
         });
         const infiniteToggle = document.getElementById("oak-infinite-toggle");
         if (infiniteToggle) infiniteToggle.addEventListener("click", function () {
-            shopInfiniteEnabled = !shopInfiniteEnabled;
-            infiniteToggle.setAttribute("aria-pressed", shopInfiniteEnabled ? "true" : "false");
-            infiniteToggle.innerHTML = shopInfiniteEnabled
-                ? '<i class="fa-solid fa-infinity" aria-hidden="true"></i><span>Infinite Scroll On</span>'
-                : '<i class="fa-solid fa-arrows-down-to-line" aria-hidden="true"></i><span>Infinite Scroll</span>';
-            if (shopScrollObserver) shopScrollObserver.disconnect();
-            if (shopInfiniteEnabled) observeShopLoadTrigger();
+            if (shopShowAll) { resetShopToFirstPage(); return; }
+            shopShowAll = true;
+            renderShopCards(shopFilteredCount);                   /* open everything in one go */
+            updateShopLoadControls();
         });
 
         function filterShopProducts(category, btnElement) {
@@ -6462,15 +6762,15 @@ body.oak-privacy-open { overflow: hidden; }
             const closeBtn = el("oak-chat-close"), clearBtn = el("oak-chat-clear"), humanBtn = el("oak-chat-human");
             const form = el("oak-chat-form"), input = el("oak-chat-input"), messagesEl = el("oak-chat-messages");
             const chipsEl = el("oak-chat-chips"), teaser = el("oak-teaser"), teaserClose = el("oak-teaser-close");
-            const badge = el("oak-fab-badge"), micBtn = el("oak-chat-mic");
-            if (!shell || !toggleBtn || !popup || !closeBtn || !clearBtn || !humanBtn || !form || !input || !messagesEl || !chipsEl || !teaser || !teaserClose || !badge || !micBtn) return;
+            const badge = el("oak-fab-badge");
+            if (!shell || !toggleBtn || !popup || !closeBtn || !clearBtn || !humanBtn || !form || !input || !messagesEl || !chipsEl || !teaser || !teaserClose || !badge) return;
 
             const WA_NUMBER = "255655761313";
             const WA_DISPLAY = "+255 655 761 313";
             const STORE_KEY = "oak-chat-v2";
-            const PLACEHOLDER = "Type your message…";
+            const PLACEHOLDER = "Type your message…";   /* typed messages only: Oak Man does not take voice input */
             const AI_ENDPOINT = (document.querySelector('meta[name="oak-ai-endpoint"]')?.content || "").trim();
-            const MAIN_CHIPS = ["Browse collections", "Bespoke services", "Book a consultation", "Wood & materials", "Care tips", "Contact us"];
+            const MAIN_CHIPS = ["Browse collections", "Bespoke services", "Book a consultation", "Wood & materials", "Care tips", "Website guide", "Contact us"];
             const SERVICES = [
                 { label: "Custom joinery", form: "Bespoke Custom Joinery", full: "Custom Joinery & Tailored Crafting" },
                 { label: "Room layout planning", form: "Room Spatial Layout", full: "Room Spatial Layout Planning" },
@@ -6483,7 +6783,7 @@ body.oak-privacy-open { overflow: hidden; }
             /* ---------- State & persistence ---------- */
             const fresh = () => ({
                 messages: [], chips: [], flow: null, unread: 0, opened: false, teaserDismissed: false,
-                ctx: { name: "", offer: null, misses: 0, topic: "" }
+                ctx: { name: "", offer: null, misses: 0, topic: "", lastProduct: "" }
             });
             let state = fresh();
             let epoch = 0;
@@ -6574,6 +6874,12 @@ body.oak-privacy-open { overflow: hidden; }
             }
 
             function runSearch(q) {
+                /* If the customer names a piece in full, answer with that one piece */
+                const named = PRODUCTS_DB.map(p => {
+                    const nw = norm(p.name).split(" ").filter(w => w.length > 2 && !NON_SEARCH.has(w));
+                    return { p: p, n: nw.length, all: nw.length >= 2 && nw.every(w => q.tokens.some(t => sameWord(t, w))) };
+                }).filter(x => x.all).sort((a, b) => b.n - a.n);
+                if (named.length && (named.length === 1 || named[0].n > named[1].n)) return { items: [named[0].p], specific: true };
                 let list = PRODUCTS_DB.map((p, i) => {
                     let s = 0;
                     const nameT = norm(p.name).split(" "), descT = norm(p.desc).split(" ");
@@ -6591,6 +6897,136 @@ body.oak-privacy-open { overflow: hidden; }
                 if (items.length > 1 && items[0].s >= 6 && items[0].s >= items[1].s * 2) items = [items[0]];
                 return { items: items.map(x => x.p), specific: specific };
             }
+
+            /* ---------- Website knowledge base ----------
+               Built live from the page itself (every page, section, FAQ-style block, footer, menu and the Privacy Policy)
+               plus the product and project databases, so anything added to the website later is known automatically. */
+            const STOPWORDS = new Set("the and for you your yours our are was were has have had can could would should will with from about what which who whom how when where why does did not any some there their they them its this that these those tell please give show let want need like just also than then into over under been being very much more most only than too out off all one two get got".split(" "));
+            const CAT_LABEL = { living: "Living Space", bedroom: "Bedrooms", dining: "Dining Areas", office: "Office Accents" };
+            const KB_ROOTS = [
+                ["#home-view", "home", "Home"], ["#shop-view", "shop", "Collections"], ["#portfolio-view", "portfolio", "Designers Corner"],
+                ["#story-view", "story", "About Us"], ["#services-view", "services", "Bespoke Services"],
+                ["#instagram-hub", null, "Instagram hub"], ["footer", null, "Footer"],
+                [".oak-personalization", null, "Personalisation menu"], [".oak-privacy-body", "privacy", "Privacy Policy"]
+            ];
+            const KB_FACTS = [
+                { title: "Browsing the collections", view: "shop", text: "Collections shows every piece with its photo, name and description. Use the search box to find a piece by name or keyword, the sort menu to order pieces, and the category buttons to filter by Living Space, Bedrooms, Dining Areas or Office. The first 12 pieces show at once; press Load More for the next 12, or switch Infinite Scroll on to open every piece and keep scrolling." },
+                { title: "Enquiring about a piece", view: "shop", text: "Every product card has an Enquire button that opens WhatsApp with a pre-filled message about that piece, and a heart icon to save it to your wishlist. Prices are not listed on the website: our team shares price, finishes, size and delivery directly on WhatsApp." },
+                { title: "Booking a design consultation", view: "services", text: "Booking requests can be made on the Bespoke Services page or by asking me. You choose a service (Custom Joinery, Room Layout Planning or Virtual Design Consulting), a session date and share your project notes. The request is sent to our team on WhatsApp, and you must tick the Privacy Policy consent box before submitting." },
+                { title: "Style configurator", view: "services", text: "The Style Configurator on the Bespoke Services page lets you preview Natural Royal Oak, Smoked Dark Walnut or Classic Red Mahogany with Brushed Brass, Matte Black or Aged Copper hardware." },
+                { title: "Personalising the website", view: null, text: "Open the menu to find Make it yours: pick the room you are styling, an accent finish, night mode, compact collection cards and reduced motion. Choices are stored only in your browser and can be reset at any time." },
+                { title: "Privacy and your information", view: "privacy", text: "Our Privacy Policy explains what we collect, how we use it, who we share it with, how long we keep it and your rights. It appears before you share personal details in the booking form, the newsletter or this chat. Please never send card numbers, passwords or ID numbers here." },
+                { title: "Newsletter", view: null, text: "The Studio Despatch newsletter in the footer sends architectural style recommendations and seasonal catalogue launches. Subscribing means you agree to the Privacy Policy." },
+                { title: "Social media and Instagram", view: null, url: "https://instagram.com/oakfurnitureandinteriors", urlLabel: "Open our Instagram", text: "You can follow Oak Furniture & Interiors on Instagram (@oakfurnitureandinteriors) for behind-the-scenes workshop moments, fresh installations and daily design inspiration. The website has an Instagram hub, and Facebook and Pinterest links sit in the footer." },
+                { title: "About Oak Man", view: null, text: "Oak Man is the automated website assistant. I can find furniture, explain services, materials, care, delivery and the website itself, take a consultation request and hand you to our team on WhatsApp. I only read typed messages." }
+            ];
+            let KB = null;
+            const kbClean = t => String(t).replace(/\s+/g, " ").trim();
+            const kbTok = t => norm(t).split(" ").filter(w => w.length > 2 && !STOPWORDS.has(w)).map(canonicalWord);
+
+            function buildKB() {
+                const out = [];
+                const SKIP = /^(SCRIPT|STYLE|SVG|NOSCRIPT|IMG|VIDEO|CANVAS|INPUT|SELECT|TEXTAREA|OPTION|IFRAME|BUTTON|SOURCE)$/i;
+                KB_ROOTS.forEach(root => {
+                    const rootEl = document.querySelector(root[0]);
+                    if (!rootEl) return;
+                    let cur = { title: root[2], parts: [] }, carry = "";
+                    const flush = () => {
+                        let text = kbClean(cur.parts.join(" "));
+                        if (carry) { text = carry + " " + text; carry = ""; }
+                        if (text.length < 70) { carry = kbClean((cur.title && cur.title !== root[2] ? cur.title + ". " : "") + text); return; }
+                        out.push({ kind: "page", view: root[1], label: root[2], title: cur.title || root[2], text: text.slice(0, 900) });
+                    };
+                    const walk = node => {
+                        node.childNodes.forEach(n => {
+                            if (n.nodeType === 3) { const t = kbClean(n.nodeValue); if (t) cur.parts.push(t); return; }
+                            if (n.nodeType !== 1 || SKIP.test(n.tagName)) return;
+                            if (n.id === "shop-products-container" || n.id === "homepage-featured-products") return;
+                            if (/^H[1-4]$/.test(n.tagName)) { flush(); cur = { title: kbClean(n.textContent), parts: [] }; return; }
+                            walk(n);
+                        });
+                    };
+                    walk(rootEl);
+                    flush();
+                });
+                KB_FACTS.forEach(f => out.push({ kind: "fact", view: f.view, label: "Website guide", title: f.title, text: f.text, url: f.url, urlLabel: f.urlLabel }));
+                PRODUCTS_DB.forEach(p => out.push({ kind: "product", id: p.id, view: "shop", label: "Collections", title: p.name, text: (CAT_LABEL[p.category] || "Collections") + ". " + p.desc }));
+                if (typeof PORTFOLIO_DB !== "undefined") PORTFOLIO_DB.forEach(p => out.push({ kind: "project", view: "portfolio", label: "Designers Corner", title: p.title, text: p.subtitle + " project (" + p.category + "). Browse it in Designers Corner." }));
+                out.forEach(e => { e.tt = new Set(kbTok(e.title)); e.tw = new Set(kbTok(e.title + " " + e.text)); e.tl = Array.from(e.tw); });
+                const df = {};
+                out.forEach(e => e.tw.forEach(w => { df[w] = (df[w] || 0) + 1; }));
+                out.forEach(e => { e.df = df; });
+                KB = { entries: out, df: df, n: out.length };
+            }
+            const kbHas = (set, list, w) => set.has(w) || set.has(w + "s") || (w.length > 3 && w.charAt(w.length - 1) === "s" && set.has(w.slice(0, -1))) || (w.length >= 5 && list.some(x => oneEditAway(x, w)));
+
+            function kbSearch(text) {
+                if (!KB) buildKB();
+                const qw = Array.from(new Set(kbTok(text)));
+                if (!qw.length) return null;
+                const scored = KB.entries.map(e => {
+                    let s = 0, hit = 0;
+                    qw.forEach(w => {
+                        if (kbHas(e.tw, e.tl, w)) {
+                            hit++;
+                            const idf = Math.log(1 + KB.n / (1 + (KB.df[w] || 0)));
+                            s += idf * (kbHas(e.tt, Array.from(e.tt), w) ? 2.2 : 1);
+                        }
+                    });
+                    if (e.kind === "fact") s *= 1.15;
+                    return { e: e, s: s, hit: hit };
+                }).filter(x => x.hit > 0).sort((a, b) => b.s - a.s);
+                if (!scored.length) return null;
+                const top = scored[0];
+                const needHits = qw.length >= 3 ? 2 : 1;
+                if (top.hit < needHits || top.s < 2.4) return null;
+                return { top: top, qw: qw, all: scored };
+            }
+
+            function kbSentences(e, qw) {
+                const sents = e.text.split(/(?<=[.!?])\s+/).filter(Boolean);
+                const rated = sents.map((s, i) => {
+                    const set = new Set(kbTok(s)), list = Array.from(set);
+                    return { s: s, i: i, r: qw.reduce((a, w) => a + (kbHas(set, list, w) ? 1 : 0), 0) };
+                });
+                let pick = rated.filter(x => x.r > 0).sort((a, b) => b.r - a.r || a.i - b.i).slice(0, 3);
+                if (!pick.length) pick = rated.slice(0, 2);
+                let out = pick.sort((a, b) => a.i - b.i).map(x => x.s).join(" ");
+                if (out.length > 520) out = out.slice(0, 500).replace(/\s+\S*$/, "") + "…";
+                return out;
+            }
+
+            function kbAnswer(text) {
+                const r = kbSearch(text);
+                if (!r) return null;
+                const e = r.top.e;
+                if (e.kind === "product") {
+                    const p = PRODUCTS_DB.find(x => x.id === e.id);
+                    if (p) return { score: r.top.s, msg: productDetail(p) };
+                }
+                let body = kbSentences(e, r.qw);
+                const show = e.title && e.title.toLowerCase() !== (e.label || "").toLowerCase() ? "**" + e.title + "**\n" : "";
+                const actions = [];
+                if (e.view === "privacy") actions.push({ type: "privacy", label: "Read Privacy Policy" });
+                else if (e.view) actions.push(navAction(e.view, "Open " + e.label));
+                if (e.url) actions.push({ type: "url", label: e.urlLabel || "Open link", value: e.url });
+                if (e.kind === "fact" && /book/i.test(e.title)) actions.push(bookAction());
+                if (e.kind === "fact" && /configurator/i.test(e.title)) actions.unshift({ type: "configurator", label: "Open style configurator" });
+                const near = r.all.slice(1, 4).filter(x => x.e.kind === "product" && x.s > r.top.s * 0.7);
+                const msg = M(show + body, { actions: actions, chips: MAIN_CHIPS.slice(0, 3) });
+                if (e.kind === "project") { msg.chips = ["Book a consultation", "Browse collections"]; }
+                return { score: r.top.s, msg: msg };
+            }
+
+            function productDetail(p) {
+                state.ctx.lastProduct = p.id;
+                return M("**" + p.name + "** · " + (CAT_LABEL[p.category] || "Collections") + "\n" + p.desc + "\n\nPrice, finish and size are confirmed by our team — tap **Enquire** to ask on WhatsApp.", {
+                    cards: [p.id],
+                    actions: [{ type: "shopfilter", value: p.category, label: "More " + (CAT_LABEL[p.category] || "pieces") }],
+                    chips: ["Book a consultation", "Chat on WhatsApp"]
+                });
+            }
+            const lastProduct = () => PRODUCTS_DB.find(p => p.id === state.ctx.lastProduct) || null;
 
             /* ---------- Booking flow ---------- */
             function matchService(t) {
@@ -6688,9 +7124,12 @@ body.oak-privacy-open { overflow: hidden; }
                 {
                     id: "order",
                     kws: ["order", "buy", "purchase", "checkout", "cart"],
-                    run: () => M("To order, tap **Enquire** on any piece and our team will confirm availability, finishes and delivery with you directly on WhatsApp.", {
-                        actions: [waAction("I'd like to place an order.", "Start an order on WhatsApp"), { type: "shopfilter", value: "all", label: "Open collections" }]
-                    })
+                    run: () => {
+                        const lp = lastProduct();
+                        return M("To order, tap **Enquire** on any piece and our team will confirm availability, finishes and delivery with you directly on WhatsApp." + (lp ? "\n\nI can start the enquiry for **" + lp.name.replace(/,$/, "") + "** right now." : ""), {
+                            actions: [waAction(lp ? "I'd like to order the " + lp.name.replace(/,$/, "") + "." : "I'd like to place an order.", "Start an order on WhatsApp"), { type: "shopfilter", value: "all", label: "Open collections" }]
+                        });
+                    }
                 },
                 {
                     id: "booking",
@@ -6728,9 +7167,12 @@ body.oak-privacy-open { overflow: hidden; }
                 {
                     id: "price",
                     kws: ["price", "prices", "pricing", "cost", "costs", "how much", "quote", "estimate", "discount", "sale"],
-                    run: () => M("Our team shares all the details for each piece directly. Tell us what you have in mind — room, size and wood preference — and they will get back to you on WhatsApp.", {
-                        actions: [bookAction(), waAction("I'd like details on a piece.", "Ask our team")], chips: ["Browse collections", "Wood & materials"], offer: "booking"
-                    })
+                    run: () => {
+                        const lp = lastProduct();
+                        return M("Prices aren't listed on the website — our team quotes each piece directly" + (lp ? ", including the **" + lp.name.replace(/,$/, "") + "**" : "") + ". Tell us the room, size and wood preference you have in mind and they will reply on WhatsApp.", {
+                            actions: [bookAction(), waAction(lp ? "I'd like the price and details for the " + lp.name.replace(/,$/, "") + "." : "I'd like details on a piece.", "Ask our team")], chips: ["Browse collections", "Wood & materials"], offer: "booking"
+                        });
+                    }
                 },
                 {
                     id: "contact",
@@ -6766,6 +7208,34 @@ body.oak-privacy-open { overflow: hidden; }
                     })
                 },
                 {
+                    id: "catalog",
+                    kws: ["how many", "all products", "all your products", "every product", "what do you sell", "what do you offer", "what do you have", "what products", "full list", "complete list", "list of products", "everything you have", "categories", "category", "product range", "range"],
+                    run: () => {
+                        const cats = Object.keys(CAT_LABEL).filter(k => PRODUCTS_DB.some(p => p.category === k));
+                        const lines = cats.map(k => {
+                            const items = PRODUCTS_DB.filter(p => p.category === k);
+                            return "• **" + CAT_LABEL[k] + "** (" + items.length + "): " + items.map(p => p.name.replace(/,$/, "")).join(", ");
+                        });
+                        return M("Our collections currently feature **" + PRODUCTS_DB.length + " pieces** across " + cats.length + " spaces:\n" + lines.join("\n") + "\n\nAsk me about any piece by name, or tell me the room you're styling.", {
+                            chips: cats.map(k => CAT_LABEL[k]).concat(["Book a consultation"]), actions: [{ type: "shopfilter", value: "all", label: "Open collections" }]
+                        });
+                    }
+                },
+                {
+                    id: "sitemap",
+                    kws: ["website", "site map", "sitemap", "pages", "sections", "navigate", "navigation", "tabs", "website guide", "what is on your site", "whats on your site", "around the site"],
+                    run: () => M("Here's a quick tour of the website:\n• **Home** — featured pieces, our promise and highlights\n• **Collections** — all " + PRODUCTS_DB.length + " pieces with search, sort, category filters, Load More and an Infinite Scroll switch\n• **Designers Corner** — " + (typeof PORTFOLIO_DB !== "undefined" ? PORTFOLIO_DB.length : "our") + " residential and commercial projects\n• **About Us** — our story, founder and numbers\n• **Bespoke Services** — joinery, room layout planning, virtual consulting, the booking form and the Style Configurator\n• **Menu** — personalise the site (night mode, compact cards, reduced motion)\n• **Footer** — newsletter, social links and our Privacy Policy\n\nAsk me about anything on any page.", {
+                        actions: [navAction("shop", "Collections"), navAction("portfolio", "Designers Corner"), navAction("services", "Bespoke Services"), navAction("story", "About Us")]
+                    })
+                },
+                {
+                    id: "privacy",
+                    kws: ["privacy", "privacy policy", "personal data", "my data", "my information", "data protection", "gdpr", "cookies", "confidential", "consent", "secure", "safe", "newsletter", "subscribe", "unsubscribe"],
+                    run: () => M("We only use the details you share (name, phone or email, project notes) to answer your request, and we never sell them. Our Privacy Policy covers what we collect, who we share it with, how long we keep it and your rights. Please don't send card numbers, passwords or ID numbers in chat or forms.", {
+                        actions: [{ type: "privacy", label: "Read Privacy Policy" }], chips: ["Book a consultation", "Contact us"]
+                    })
+                },
+                {
                     id: "products",
                     kws: ["collection", "shop", "browse", "products", "catalog", "catalogue", "furniture", "sofa", "couch", "bed", "table", "desk", "chair", "dining", "bedroom", "living", "office", "mirror", "media", "coffee", "recommend", "suggest", "show me", "items", "pieces", "gift", "luxury", "stock", "available", "availability"],
                     run: c => productReply(c)
@@ -6793,7 +7263,7 @@ body.oak-privacy-open { overflow: hidden; }
                 {
                     id: "help",
                     kws: ["help", "menu", "options", "what can you do", "start", "home"],
-                    run: () => M("Here's what I can do:\n• Find furniture by room or name\n• Explain our bespoke services and materials\n• Book a design consultation\n• Share care tips, delivery and contact info\n• Connect you with our team on WhatsApp", { chips: MAIN_CHIPS })
+                    run: () => M("Here's what I can do:\n• Find furniture by room or name\n• Explain our bespoke services and materials\n• Book a design consultation\n• Share care tips, delivery and contact info\n• Show you around the website and answer questions about any page or piece\n• Connect you with our team on WhatsApp", { chips: MAIN_CHIPS })
                 }
             ];
 
@@ -6808,8 +7278,7 @@ body.oak-privacy-open { overflow: hidden; }
                 const n = r.items.length;
                 let text;
                 if (n === 1) {
-                    const p = r.items[0];
-                    text = "**" + p.name + "**\n" + p.desc;
+                    return productDetail(r.items[0]);
                 } else {
                     text = "Here are " + n + " pieces " + (r.specific ? "that match what you're after" : "from our collections") + ". Tap **Enquire** and our team will reply on WhatsApp.";
                 }
@@ -6873,6 +7342,13 @@ body.oak-privacy-open { overflow: hidden; }
                     if (it.id === "products" && (c.pq.cats.length || c.pq.nameMatch)) s += 4;
                     if (s > bestScore) { best = it; bestScore = s; }
                 });
+                const kb = (!best || bestScore < 4) ? kbAnswer(c.raw) : null;
+                if (kb && (!best || kb.score >= bestScore * 4 + 3)) {
+                    state.ctx.misses = 0;
+                    state.ctx.topic = "kb";
+                    state.ctx.offer = null;
+                    return kb.msg;
+                }
                 if (best) {
                     state.ctx.misses = 0;
                     state.ctx.topic = best.id;
@@ -6902,7 +7378,7 @@ body.oak-privacy-open { overflow: hidden; }
 
             const ACTION_ICONS = {
                 wa: "fa-brands fa-whatsapp", nav: "fa-solid fa-arrow-right", shopfilter: "fa-solid fa-arrow-right",
-                configurator: "fa-solid fa-sliders", booking: "fa-solid fa-calendar-check", bookingform: "fa-solid fa-file-pen", prompt: "fa-solid fa-chevron-right"
+                url: "fa-solid fa-arrow-up-right-from-square", configurator: "fa-solid fa-sliders", booking: "fa-solid fa-calendar-check", bookingform: "fa-solid fa-file-pen", prompt: "fa-solid fa-chevron-right"
             };
 
             function buildAction(a) {
@@ -7146,6 +7622,9 @@ body.oak-privacy-open { overflow: hidden; }
                         navigateTo(a.value, null, { showToast: false });
                         collapse();
                         break;
+                    case "url":
+                        if (/^https:\/\//.test(a.value || "")) window.open(a.value, "_blank", "noopener,noreferrer");
+                        break;
                     case "shopfilter":
                         navigateTo("shop", null, { showToast: false });
                         setTimeout(() => {
@@ -7206,14 +7685,15 @@ body.oak-privacy-open { overflow: hidden; }
 
             /* ---------- Open / close ---------- */
             const backdrop = el("oak-backdrop");
-            let closeTimer = null;
+            let closeTimer = null, introTimer = null;
+            const throwEl = el("oak-throw");
 
             function fitViewport(forceOpen) {
                 if (popup.classList.contains("closing")) return;
                 const vv = window.visualViewport;
                 if (isMobile() && (forceOpen || isOpen()) && vv) {
-                    popup.style.height = Math.max(320, vv.height - 24) + "px";
-                    popup.style.top = (vv.offsetTop + vv.height / 2) + "px";
+                    popup.style.height = Math.max(320, vv.height) + "px";
+                    popup.style.top = vv.offsetTop + "px";
                 } else {
                     popup.style.height = "";
                     popup.style.top = "";
@@ -7243,6 +7723,14 @@ body.oak-privacy-open { overflow: hidden; }
                 fitViewport(true);
                 setGenieOrigin();
                 popup.classList.add("open");
+                popup.classList.add("intro");
+                clearTimeout(introTimer);
+                introTimer = setTimeout(() => popup.classList.remove("intro"), 2200);
+                if (throwEl && isMobile()) {   /* phones: golden shape is thrown up first, the white sheet then covers it */
+                    throwEl.classList.remove("back");
+                    void throwEl.offsetWidth;
+                    throwEl.classList.add("go");
+                }
                 popup.setAttribute("aria-hidden", "false");
                 shell.classList.add("is-open");
                 toggleBtn.setAttribute("aria-expanded", "true");
@@ -7263,13 +7751,17 @@ body.oak-privacy-open { overflow: hidden; }
                 setGenieOrigin();
                 popup.classList.remove("open");
                 popup.classList.add("closing");
+                if (throwEl && isMobile()) {
+                    throwEl.classList.remove("go");
+                    void throwEl.offsetWidth;
+                    throwEl.classList.add("back");
+                }
                 popup.setAttribute("aria-hidden", "true");
                 toggleBtn.setAttribute("aria-expanded", "false");
                 toggleBtn.setAttribute("aria-label", "Open Oak Man assistant");
                 document.body.classList.remove("oak-open");
-                if (listening && rec) { try { rec.stop(); } catch (e) { /* ignore */ } }
                 clearTimeout(closeTimer);
-                closeTimer = setTimeout(() => { popup.classList.remove("closing"); fitViewport(); }, 460);
+                closeTimer = setTimeout(() => { popup.classList.remove("closing"); if (throwEl) throwEl.classList.remove("go", "back"); fitViewport(); }, isMobile() ? 640 : 460);
                 if (hadFocus) toggleBtn.focus({ preventScroll: true });
             }
 
@@ -7289,31 +7781,6 @@ body.oak-privacy-open { overflow: hidden; }
 
             function welcome() {
                 botNow(M("Hello, I'm **Oak Man** — the virtual assistant for Oak Furniture & Interiors.\n\nI can help you find furniture, explore our bespoke services, book a design consultation, or connect you with our team. What would you like to do?", { chips: MAIN_CHIPS }));
-            }
-
-            /* ---------- Voice input ---------- */
-            const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-            let rec = null, listening = false;
-            if (!SR) {
-                micBtn.style.display = "none";
-            } else {
-                micBtn.addEventListener("click", () => {
-                    if (listening && rec) { try { rec.stop(); } catch (e) { /* ignore */ } return; }
-                    try {
-                        rec = new SR();
-                        rec.lang = navigator.language || "en-US";
-                        rec.interimResults = false;
-                        rec.maxAlternatives = 1;
-                        rec.onstart = () => { listening = true; micBtn.classList.add("listening"); input.placeholder = "Listening…"; };
-                        rec.onend = () => { listening = false; micBtn.classList.remove("listening"); input.placeholder = PLACEHOLDER; };
-                        rec.onerror = () => { listening = false; micBtn.classList.remove("listening"); input.placeholder = PLACEHOLDER; };
-                        rec.onresult = e => {
-                            const t = e.results && e.results[0] && e.results[0][0] ? e.results[0][0].transcript : "";
-                            if (t) send(t);
-                        };
-                        rec.start();
-                    } catch (err) { /* ignore */ }
-                });
             }
 
             /* ---------- Events ---------- */
@@ -7577,6 +8044,7 @@ body.oak-privacy-open { overflow: hidden; }
         slate: { accent: "#94a6bb", hover: "#788ba2" }
     });
     const rooms = new Set(["living", "bedroom", "dining", "office"]);
+    const reducedMotionQuery = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
     const prefs = { tone: "brass", room: "living", compact: false, reduceMotion: !!(reducedMotionQuery && reducedMotionQuery.matches), nightMode: false };
 
     function showStatus(message) { if (status) status.textContent = message; }
@@ -8456,8 +8924,7 @@ body.oak-privacy-open { overflow: hidden; }
             <ul>
                 <li><strong>WhatsApp (Meta):</strong> booking and enquiry forms open WhatsApp with a pre-filled message. Once sent, it is handled under WhatsApp's own terms and privacy policy.</li>
                 <li><strong>Content providers:</strong> fonts, icons, images and video are loaded from third-party services (for example Google Fonts, cdnjs, Unsplash and image hosts), which may receive your IP address and browser information.</li>
-                <li><strong>Voice input:</strong> if you use the microphone in the chat, your browser may send audio to its speech-recognition provider.</li>
-                <li><strong>Social links:</strong> Instagram, Facebook and Pinterest are separate services with their own policies.</li>
+                                <li><strong>Social links:</strong> Instagram, Facebook and Pinterest are separate services with their own policies.</li>
                 <li>We may also disclose information where required by law.</li>
             </ul>
 
